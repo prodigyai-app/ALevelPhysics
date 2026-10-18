@@ -14296,6 +14296,265 @@ EXAM.paper({id:"fp3",num:3,mins:90,secA:[],secB,group:"f",lvl:"H556/03 style",na
 })();
 </script>
 <script>
+/* Full paper 1, Set 2: Modelling physics (H556/01 style) */
+(()=>{
+const {graph}=EXAM;
+const secA=[
+ {tag:"2",q:"Which of these quantities is a vector?",opts:["Kinetic energy","Momentum","Power","Work done"],a:1,why:"Momentum has a direction; the others are scalars."},
+ {tag:"1",q:"A resistor has resistance 47 ± 2 Ω and carries a current of 0.25 ± 0.01 A. What is the percentage uncertainty in the p.d. across it?",opts:["2 %","4 %","6 %","8 %"],a:3,why:"%V = %R + %I = 4.3 % + 4.0 % = 8.3 % ≈ 8 %."},
+ {tag:"2",q:"A classroom measures 8 m × 6 m × 3 m. The density of air is 1.2 kg m⁻³. What is the best estimate of the mass of air in the room?",opts:["2 kg","20 kg","200 kg","2000 kg"],a:2,why:"144 m³ × 1.2 kg m⁻³ ≈ 170 kg, so about 200 kg."},
+ {tag:"3.1",q:"A ball is thrown vertically upwards at 20 m s⁻¹. Ignoring air resistance, how long is it before it returns to the launch point?",opts:["2.0 s","4.1 s","8.2 s","41 s"],a:1,why:"t = 2u/g = 40/9.81 = 4.1 s."},
+ {tag:"3.2",q:"What is the pressure due to water alone at a depth of 25 m? (density of water 1000 kg m⁻³)",opts:["2.5 × 10³ Pa","2.5 × 10⁴ Pa","2.5 × 10⁵ Pa","2.5 × 10⁶ Pa"],a:2,why:"p = hρg = 25 × 1000 × 9.81 = 2.5 × 10⁵ Pa."},
+ {tag:"3.3",q:"A 1200 kg car speeds up from 10 m s⁻¹ to 20 m s⁻¹. What is the work done on it by the resultant force?",opts:["6.0 × 10⁴ J","1.2 × 10⁵ J","1.8 × 10⁵ J","2.4 × 10⁵ J"],a:2,why:"ΔE<sub>k</sub> = ½ × 1200 × (400 − 100) = 1.8 × 10⁵ J."},
+ {tag:"3.4",q:"Wires X and Y are made of the same metal. X is twice as long as Y and has twice the diameter. The same load is applied to each. What is (extension of X)/(extension of Y)?",opts:["¼","½","1","2"],a:1,why:"x = FL/(AE): L × 2, A × 4, so the ratio is 2/4 = ½."},
+ {tag:"3.5",q:"A rocket ejects 50 kg of exhaust gas every second at 2000 m s⁻¹ relative to the rocket. What is the thrust on the rocket?",opts:["40 N","2.5 × 10³ N","1.0 × 10⁵ N","1.0 × 10⁶ N"],a:2,why:"F = (Δm/Δt)v = 50 × 2000 = 1.0 × 10⁵ N."},
+ {tag:"5.1",q:"The pressure of a fixed mass of ideal gas is doubled while its volume is halved. What happens to the mean kinetic energy of its molecules?",opts:["It halves","It is unchanged","It doubles","It quadruples"],a:1,why:"pV is unchanged, so T is unchanged, and mean KE ∝ T."},
+ {tag:"5.1",q:"How many molecules are there in 1.0 m³ of an ideal gas at 1.0 × 10⁵ Pa and 300 K?",opts:["2.4 × 10²³","4.0 × 10²⁴","2.4 × 10²⁵","6.0 × 10²⁶"],a:2,why:"N = pV/kT = 10⁵/(1.38 × 10⁻²³ × 300) = 2.4 × 10²⁵."},
+ {tag:"5.2",q:"A car drives over a hump-back bridge whose top is part of a circle of radius 20 m. What is the maximum speed at which the car stays in contact with the road at the top?",opts:["4.4 m s⁻¹","14 m s⁻¹","20 m s⁻¹","196 m s⁻¹"],a:1,why:"Contact is lost when mg = mv²/r: v = √(9.81 × 20) = 14 m s⁻¹."},
+ {tag:"5.3",q:"A simple pendulum of length 1.0 m is taken to the Moon, where g = 1.62 N kg⁻¹. What is its period there?",opts:["0.8 s","2.0 s","4.9 s","24 s"],a:2,why:"T = 2π√(L/g) = 2π√(1/1.62) = 4.9 s."},
+ {tag:"5.3",q:"The displacement of an oscillator is x = 0.050 cos(10t), in metres and seconds. What is its maximum acceleration?",opts:["0.50 m s⁻²","5.0 m s⁻²","10 m s⁻²","50 m s⁻²"],a:1,why:"a<sub>max</sub> = ω²A = 100 × 0.050 = 5.0 m s⁻²."},
+ {tag:"5.4",q:"A planet has twice the mass and twice the radius of the Earth. How does the escape velocity from its surface compare with that from the Earth?",opts:["½","The same","√2 times","2 times"],a:1,why:"v<sub>esc</sub> = √(2GM/R); M/R is unchanged."},
+ {tag:"5.5",q:"A star has a parallax angle of 0.20 arc seconds. How far away is it?",opts:["0.20 pc","2.0 pc","5.0 pc","20 pc"],a:2,why:"d (pc) = 1/p (arcsec) = 1/0.20 = 5.0 pc."}];
+
+const secB=[
+ {stem:`<p>A skydiver of total mass 80 kg jumps from a plane. The drag force on her is proportional to the square of her speed, and her terminal velocity is 55 m s⁻¹.</p>`,parts:[
+  {tag:"3.2",q:"Explain why the skydiver reaches a terminal velocity.",m:3,lines:5,ms:[["B1","At first, weight > drag, so she accelerates downwards"],["B1","As her speed increases, the drag increases"],["B1","Eventually drag = weight, so the resultant force (and acceleration) is zero and her velocity is constant"]]},
+  {tag:"3.2",q:"State the drag force on her at terminal velocity.",m:1,ans:{a:785,unit:"N"},ms:[["B1","Drag = weight = 80 × 9.81 = 785 N"]]},
+  {tag:"3.2",q:"Calculate her acceleration when her speed is 30 m s⁻¹.",m:3,ans:{a:6.89,unit:"m s⁻²"},ms:[["C1","Drag at 30 m s⁻¹ = 785 × (30/55)² = 234 N"],["C1","Resultant force = 785 − 234 = 551 N"],["A1","a = 551/80 = 6.9 m s⁻²"]]},
+  {tag:"3.1",q:"She opens her parachute. Describe the shape of her velocity–time graph from just before the parachute opens until she reaches a new terminal velocity.",m:2,lines:3,ms:[["B1","Velocity decreases rapidly at first (large negative gradient), then the gradient becomes less steep"],["B1","Levels off at a new, lower, constant terminal velocity"]]}]},
+
+ {stem:`<p>A tower crane has a uniform horizontal jib of length 12 m and weight 8000 N. The jib is supported at a pivot 4.0 m from its left-hand end. A counterweight hangs from the left-hand end and a load of weight 15 000 N hangs from the right-hand end.</p>`,parts:[
+  {tag:"3.2",q:"Define the <b>moment</b> of a force about a point.",m:1,lines:2,ms:[["B1","Force × perpendicular distance from the point to the line of action of the force"]]},
+  {tag:"3.2",q:"Calculate the weight of the counterweight needed for the jib to be in equilibrium.",m:3,ans:{a:34000,unit:"N"},ms:[["C1","The jib's centre of gravity is at 6.0 m from the left, i.e. 2.0 m to the right of the pivot"],["C1","Moments about the pivot: W × 4.0 = 8000 × 2.0 + 15 000 × 8.0"],["A1","W = 3.4 × 10⁴ N"]]},
+  {tag:"3.2",q:"Calculate the force exerted on the jib by the pivot.",m:1,ans:{a:57000,unit:"N"},ms:[["B1","34 000 + 8000 + 15 000 = 5.7 × 10⁴ N upwards"]]},
+  {tag:"3.2",q:"The load is lowered to the ground and unhooked. Explain why the crane is now at risk of toppling, and suggest how this is prevented.",m:2,lines:3,ms:[["B1","Without the load, the anticlockwise moment of the counterweight is no longer balanced, so there is a resultant moment (towards the counterweight)"],["B1","e.g. the counterweight can be moved closer to the pivot / the tower is anchored and designed to withstand the moment"]]}]},
+
+ {stem:`<p>A student uses a sealed flask of air connected to a pressure gauge to estimate absolute zero. The flask is placed in a water bath whose temperature is varied.</p>`,parts:[
+  {tag:"1",q:"Describe how the student could carry out the experiment and use a graph to estimate absolute zero. Include how to obtain accurate results.",m:6,lines:12,lor:[["Level 3 (5–6)","A clear method in which the gas temperature is changed over a wide range and the pressure is measured once the gas has reached the bath temperature. A correct graph of p against θ, extrapolated to p = 0 to find absolute zero, with several accuracy steps. Well structured."],["Level 2 (3–4)","A workable method with p measured at several temperatures and an attempt at a graph or extrapolation. Some accuracy detail missing."],["Level 1 (1–2)","A simple method or a simple statement that pressure falls with temperature."]],ind:["Flask fully immersed in a water bath; short, narrow tube to the gauge so most of the gas is at the bath temperature","Heat the water with a kettle or immersion heater, or add ice; stir","Wait for thermal equilibrium before each reading (temperature steady)","Measure θ with a thermometer next to the flask; read p from the gauge","Take readings over a wide range, e.g. 0 °C to 100 °C, at least 6 values; repeat while cooling","Constant volume and fixed mass of gas","Plot p against θ (°C): a straight line","Extrapolate to p = 0: the intercept on the θ-axis is absolute zero (≈ −273 °C)"]},
+  {tag:"5.1",q:"The student's line of best fit passes through p = 101 kPa at 0 °C and p = 138 kPa at 100 °C. Determine the student's value of absolute zero in °C.",m:3,ans:{a:-273,unit:"°C",tol:0.01},ms:[["C1","Gradient = (138 − 101)/100 = 0.37 kPa K⁻¹"],["C1","p = 0 when θ = −101/0.37"],["A1","θ = −273 °C"]]}]},
+
+ {stem:`<p>Two gliders sit at rest on a horizontal air track with a compressed spring between them. Glider A has mass 0.30 kg and glider B has mass 0.20 kg. When the spring is released, B moves off at 0.60 m s⁻¹.</p>`,parts:[
+  {tag:"3.5",q:"Calculate the velocity of A after the release.",m:2,ans:{a:0.40,unit:"m s⁻¹"},ms:[["C1","0 = 0.20 × 0.60 + 0.30 × v"],["A1","v = −0.40 m s⁻¹: 0.40 m s⁻¹ in the opposite direction to B"]]},
+  {tag:"3.3",q:"Calculate the energy that was stored in the spring.",m:2,ans:{a:0.060,unit:"J"},ms:[["C1","½ × 0.20 × 0.60² + ½ × 0.30 × 0.40² = 0.036 + 0.024"],["A1","= 0.060 J"]]},
+  {tag:"3.5",q:"Explain why the gliders have zero total momentum after the release even though they have kinetic energy.",m:2,lines:3,ms:[["B1","Momentum is a vector; the two momenta are equal in size and opposite in direction, so they sum to zero"],["B1","Kinetic energy is a scalar (always positive), so the energies add; it came from the elastic potential energy of the spring"]]},
+  {tag:"3.5",q:"The spring pushes on B for 0.050 s. Calculate the average force on B.",m:2,ans:{a:2.4,unit:"N"},ms:[["C1","Impulse = Δp = 0.20 × 0.60 = 0.12 N s"],["A1","F = 0.12/0.050 = 2.4 N"]]}]},
+
+ {stem:`<p>A racing track is banked at 15° to the horizontal on a bend of radius 80 m. A car of mass 1200 kg drives round the bend at a speed at which no sideways friction is needed.</p>`,parts:[
+  {tag:"5.2",q:"Explain why a resultant force is needed for the car to travel round the bend at constant speed.",m:2,lines:3,ms:[["B1","The direction of the velocity is continually changing, so the car is accelerating (towards the centre)"],["B1","By Newton's second law, an acceleration requires a resultant force (the centripetal force)"]]},
+  {tag:"5.2",q:"Show that the speed of the car is about 15 m s⁻¹.",m:3,lines:5,ms:[["M1","Vertically: N cos 15° = mg"],["M1","Horizontally: N sin 15° = mv²/r, so tan 15° = v²/rg"],["A1","v = √(80 × 9.81 × tan 15°) = 14.5 m s⁻¹"]]},
+  {tag:"5.2",q:"Calculate the normal contact force on the car.",m:2,ans:{a:12187,unit:"N"},ms:[["C1","N = mg/cos 15° = 1200 × 9.81/cos 15°"],["A1","N = 1.2 × 10⁴ N"]]}]},
+
+ {stem:`<p>An object of mass 0.40 kg hangs from a spring of force constant 64 N m⁻¹. It is pulled down 3.0 cm from its equilibrium position and released.</p>`,parts:[
+  {tag:"5.3",q:"Show that the period of the oscillation is about 0.50 s.",m:2,lines:3,ms:[["M1","T = 2π√(m/k) = 2π√(0.40/64)"],["A1","T = 0.497 s"]]},
+  {tag:"5.3",q:"Calculate the maximum speed of the object.",m:2,ans:{a:0.379,unit:"m s⁻¹"},ms:[["C1","ω = √(k/m) = √160 = 12.6 rad s⁻¹"],["A1","v<sub>max</sub> = ωA = 12.6 × 0.030 = 0.38 m s⁻¹"]]},
+  {tag:"5.3",q:"Calculate the total energy of the oscillation.",m:1,ans:{a:0.0288,unit:"J"},ms:[["B1","½kA² = ½ × 64 × 0.030² = 0.029 J"]]},
+  {tag:"5.3",q:"Calculate the acceleration of the object when its displacement is 1.5 cm.",m:1,ans:{a:2.4,unit:"m s⁻²"},ms:[["B1","a = ω²x = 160 × 0.015 = 2.4 m s⁻² (towards equilibrium)"]]},
+  {tag:"5.3",q:"The object is now made to oscillate in a beaker of oil. Describe and explain how its displacement–time graph changes.",m:2,lines:3,ms:[["B1","The amplitude decreases with time (gradually or quickly, depending on the damping)"],["B1","Drag from the oil does work against the motion, transferring energy from the oscillator to the oil (thermal energy)"]]}]},
+
+ {stem:`<p>Jupiter's moon Callisto orbits Jupiter in a circular orbit of radius 1.88 × 10⁹ m with a period of 16.7 days. The radius of Jupiter is 7.0 × 10⁷ m.</p>`,parts:[
+  {tag:"5.4",q:"State Kepler's second law.",m:1,lines:2,ms:[["B1","A line joining a planet (moon) to the Sun (planet) sweeps out equal areas in equal times"]]},
+  {tag:"5.4",q:"Calculate the mass of Jupiter.",m:3,ans:{a:1.89e27,unit:"kg"},ms:[["C1","T = 16.7 × 86 400 = 1.44 × 10⁶ s"],["C1","M = 4π²r³/GT²"],["A1","M = 1.9 × 10²⁷ kg"]]},
+  {tag:"5.4",q:"Calculate the gravitational field strength at Jupiter's surface.",m:2,ans:{a:25.7,unit:"N kg⁻¹"},ms:[["C1","g = GM/R² = 6.67 × 10⁻¹¹ × 1.89 × 10²⁷ / (7.0 × 10⁷)²"],["A1","g = 26 N kg⁻¹ (allow ecf)"]]},
+  {tag:"5.4",q:"Calculate the gravitational potential at Jupiter's surface.",m:1,ans:{a:-1.8e9,unit:"J kg⁻¹"},ms:[["B1","V = −GM/R = −1.8 × 10⁹ J kg⁻¹ (minus sign required; allow ecf)"]]}]},
+
+ {stem:`<p>Stars like the Sun and stars much more massive than the Sun evolve in different ways.</p>`,parts:[
+  {tag:"5.5",q:"Describe the life cycle of a star of about one solar mass from its formation to its final state, and explain how the evolution of a star of more than ten solar masses differs.",m:6,lines:12,lor:[["Level 3 (5–6)","A clear, correctly ordered account of the formation and evolution of a low-mass star (nebula, protostar, main sequence, red giant, planetary nebula, white dwarf) with explanation of the key processes (gravitational collapse, fusion, equilibrium between radiation pressure and gravity, electron degeneracy pressure), and a correct comparison with a massive star (red supergiant, supernova, neutron star or black hole)."],["Level 2 (3–4)","Most stages of the low-mass star in the right order with some explanation, and at least one correct difference for a massive star."],["Level 1 (1–2)","Some stages named, with little explanation or comparison."]],ind:["Nebula of gas and dust collapses under gravity; loses gravitational potential energy and heats up: protostar","Core hot enough for hydrogen fusion: main sequence; stable because radiation (gas) pressure balances gravity","Hydrogen in the core runs out: core contracts, outer layers expand and cool: red giant; helium fusion","Outer layers ejected as a planetary nebula; core remains as a white dwarf","White dwarf: no fusion; collapse prevented by electron degeneracy pressure; mass below the Chandrasekhar limit (1.4 solar masses)","Massive star: red supergiant; fusion of heavier elements up to iron","Core collapse, supernova; remnant is a neutron star or (if very massive) a black hole"]},
+  {tag:"5.5",q:"A white dwarf has surface temperature 2.5 × 10⁴ K and radius 7.0 × 10⁶ m. Calculate its luminosity.",m:2,ans:{a:1.36e25,unit:"W"},ms:[["C1","L = 4πr²σT⁴ = 4π × (7.0 × 10⁶)² × 5.67 × 10⁻⁸ × (2.5 × 10⁴)⁴"],["A1","L = 1.4 × 10²⁵ W"]]},
+  {tag:"5.5",q:"Calculate the peak wavelength of its radiation.",m:1,ans:{a:1.16e-7,unit:"m"},ms:[["B1","λ<sub>max</sub> = 2.90 × 10⁻³ / 2.5 × 10⁴ = 1.2 × 10⁻⁷ m (ultraviolet)"]]}]},
+
+ {stem:`<p>A car of mass 1500 kg travelling at 30 m s⁻¹ brakes to rest. The brake discs have a total mass of 8.0 kg and are made of steel of specific heat capacity 450 J kg⁻¹ K⁻¹.</p>`,parts:[
+  {tag:"3.3",q:"Calculate the initial kinetic energy of the car.",m:1,ans:{a:6.75e5,unit:"J"},ms:[["B1","½ × 1500 × 30² = 6.75 × 10⁵ J"]]},
+  {tag:"5.1",q:"80 % of this energy is transferred to the brake discs. Calculate their rise in temperature.",m:2,ans:{a:150,unit:"K"},ms:[["C1","0.80 × 6.75 × 10⁵ = 8.0 × 450 × Δθ"],["A1","Δθ = 150 K"]]},
+  {tag:"5.1",q:"State what is meant by the <b>internal energy</b> of the discs.",m:1,lines:2,ms:[["B1","The sum of the randomly distributed kinetic and potential energies of the particles (atoms) in the discs"]]},
+  {tag:"5.1",q:"Explain, in terms of particles, what happens to the internal energy of the discs as they heat up.",m:2,lines:3,ms:[["B1","The atoms vibrate faster / with greater amplitude"],["B1","So their mean kinetic energy, and therefore the internal energy, increases (temperature rises)"]]},
+  {tag:"5.1",q:"The air in one tyre is at 2.4 × 10⁵ Pa and 290 K. After the journey it is at 320 K. Assuming the volume is constant, calculate its new pressure.",m:1,ans:{a:2.65e5,unit:"Pa"},ms:[["B1","p = 2.4 × 10⁵ × 320/290 = 2.6 × 10⁵ Pa"]]}]},
+
+ {stem:`<p>A boat points due north and moves through the water at 4.0 m s⁻¹. The river flows due east at 3.0 m s⁻¹. The river is 60 m wide.</p>`,parts:[
+  {tag:"2",q:"Calculate the magnitude and direction of the boat's velocity relative to the riverbank.",m:2,lines:3,ms:[["B1","Magnitude = √(4.0² + 3.0²) = 5.0 m s⁻¹"],["B1","Direction = tan⁻¹(3.0/4.0) = 37° east of north"]]},
+  {tag:"2",q:"Calculate the time to cross the river.",m:1,ans:{a:15,unit:"s"},ms:[["B1","t = 60/4.0 = 15 s (only the northward component carries the boat across)"]]},
+  {tag:"2",q:"Calculate how far downstream the boat lands.",m:1,ans:{a:45,unit:"m"},ms:[["B1","3.0 × 15 = 45 m"]]},
+  {tag:"2",q:"The drag force on the boat is given by F = kv². Determine the SI base units of k.",m:2,lines:3,ms:[["C1","k = F/v²: units (kg m s⁻²)/(m² s⁻²)"],["A1","kg m⁻¹"]]}]},
+
+ {stem:`<p>A ball rolls off the edge of a horizontal table 0.90 m high and lands on the floor 1.2 m from the foot of the table. Ignore air resistance.</p>`,parts:[
+  {tag:"3.1",q:"Calculate the time the ball takes to reach the floor.",m:2,ans:{a:0.428,unit:"s"},ms:[["C1","0.90 = ½ × 9.81 × t²"],["A1","t = 0.43 s"]]},
+  {tag:"3.1",q:"Calculate the speed of the ball as it leaves the table.",m:1,ans:{a:2.80,unit:"m s⁻¹"},ms:[["B1","u = 1.2/0.428 = 2.8 m s⁻¹"]]},
+  {tag:"3.1",q:"Calculate the magnitude and direction of the velocity of the ball as it hits the floor.",m:3,lines:5,ms:[["C1","Vertical component = 9.81 × 0.428 = 4.2 m s⁻¹"],["A1","Speed = √(2.8² + 4.2²) = 5.1 m s⁻¹"],["B1","At tan⁻¹(4.2/2.8) = 56° below the horizontal"]]},
+  {tag:"3.1",q:"Explain why the horizontal component of the ball's velocity remains constant.",m:2,lines:3,ms:[["B1","There is no horizontal force on the ball (air resistance is ignored; weight acts vertically)"],["B1","So there is no horizontal acceleration (Newton's first law); the horizontal and vertical motions are independent"]]}]}];
+
+EXAM.paper({id:"fp4",num:4,mins:135,secA,secB,group:"g",lvl:"H556/01 style · Set 2",name:"Paper 1: Modelling physics (Set 2)",topics:H556.topics,pre:H556.data,
+ timeText:"2 h 15 min",
+ eyebrow:"OCR A Level Physics A · Full practice paper · Set 2 · Modules 1, 2, 3 and 5",title:"Paper 1: Modelling physics (Set 2)",
+ note:"Answer all the questions. Section A: 15 marks; Section B: 85 marks. Use the data below. You will need a calculator.",
+ intro:"A second full-length practice paper in the style of OCR H556/01, with all-new questions: 15 multiple-choice questions, then structured questions on foundations, motion, forces, energy, materials, momentum, thermal physics, circular motion, oscillations, gravitation and astrophysics. Two questions are 6-mark extended responses marked by level. 100 marks in 2 hours 15 minutes."});
+})();
+</script>
+
+<script>
+/* Full paper 2, Set 2: Exploring physics (H556/02 style) */
+(()=>{
+const S=SYM, {fig,lab}=EFIG;
+const circ=fig(S.wire([[60,40],[380,40],[380,200],[60,200],[60,40]])+S.wire([[380,95],[450,95],[450,145],[380,145]])+S.dot(380,95)+S.dot(380,145)+S.battery(60,120,true,"")+lab(86,124,"5.0 V")+S.therm(220,40,false,"")+lab(212,22,"T")+S.res(380,120,true,"")+`<text x="364" y="124" font-size="12" font-weight="700" text-anchor="end">2.2 kΩ</text>`+S.meter(450,120,"V"),"0 10 490 210","Sensing circuit: a 5.0 volt battery in series with a thermistor T and a 2.2 kilohm resistor; the voltmeter is across the 2.2 kilohm resistor");
+
+const secA=[
+ {tag:"4.1",q:"What is the total charge carried by 5.0 × 10¹⁸ electrons?",opts:["0.32 C","0.80 C","3.1 C","8.0 C"],a:1,why:"Q = Ne = 5.0 × 10¹⁸ × 1.60 × 10⁻¹⁹ = 0.80 C."},
+ {tag:"4.1",q:"A wire is replaced by one of the same metal with half the diameter, carrying the same current. By what factor does the mean drift velocity of the electrons change?",opts:["¼","½","2","4"],a:3,why:"I = Anev; A falls to ¼, so v rises × 4."},
+ {tag:"4.2",q:"A lamp is rated 12 V, 24 W. What is its resistance when working normally?",opts:["0.50 Ω","2.0 Ω","6.0 Ω","288 Ω"],a:2,why:"R = V²/P = 144/24 = 6.0 Ω."},
+ {tag:"4.2",q:"What is the unit of resistivity?",opts:["Ω","Ω m","Ω m⁻¹","Ω m²"],a:1,why:"ρ = RA/L: Ω × m²/m."},
+ {tag:"4.3",q:"A 9.0 V supply of negligible internal resistance is connected across a 2.0 kΩ resistor in series with a 1.0 kΩ resistor. What is the p.d. across the 1.0 kΩ resistor?",opts:["1.0 V","3.0 V","4.5 V","6.0 V"],a:1,why:"9.0 × 1.0/3.0 = 3.0 V."},
+ {tag:"4.3",q:"A cell of e.m.f. 6.0 V and internal resistance 1.0 Ω is connected to two 10 Ω resistors in parallel. What current does the cell supply?",opts:["0.29 A","0.55 A","1.0 A","6.0 A"],a:2,why:"External resistance 5.0 Ω; I = 6.0/(5.0 + 1.0) = 1.0 A."},
+ {tag:"4.4",q:"A grating has 500 lines per mm. Light of wavelength 600 nm is incident normally. What is the angle of the first-order maximum?",opts:["8.6°","17°","30°","37°"],a:1,why:"sin θ = λ/d = 600 × 10⁻⁹ × 5.0 × 10⁵ = 0.30 ⇒ θ = 17°."},
+ {tag:"4.4",q:"Two points on a stationary wave are in the same loop. What is the phase difference between their oscillations?",opts:["0°","90°","180°","It depends on their separation"],a:0,why:"All points between two adjacent nodes oscillate in phase."},
+ {tag:"4.5",q:"What is the energy of a photon of energy 1.5 eV, expressed in joules?",opts:["9.4 × 10⁻²⁰ J","2.4 × 10⁻¹⁹ J","1.1 × 10⁻¹⁸ J","1.5 J"],a:1,why:"1.5 × 1.60 × 10⁻¹⁹ = 2.4 × 10⁻¹⁹ J."},
+ {tag:"4.5",q:"An electron and a proton have the same kinetic energy. Which statement is correct?",opts:["They have the same de Broglie wavelength","The electron has the longer de Broglie wavelength","The proton has the longer de Broglie wavelength","Neither has a de Broglie wavelength"],a:1,why:"p = √(2mE): the electron has less momentum, so λ = h/p is longer."},
+ {tag:"6.1",q:"A 100 μF capacitor charged to 6.0 V is connected across an uncharged 200 μF capacitor. What is the final p.d. across them?",opts:["2.0 V","3.0 V","4.0 V","6.0 V"],a:0,why:"Charge 600 μC is shared over 300 μF: V = 2.0 V."},
+ {tag:"6.2",q:"The p.d. between two parallel plates is doubled and their separation is doubled. What happens to the electric field strength between them?",opts:["It halves","It is unchanged","It doubles","It quadruples"],a:1,why:"E = V/d."},
+ {tag:"6.3",q:"An electron moves parallel to the field lines of a uniform magnetic field. What is the magnetic force on it?",opts:["Zero","BQv, along the field","BQv, perpendicular to the field","It depends on its speed"],a:0,why:"F = BQv sin θ with θ = 0."},
+ {tag:"6.4",q:"What is the quark composition of a neutron?",opts:["uud","udd","uūd","ddd"],a:1,why:"Charge: +⅔ − ⅓ − ⅓ = 0."},
+ {tag:"6.5",q:"An X-ray beam passes through three half-value thicknesses of a material. What fraction of the intensity is transmitted?",opts:["1/3","1/6","1/8","1/9"],a:2,why:"(½)³ = 1/8."}];
+
+const secB=[
+ {stem:`<p>A filament lamp is rated at 12 V, 36 W. It is connected to a battery of e.m.f. 12 V and internal resistance 0.50 Ω.</p>`,parts:[
+  {tag:"4.2",q:"Describe and explain the shape of the I–V characteristic of a filament lamp.",m:2,lines:3,ms:[["B1","A curve through the origin whose gradient decreases as the p.d. increases (symmetrical for negative values)"],["B1","As the current increases the filament gets hotter; the metal ions vibrate more, so the resistance increases"]]},
+  {tag:"4.2",q:"Calculate the resistance of the lamp at its rated p.d.",m:1,ans:{a:4.0,unit:"Ω"},ms:[["B1","R = V²/P = 144/36 = 4.0 Ω"]]},
+  {tag:"4.3",q:"Assume the lamp's resistance stays at this value. Calculate the current in the circuit.",m:2,ans:{a:2.67,unit:"A"},ms:[["C1","I = E/(R + r) = 12/4.5"],["A1","I = 2.7 A"]]},
+  {tag:"4.3",q:"Calculate the terminal p.d. of the battery.",m:1,ans:{a:10.7,unit:"V"},ms:[["B1","V = IR = 2.67 × 4.0 = 10.7 V"]]},
+  {tag:"4.2",q:"The actual current is slightly larger than your answer to (c). Explain why.",m:2,lines:3,ms:[["B1","The p.d. across the lamp is less than 12 V, so the filament is cooler than at its rated value"],["B1","So its resistance is less than 4.0 Ω and the current is larger"]]}]},
+
+ {stem:`<p>A student wants to determine the resistivity of the metal in a length of uniform wire.</p>`,parts:[
+  {tag:"1",q:"Describe how the student could carry out the experiment and use a graph to determine the resistivity accurately.",m:6,lines:12,lor:[["Level 3 (5–6)","A clear, workable method: circuit (or ohmmeter), how length is varied and measured, diameter measured with a micrometer at several places. A correct graph of R against L with ρ = gradient × A. Several sensible steps for accuracy and safety. Well structured."],["Level 2 (3–4)","A workable method measuring R for several lengths and the diameter, with an attempt at analysis that could give ρ."],["Level 1 (1–2)","A basic method or a correct equation with little detail."]],ind:["Wire taped along a metre rule; crocodile clips (or a jockey) to select length L","Ammeter in series, voltmeter across the length of wire; R = V/I (or use an ohmmeter)","Use a small current / switch off between readings so the wire does not heat up","Measure the diameter with a micrometer at several points and orientations; average; A = πd²/4","Take at least 6 lengths over a wide range (e.g. 0.10 to 1.00 m); repeat","Plot R against L: straight line; gradient = ρ/A","ρ = gradient × A","A non-zero intercept shows contact resistance; the gradient method removes it"]},
+  {tag:"4.2",q:"The wire has diameter 0.32 mm and the gradient of the graph of R against L is 12.5 Ω m⁻¹. Calculate the resistivity.",m:2,ans:{a:1.01e-6,unit:"Ω m"},ms:[["C1","A = π × (0.16 × 10⁻³)² = 8.04 × 10⁻⁸ m²"],["A1","ρ = 12.5 × 8.04 × 10⁻⁸ = 1.0 × 10⁻⁶ Ω m"]]}]},
+
+ {stem:`<p>The circuit is used to monitor the temperature of a greenhouse. The thermistor is an NTC thermistor; its resistance is 4.7 kΩ at 25 °C and 1.2 kΩ at 60 °C. The battery has negligible internal resistance.</p>`+circ,parts:[
+  {tag:"4.3",q:"Calculate the voltmeter reading at 25 °C and at 60 °C.",m:3,lines:4,ms:[["C1","V = 5.0 × 2.2/(2.2 + R<sub>T</sub>)"],["A1","At 25 °C: 5.0 × 2.2/6.9 = 1.6 V"],["A1","At 60 °C: 5.0 × 2.2/3.4 = 3.2 V"]]},
+  {tag:"4.3",q:"Explain why the voltmeter reading increases as the temperature rises.",m:2,lines:3,ms:[["B1","The resistance of the thermistor decreases as the temperature rises"],["B1","So the fixed resistor takes a larger share of the 5.0 V (p.d. divides in the ratio of the resistances)"]]},
+  {tag:"4.3",q:"State the value of fixed resistor that would make the reading exactly 2.5 V at 60 °C.",m:1,ans:{a:1.2,unit:"kΩ"},ms:[["B1","1.2 kΩ (equal to the thermistor's resistance, so the p.d. splits equally)"]]}]},
+
+ {stem:`<p>Light from a hydrogen lamp falls normally on a diffraction grating with 300 lines per mm. The spectrum contains a red line of wavelength 656 nm and a blue line of wavelength 486 nm.</p>`,parts:[
+  {tag:"4.4",q:"Explain why a diffraction grating produces sharp, bright maxima.",m:2,lines:3,ms:[["B1","Light diffracts through many slits and the waves superpose"],["B1","Only at angles where the path difference between adjacent slits is a whole number of wavelengths do all the waves arrive in phase; at all other angles they almost completely cancel"]]},
+  {tag:"4.4",q:"Calculate the angle between the red and blue lines in the second-order spectrum.",m:3,ans:{a:6.2,unit:"°",tol:0.04},ms:[["C1","d = 1/300 mm = 3.33 × 10⁻⁶ m"],["C1","Red: sin θ = 2 × 656 × 10⁻⁹/3.33 × 10⁻⁶ ⇒ 23.2°; blue: ⇒ 17.0°"],["A1","Angle between them = 6.2°"]]},
+  {tag:"4.4",q:"Determine the highest order in which the red line can be seen.",m:1,ans:{a:5,unit:"",tol:0.001},ms:[["B1","n ≤ d/λ = 5.08, so the 5th order"]]}]},
+
+ {stem:`<p>Two loudspeakers 1.2 m apart are connected to the same signal generator. A student walks along a line parallel to the speakers and 8.0 m from them, and hears loud regions 1.5 m apart.</p>`,parts:[
+  {tag:"4.4",q:"Explain why the loudspeakers must be connected to the same signal generator.",m:1,lines:2,ms:[["B1","So that the sources are coherent (same frequency, constant phase difference), giving a stable interference pattern"]]},
+  {tag:"4.4",q:"Calculate the wavelength of the sound.",m:2,ans:{a:0.225,unit:"m"},ms:[["C1","λ = ax/D = 1.2 × 1.5/8.0"],["A1","λ = 0.23 m"]]},
+  {tag:"4.4",q:"The speed of sound is 340 m s⁻¹. Calculate the frequency.",m:1,ans:{a:1511,unit:"Hz"},ms:[["B1","f = 340/0.225 = 1.5 × 10³ Hz"]]},
+  {tag:"4.4",q:"State the effect on the spacing of the loud regions of increasing the frequency.",m:1,lines:2,ms:[["B1","The spacing decreases (shorter wavelength, x = λD/a)"]]},
+  {tag:"4.4",q:"Suggest why the pattern is harder to detect in an ordinary classroom than outdoors.",m:1,lines:2,ms:[["B1","Sound reflects from the walls and other surfaces, adding extra waves that blur the pattern"]]}]},
+
+ {stem:`<p>Violet light of wavelength 400 nm falls on a potassium surface. The work function of potassium is 2.3 eV.</p>`,parts:[
+  {tag:"4.5",q:"Calculate the maximum kinetic energy of the emitted electrons, in eV.",m:2,ans:{a:0.81,unit:"eV"},ms:[["C1","Photon energy = hc/λ = 4.97 × 10⁻¹⁹ J = 3.11 eV"],["A1","KE<sub>max</sub> = 3.11 − 2.3 = 0.81 eV"]]},
+  {tag:"4.5",q:"Calculate the maximum speed of the emitted electrons.",m:2,ans:{a:5.33e5,unit:"m s⁻¹"},ms:[["C1","½mv² = 0.81 × 1.60 × 10⁻¹⁹ J"],["A1","v = 5.3 × 10⁵ m s⁻¹"]]},
+  {tag:"4.5",q:"Calculate the de Broglie wavelength of these fastest electrons.",m:2,ans:{a:1.37e-9,unit:"m"},ms:[["C1","λ = h/mv = 6.63 × 10⁻³⁴ / (9.11 × 10⁻³¹ × 5.33 × 10⁵)"],["A1","λ = 1.4 × 10⁻⁹ m"]]},
+  {tag:"4.5",q:"The intensity of the violet light is doubled. State and explain the effect on the photoelectric current.",m:2,lines:3,ms:[["B1","The current doubles"],["B1","Twice as many photons arrive per second; each frees one electron (one-to-one), so twice as many electrons are emitted per second"]]}]},
+
+ {stem:`<p>A camera flash uses a 4700 μF capacitor charged to 9.0 V. It is discharged through a flash tube of resistance 2.0 Ω.</p>`,parts:[
+  {tag:"6.1",q:"Calculate the energy stored in the capacitor.",m:2,ans:{a:0.190,unit:"J"},ms:[["C1","W = ½CV² = ½ × 4700 × 10⁻⁶ × 9.0²"],["A1","W = 0.19 J"]]},
+  {tag:"6.1",q:"Calculate the time constant of the discharge.",m:1,ans:{a:9.4e-3,unit:"s"},ms:[["B1","τ = CR = 4700 × 10⁻⁶ × 2.0 = 9.4 × 10⁻³ s"]]},
+  {tag:"6.1",q:"Calculate the time for the p.d. to fall to 1.0 V.",m:2,ans:{a:0.0207,unit:"s"},ms:[["C1","1.0 = 9.0e<sup>−t/CR</sup> ⇒ t = CR ln 9"],["A1","t = 0.021 s"]]},
+  {tag:"6.1",q:"Describe how the current in the flash tube varies with time during the discharge.",m:2,lines:3,ms:[["B1","Current is a maximum (4.5 A) at the start"],["B1","It then decreases exponentially, falling by the same factor in equal times (to 37 % after each 9.4 ms)"]]}]},
+
+ {stem:`<p>A point charge of +4.0 μC is fixed at point A, and a point charge of +1.0 μC is fixed at point B, 0.30 m from A.</p>`,parts:[
+  {tag:"6.2",q:"Define <b>electric field strength</b>.",m:1,lines:2,ms:[["B1","The force per unit positive charge"]]},
+  {tag:"6.2",q:"Calculate the electric field strength at the midpoint of AB.",m:3,ans:{a:1.2e6,unit:"N C⁻¹"},ms:[["C1","Field due to A: 8.99 × 10⁹ × 4.0 × 10⁻⁶/0.15² = 1.60 × 10⁶ N C⁻¹ towards B"],["C1","Field due to B: 4.0 × 10⁵ N C⁻¹ towards A (opposite)"],["A1","Resultant = 1.2 × 10⁶ N C⁻¹ towards B"]]},
+  {tag:"6.2",q:"Determine the distance from A of the point on AB where the electric field strength is zero.",m:2,ans:{a:0.20,unit:"m"},ms:[["C1","4.0/x² = 1.0/(0.30 − x)² ⇒ x/(0.30 − x) = 2"],["A1","x = 0.20 m"]]},
+  {tag:"6.2",q:"Calculate the electric potential at that point.",m:2,ans:{a:2.70e5,unit:"V"},ms:[["C1","V = 8.99 × 10⁹ × (4.0 × 10⁻⁶/0.20 + 1.0 × 10⁻⁶/0.10)"],["A1","V = 2.7 × 10⁵ V (potentials add as scalars; the potential is not zero where the field is zero)"]]}]},
+
+ {stem:`<p>A small search coil connected to an oscilloscope is used to investigate the alternating magnetic field near a coil carrying alternating current.</p>`,parts:[
+  {tag:"6.3",q:"Describe how the search coil could be used to investigate how the induced e.m.f. depends on the angle between the axis of the search coil and the field, and explain the results expected using Faraday's law.",m:6,lines:12,lor:[["Level 3 (5–6)","A clear workable method including keeping the position fixed, measuring the angle with a protractor and the peak e.m.f. from the oscilloscope, with a suitable graph (ε against cos θ). Correct explanation using flux linkage NBA cos θ and Faraday's law, including where the maximum and zero occur."],["Level 2 (3–4)","Workable method with some measurement detail and a partly correct explanation of the variation."],["Level 1 (1–2)","A basic method or a simple statement that the e.m.f. changes with angle."]],ind:["Search coil on a protractor or rotating mount at a fixed distance from the field coil","Keep the a.c. supply frequency and current constant","Read peak-to-peak height of the trace (Y-gain setting) and halve it to get the peak e.m.f.","Rotate in steps (e.g. 15°) from 0° to 90° and beyond; repeat","Flux linkage = NBA cos θ, where θ is the angle between the field and the coil's axis","ε₀ = BANω cos θ: maximum when axis is parallel to the field, zero at 90°","Plot ε₀ against cos θ: straight line through the origin"]},
+  {tag:"6.3",q:"The search coil has 2000 turns and area 1.0 cm². The field has peak flux density 3.0 mT and frequency 50 Hz. Calculate the peak e.m.f. when the coil's axis is parallel to the field.",m:2,ans:{a:0.188,unit:"V"},ms:[["C1","ε₀ = BANω = 3.0 × 10⁻³ × 1.0 × 10⁻⁴ × 2000 × 2π × 50"],["A1","ε₀ = 0.19 V"]]}]},
+
+ {stem:`<p>Living wood has a carbon-14 activity of 0.25 Bq per gram of carbon. A sample of ancient wood has an activity of 0.060 Bq per gram of carbon. The half-life of carbon-14 is 5730 years.</p>`,parts:[
+  {tag:"6.4",q:"Calculate the decay constant of carbon-14 in year⁻¹.",m:1,ans:{a:1.21e-4,unit:"year⁻¹"},ms:[["B1","λ = ln 2/5730 = 1.2 × 10⁻⁴ year⁻¹"]]},
+  {tag:"6.4",q:"Calculate the age of the wood.",m:2,ans:{a:11800,unit:"years"},ms:[["C1","0.060 = 0.25e<sup>−λt</sup> ⇒ t = ln(0.25/0.060)/λ"],["A1","t = 1.2 × 10⁴ years"]]},
+  {tag:"6.4",q:"Suggest two reasons why ages found by carbon dating are uncertain.",m:2,lines:3,ms:[["B1","Decay is random; with such low activities the count has a large (percentage) uncertainty / background radiation is significant"],["B1","The ratio of C-14 to C-12 in the atmosphere may not have been constant over time"]]},
+  {tag:"6.4",q:"Carbon-14 decays by β⁻ emission to nitrogen. Write the nuclear equation for this decay.",m:2,lines:2,ms:[["B1","<sup>14</sup>₆C → <sup>14</sup>₇N + <sup>0</sup>₋₁e"],["B1","+ ν̄<sub>e</sub> (electron antineutrino)"]]}]},
+
+ {stem:`<p>An X-ray tube accelerates electrons through a p.d. of 80 kV. The X-rays pass through 4.0 cm of soft tissue (attenuation coefficient 0.20 cm⁻¹) or 4.0 cm of bone (attenuation coefficient 0.60 cm⁻¹).</p>`,parts:[
+  {tag:"6.5",q:"Calculate the minimum wavelength of the X-rays produced.",m:2,ans:{a:1.55e-11,unit:"m"},ms:[["C1","Maximum photon energy = eV = 1.60 × 10⁻¹⁹ × 80 × 10³ = 1.28 × 10⁻¹⁴ J"],["A1","λ<sub>min</sub> = hc/E = 1.6 × 10⁻¹¹ m"]]},
+  {tag:"6.5",q:"Calculate the fraction of the intensity transmitted through the tissue and through the bone.",m:2,lines:3,ms:[["B1","Tissue: e<sup>−0.20 × 4.0</sup> = 0.45"],["B1","Bone: e<sup>−0.60 × 4.0</sup> = 0.091"]]},
+  {tag:"6.5",q:"Explain why a barium meal is used to image the digestive tract.",m:3,lines:4,ms:[["B1","Soft tissues have similar attenuation coefficients, so there is little contrast between them"],["B1","Barium has a high proton number, so it absorbs X-rays strongly (photoelectric effect ∝ Z³)"],["B1","The tract filled with barium appears clearly (white) against surrounding tissue"]]}]},
+
+ {stem:`<p>In a fusion reaction, a deuterium nucleus and a tritium nucleus fuse:<br><sup>2</sup>₁H + <sup>3</sup>₁H → <sup>4</sup>₂He + <sup>1</sup>₀n<br>Masses: deuterium 2.01410 u, tritium 3.01605 u, helium-4 4.00260 u, neutron 1.00866 u. 1 u is equivalent to 931.5 MeV.</p>`,parts:[
+  {tag:"6.4",q:"Calculate the energy released in MeV.",m:3,ans:{a:17.6,unit:"MeV"},ms:[["C1","Mass before = 5.03015 u; mass after = 5.01126 u"],["C1","Mass defect = 0.01889 u"],["A1","Energy = 0.01889 × 931.5 = 17.6 MeV"]]},
+  {tag:"6.4",q:"Explain why fusion only happens at very high temperatures.",m:2,lines:3,ms:[["B1","The nuclei are both positive and repel each other (electrostatic repulsion)"],["B1","They need very high kinetic energies (high temperature) to get close enough for the strong nuclear force to act"]]},
+  {tag:"6.4",q:"State one quantity, other than energy, that is conserved in this reaction.",m:1,lines:1,ms:[["B1","e.g. charge / nucleon number / momentum"]]}]}];
+
+EXAM.paper({id:"fp5",num:5,mins:135,secA,secB,group:"g",lvl:"H556/02 style · Set 2",name:"Paper 2: Exploring physics (Set 2)",topics:H556.topics,pre:H556.data,
+ timeText:"2 h 15 min",
+ eyebrow:"OCR A Level Physics A · Full practice paper · Set 2 · Modules 1, 2, 4 and 6",title:"Paper 2: Exploring physics (Set 2)",
+ note:"Answer all the questions. Section A: 15 marks; Section B: 85 marks. Use the data below. You will need a calculator.",
+ intro:"A second full-length practice paper in the style of OCR H556/02, with all-new questions: 15 multiple-choice questions, then structured questions on electricity, waves, quantum physics, capacitors, electric fields, electromagnetism, nuclear physics and medical imaging. Two questions are 6-mark extended responses marked by level. 100 marks in 2 hours 15 minutes."});
+})();
+</script>
+
+<script>
+/* Full paper 3, Set 2: Unified physics (H556/03 style) */
+(()=>{
+const secB=[
+ {stem:`<p>An electric car of mass 1600 kg has a 60 kW h battery. At a steady 25 m s⁻¹ the total resistive force on the car is 500 N. The motor and drive system are 85 % efficient. (1 kW h = 3.6 × 10⁶ J)</p>`,parts:[
+  {tag:"3.3",q:"Calculate the useful power output needed at 25 m s⁻¹.",m:1,ans:{a:12500,unit:"W"},ms:[["B1","P = Fv = 500 × 25 = 1.25 × 10⁴ W"]]},
+  {tag:"3.3",q:"Calculate the range of the car on a full battery at this speed.",m:3,ans:{a:3.67e5,unit:"m"},ms:[["C1","Battery energy = 60 × 3.6 × 10⁶ = 2.16 × 10⁸ J"],["C1","Useful work = 0.85 × 2.16 × 10⁸ = 1.84 × 10⁸ J = 500 × d"],["A1","d = 3.7 × 10⁵ m (370 km)"]]},
+  {tag:"4.1",q:"The battery is charged at 7.2 kW from a 400 V supply. Calculate the charging current.",m:1,ans:{a:18,unit:"A"},ms:[["B1","I = P/V = 7200/400 = 18 A"]]},
+  {tag:"4.2",q:"Calculate the time to charge the battery fully from empty, in hours, ignoring losses.",m:1,ans:{a:8.33,unit:"h"},ms:[["B1","60 kW h / 7.2 kW = 8.3 h"]]},
+  {tag:"5.1",q:"Suggest two reasons why the range of the car is shorter in cold winter weather.",m:2,lines:3,ms:[["B1","Energy from the battery is used to heat the cabin (and the battery)"],["B1","e.g. the battery's internal resistance is greater at low temperature, so more energy is wasted inside it / cold air is denser, so drag is greater"]]}]},
+
+ {stem:`<p>An astronaut on the Moon hits a golf ball at 30 m s⁻¹ at 45° to the horizontal. The Moon has mass 7.35 × 10²² kg and radius 1.74 × 10⁶ m and no atmosphere.</p>`,parts:[
+  {tag:"5.4",q:"Show that the gravitational field strength at the Moon's surface is about 1.6 N kg⁻¹.",m:1,lines:2,ms:[["B1","g = GM/R² = 6.67 × 10⁻¹¹ × 7.35 × 10²² / (1.74 × 10⁶)² = 1.62 N kg⁻¹"]]},
+  {tag:"3.1",q:"For a projectile launched and landing at the same level, the range is v²sin 2θ/g. Calculate the range of the golf ball on the Moon.",m:2,ans:{a:556,unit:"m"},ms:[["C1","R = 30² × sin 90° / 1.62"],["A1","R = 560 m"]]},
+  {tag:"3.1",q:"Calculate the range of the same shot on the Earth, ignoring air resistance.",m:1,ans:{a:91.7,unit:"m"},ms:[["B1","900/9.81 = 92 m (six times less than on the Moon, since g is six times greater)"]]},
+  {tag:"5.4",q:"Calculate the speed needed for a circular orbit just above the Moon's surface.",m:2,ans:{a:1679,unit:"m s⁻¹"},ms:[["C1","mg = mv²/R ⇒ v = √(gR)"],["A1","v = √(1.62 × 1.74 × 10⁶) = 1.7 × 10³ m s⁻¹"]]},
+  {tag:"5.2",q:"An astronaut in a spacecraft orbiting the Moon feels weightless. Explain why.",m:2,lines:3,ms:[["B1","The astronaut and the spacecraft are both in free fall with the same acceleration (g) towards the Moon"],["B1","So there is no contact force between the astronaut and the floor (gravity still acts, providing the centripetal force)"]]}]},
+
+ {stem:`<p>A student investigates how the count rate from a gamma source varies with distance <i>d</i> measured from the front of a Geiger–Müller tube. The actual source–detector distance is <i>d</i> + <i>e</i>, where <i>e</i> is an unknown distance inside the tube. The background count has been subtracted to give the corrected count rate <i>C</i>.</p><div class="tbl-wrap"><table><tr><th><i>d</i> / cm</th><td>2.0</td><td>4.0</td><td>6.0</td><td>8.0</td><td>10.0</td></tr><tr><th><i>C</i> / counts min⁻¹</th><td>1148</td><td>391</td><td>195</td><td>116</td><td>77</td></tr><tr><th>1/√<i>C</i> / (counts min⁻¹)<sup>−½</sup></th><td>0.0295</td><td>0.0506</td><td></td><td>0.0928</td><td>0.1140</td></tr></table></div>`,parts:[
+  {tag:"1",q:"State why the background count rate must be measured and subtracted.",m:1,lines:2,ms:[["B1","Background radiation adds counts that are not from the source, and is significant at large distances where the count rate is low"]]},
+  {tag:"6.4",q:"Calculate the missing value of 1/√C.",m:1,ans:{a:0.0716,unit:"",tol:0.004},ms:[["B1","1/√195 = 0.0716"]]},
+  {tag:"6.4",q:"Gamma rays obey an inverse-square law, C = k/(d + e)². Explain why a graph of 1/√C against d is a straight line, and state what its intercept on the d-axis represents.",m:2,lines:3,ms:[["B1","1/√C = (d + e)/√k, which has the form y = mx + c with gradient 1/√k"],["B1","1/√C = 0 when d = −e, so the d-axis intercept is −e"]]},
+  {tag:"1",q:"Use the data to determine e.",m:2,ans:{a:0.8,unit:"cm",tol:0.08},ms:[["C1","Gradient = (0.1140 − 0.0295)/8.0 = 0.0106 per cm; intercept at d = 0 is 0.0295 − 2.0 × 0.0106 = 0.0084"],["A1","e = 0.0084/0.0106 = 0.8 cm"]]},
+  {tag:"1",q:"Identify one source of random uncertainty in this experiment and suggest how to reduce its effect.",m:2,lines:3,ms:[["B1","Radioactive decay is random, so the count in each minute varies"],["B1","Count for a longer time (or repeat and average) so the total count is larger and its percentage uncertainty (≈ 1/√N) smaller"]]},
+  {tag:"6.4",q:"State one safety precaution the student should take.",m:1,lines:2,ms:[["B1","e.g. handle the source with long tongs; keep it in its lead box when not in use; keep a large distance from it; minimise time of exposure"]]}]},
+
+ {stem:`<p>In the laboratory, a sodium spectral line has wavelength 589.0 nm. In the spectrum of a distant galaxy the same line is observed at 591.4 nm.</p>`,parts:[
+  {tag:"5.5",q:"Calculate the recession speed of the galaxy.",m:2,ans:{a:1.22e6,unit:"m s⁻¹"},ms:[["C1","v = (Δλ/λ)c = (2.4/589.0) × 3.00 × 10⁸"],["A1","v = 1.2 × 10⁶ m s⁻¹"]]},
+  {tag:"5.5",q:"Take H₀ = 70 km s⁻¹ Mpc⁻¹. Calculate the distance to the galaxy.",m:1,ans:{a:17.5,unit:"Mpc"},ms:[["B1","d = 1220/70 = 17 Mpc"]]},
+  {tag:"4.5",q:"Calculate the energy of a photon of wavelength 589.0 nm, in eV.",m:2,ans:{a:2.11,unit:"eV"},ms:[["C1","E = hc/λ = 3.38 × 10⁻¹⁹ J"],["A1","E = 2.1 eV"]]},
+  {tag:"5.5",q:"Explain how a line emission spectrum provides evidence for discrete electron energy levels in atoms.",m:2,lines:3,ms:[["B1","Only certain wavelengths (frequencies) are emitted, so the photons have only certain energies"],["B1","Each photon is emitted when an electron moves down between two levels: E = hf = ΔE, so the levels must have discrete energies"]]}]},
+
+ {stem:`<p>A parallel-plate capacitor has square plates of area 0.040 m² separated by 2.0 mm of air. It is connected to a 3.0 kV supply.</p>`,parts:[
+  {tag:"6.2",q:"Calculate the capacitance.",m:1,ans:{a:1.77e-10,unit:"F"},ms:[["B1","C = ε₀A/d = 8.85 × 10⁻¹² × 0.040/0.0020 = 1.8 × 10⁻¹⁰ F"]]},
+  {tag:"6.1",q:"Calculate the charge stored and the energy stored.",m:2,lines:3,ms:[["B1","Q = CV = 1.77 × 10⁻¹⁰ × 3000 = 5.3 × 10⁻⁷ C"],["B1","W = ½CV² = 8.0 × 10⁻⁴ J"]]},
+  {tag:"6.2",q:"Calculate the electric field strength between the plates.",m:1,ans:{a:1.5e6,unit:"V m⁻¹"},ms:[["B1","E = V/d = 3000/0.0020 = 1.5 × 10⁶ V m⁻¹"]]},
+  {tag:"6.3",q:"Protons moving at 3.0 × 10⁶ m s⁻¹ pass between the plates. Calculate the magnetic flux density, perpendicular to both the beam and the electric field, needed for the protons to pass through undeflected.",m:2,ans:{a:0.5,unit:"T"},ms:[["C1","eE = Bev ⇒ B = E/v"],["A1","B = 1.5 × 10⁶/3.0 × 10⁶ = 0.50 T"]]},
+  {tag:"6.1",q:"The capacitor is disconnected from the supply and the plates are pulled further apart. Explain what happens to the p.d. between them and to the energy stored.",m:2,lines:3,ms:[["B1","The charge stays constant but C = ε₀A/d decreases, so V = Q/C increases"],["B1","W = Q²/2C increases; the extra energy comes from the work done pulling the attracting plates apart"]]}]},
+
+ {stem:`<p>Light and electrons both show wave and particle behaviour.</p>`,parts:[
+  {tag:"4.5",q:"Explain how the photoelectric effect provides evidence for the particle nature of light, and how electron diffraction provides evidence for the wave nature of matter. Discuss what is meant by wave–particle duality.",m:6,lines:12,lor:[["Level 3 (5–6)","A clear explanation of the photoelectric observations (threshold frequency, instantaneous emission, KE independent of intensity) and how only the photon model explains them; a clear description of electron diffraction and the de Broglie relation; and a coherent statement of wave–particle duality."],["Level 2 (3–4)","Correct key evidence for both, with some explanation, or one explained in full."],["Level 1 (1–2)","Some relevant statements with little explanation."]],ind:["Electrons are emitted only if the frequency is above a threshold, whatever the intensity","KE<sub>max</sub> depends on frequency, not intensity; emission is instantaneous","Wave model predicts any frequency would work given enough time / intensity: it fails","Photon model: energy hf in discrete packets, one photon to one electron, hf = φ + KE<sub>max</sub>","Electrons through thin graphite produce diffraction rings on a screen; diffraction is a wave property","λ = h/p; higher accelerating p.d. gives smaller rings","Duality: light and matter show wave behaviour (propagation, diffraction) and particle behaviour (emission, absorption, detection)"]},
+  {tag:"4.5",q:"Calculate the speed of an electron with a de Broglie wavelength of 0.10 nm.",m:2,ans:{a:7.28e6,unit:"m s⁻¹"},ms:[["C1","v = h/mλ = 6.63 × 10⁻³⁴ / (9.11 × 10⁻³¹ × 1.0 × 10⁻¹⁰)"],["A1","v = 7.3 × 10⁶ m s⁻¹"]]}]},
+
+ {stem:`<p>In a nuclear power station, water flows through the reactor at 1.2 × 10⁴ kg s⁻¹ and its temperature rises by 30 K. Each fission of uranium-235 releases 200 MeV. Specific heat capacity of water = 4200 J kg⁻¹ K⁻¹; molar mass of U-235 = 0.235 kg mol⁻¹.</p>`,parts:[
+  {tag:"5.1",q:"Calculate the thermal power transferred to the water.",m:2,ans:{a:1.51e9,unit:"W"},ms:[["C1","P = (m/t)cΔθ = 1.2 × 10⁴ × 4200 × 30"],["A1","P = 1.5 × 10⁹ W"]]},
+  {tag:"6.4",q:"Calculate the number of fissions per second.",m:2,ans:{a:4.73e19,unit:"s⁻¹"},ms:[["C1","Energy per fission = 200 × 1.60 × 10⁻¹³ = 3.2 × 10⁻¹¹ J"],["A1","N = 1.51 × 10⁹/3.2 × 10⁻¹¹ = 4.7 × 10¹⁹ s⁻¹"]]},
+  {tag:"6.4",q:"Calculate the mass of uranium-235 used in one year.",m:2,ans:{a:583,unit:"kg"},ms:[["C1","Nuclei per year = 4.73 × 10¹⁹ × 3.16 × 10⁷ = 1.49 × 10²⁷"],["A1","Mass = 1.49 × 10²⁷/6.02 × 10²³ × 0.235 = 580 kg"]]},
+  {tag:"3.5",q:"The moderator slows neutrons by elastic collisions. Explain why a moderator of light nuclei (such as hydrogen in water) is effective.",m:2,lines:3,ms:[["B1","In an elastic collision, momentum and kinetic energy are conserved"],["B1","A neutron transfers the largest fraction of its kinetic energy when it collides with a nucleus of similar mass (a proton has nearly the same mass)"]]}]},
+
+ {stem:`<p>A lift car of mass 800 kg carries a maximum load of 600 kg. It hangs from a steel cable of length 40 m. Steel has Young modulus 2.0 × 10¹¹ Pa and ultimate tensile strength 1.2 × 10⁹ Pa.</p>`,parts:[
+  {tag:"3.2",q:"Calculate the tension in the cable when the fully loaded lift accelerates upwards at 1.5 m s⁻².",m:2,ans:{a:15834,unit:"N"},ms:[["C1","T − mg = ma ⇒ T = 1400 × (9.81 + 1.5)"],["A1","T = 1.6 × 10⁴ N"]]},
+  {tag:"3.4",q:"Regulations require the breaking load to be at least 5 times this tension. Calculate the minimum diameter of cable.",m:3,ans:{a:9.17,unit:"mm",tol:0.03},ms:[["C1","Breaking force = 5 × 15 834 = 7.92 × 10⁴ N"],["C1","A = 7.92 × 10⁴ / 1.2 × 10⁹ = 6.6 × 10⁻⁵ m²"],["A1","d = √(4A/π) = 9.2 × 10⁻³ m"]]},
+  {tag:"3.4",q:"Calculate the extension of a 40 m cable of this cross-section under the tension in (a).",m:2,ans:{a:0.048,unit:"m"},ms:[["C1","x = TL/(AE) = 15 834 × 40 / (6.6 × 10⁻⁵ × 2.0 × 10¹¹)"],["A1","x = 0.048 m"]]}]},
+
+ {stem:`<p>A wind turbine generates 2.0 MW at 690 V. The power is transmitted to a substation through cables of total resistance 1.5 Ω.</p>`,parts:[
+  {tag:"4.2",q:"Calculate the current in the cables if the power were transmitted at 690 V, and the power that would be lost in them. Comment on your answer.",m:3,lines:5,ms:[["C1","I = 2.0 × 10⁶/690 = 2.9 × 10³ A"],["C1","P = I²R = 2900² × 1.5 = 1.3 × 10⁷ W"],["B1","This is more than the power generated: transmission at 690 V is impossible"]]},
+  {tag:"6.3",q:"The p.d. is stepped up to 33 kV. Calculate the percentage of the power lost in the cables.",m:2,ans:{a:0.28,unit:"%"},ms:[["C1","I = 2.0 × 10⁶/33 000 = 60.6 A; P = 60.6² × 1.5 = 5.5 × 10³ W"],["A1","5.5 × 10³/2.0 × 10⁶ = 0.28 %"]]},
+  {tag:"6.3",q:"Explain why a transformer will not work with a direct current.",m:2,lines:3,ms:[["B1","A steady current produces a constant magnetic flux in the core"],["B1","The flux linkage of the secondary does not change, so no e.m.f. is induced (Faraday's law)"]]}]}];
+
+EXAM.paper({id:"fp6",num:6,mins:90,secA:[],secB,group:"g",lvl:"H556/03 style · Set 2",name:"Paper 3: Unified physics (Set 2)",topics:H556.topics,pre:H556.data,
+ timeText:"1 h 30 min",
+ eyebrow:"OCR A Level Physics A · Full practice paper · Set 2 · All modules",title:"Paper 3: Unified physics (Set 2)",
+ note:"Answer all the questions. Questions draw on content from across the whole course, and include practical skills. Use the data below. You will need a calculator.",
+ intro:"A second full-length practice paper in the style of OCR H556/03, with all-new synoptic questions linking topics from across the specification, including analysis of practical data and a 6-mark extended response marked by level. There is no multiple-choice section. 70 marks in 1 hour 30 minutes."});
+})();
+</script>
+
+<script>
 Object.assign(LAB.ICONS,{"u-papers":'<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/><path d="M15 17l1.5 1.5L19 15"/>',"l-solve":LAB.ICONS["l-solve"]||'<path d="M5 3h14v18H5z"/>'});
 LEARN.unit=null;
 </script>
@@ -14363,10 +14622,10 @@ const U=[
   desc:"Producing X-rays; attenuation and contrast media; CAT scans; tracers and the gamma camera; PET; ultrasound A- and B-scans, acoustic impedance and Doppler imaging.",
   intro:"Work through the lessons in order, or jump to any topic. A lesson is ticked off when you get every check question right.",
   groups:[["medical:x","6.5.1 Using X-rays"],["medical:d","6.5.2 Diagnostic methods in medicine"],["medical:u","6.5.3 Using ultrasound"],["medical:r","Review and exam practice"]]},
- {key:"papers",kind:"OCR H556 · Exam practice",title:"Full practice papers",sub:"Papers 1, 2 and 3 across the whole specification",icon:"u-papers",noun:"papers",listLabel:"Practice papers",done,
+ {key:"papers",kind:"OCR H556 · Exam practice",title:"Full practice papers",sub:"Two sets of Papers 1, 2 and 3 across the whole specification",icon:"u-papers",noun:"papers",listLabel:"Practice papers",done,
   desc:"A complete set of full-length papers in the style of OCR H556: Paper 1 Modelling physics, Paper 2 Exploring physics and Paper 3 Unified physics. Timed, self-marked against mark schemes, with a topic-by-topic summary.",
   intro:"Sit each paper under timed conditions, then mark it with the mark schemes. The summary at the end of each paper shows which specification topics to revise.",
-  groups:[["papers:f","OCR H556 practice papers · Set 1"]]},
+  groups:[["papers:f","OCR H556 practice papers · Set 1"],["papers:g","OCR H556 practice papers · Set 2"]]},
  {key:"lab",kind:"Practical endorsement",title:"Practical Lab",sub:"OCR PAGs and extension practicals",icon:"u-lab",noun:"practicals",listLabel:"All practicals",
   desc:"Virtual versions of the OCR practical activity groups and extension practicals: set up the apparatus, take readings, plot graphs and work out the result with uncertainties.",
   intro:"Choose a practical to open it; use Next to work through them in order.",
@@ -14526,6 +14785,255 @@ if(!wrap){ wrap=document.createElement("div"); wrap.className="top-actions"; hea
 wrap.insertBefore(b,wrap.firstChild);
 })();
 
+</script>
+
+<script>window.ALP_SITE="alevel-physics";</script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
+<style>
+/* ---------- accounts: sign-in, sync and teacher dashboard ---------- */
+#acc-ov,#td{position:fixed;inset:0;z-index:60;background:rgba(10,14,20,.6);display:grid;place-items:start center;padding:24px 16px;overflow-y:auto}
+#acc-ov[hidden],#td[hidden]{display:none}
+.acc-box{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);width:100%;max-width:440px;padding:22px;box-shadow:0 12px 40px rgba(0,0,0,.3);margin-top:6vh}
+.acc-box h2{margin:0 0 4px;font-family:var(--f-display);font-stretch:85%;font-size:1.55rem}
+.acc-box>p.muted{margin:0 0 14px;font-size:.95rem}
+.acc-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.acc-tabs button{min-height:40px}
+.acc-tabs button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.acc-form{display:flex;flex-direction:column;gap:10px}
+.acc-form label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--muted)}
+.acc-form input{font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-height:42px}
+.acc-form .hint{font-size:.82rem;color:var(--muted)}
+.acc-form .ok-note{font-size:.88rem;color:var(--good);font-weight:600}
+.acc-err{color:var(--bad);font-weight:600;font-size:.92rem;min-height:1.2em}
+.acc-links{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:.9rem}
+.acc-links button{all:unset;cursor:pointer;color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.acc-links button:focus-visible{outline:2px solid var(--accent)}
+.acc-btn{width:auto;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 14px}
+.acc-menu{position:relative}
+.acc-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:40;background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:220px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:6px;display:flex;flex-direction:column}
+.acc-pop[hidden]{display:none}
+.acc-pop button{all:unset;cursor:pointer;padding:9px 10px;border-radius:6px;font-size:.95rem}
+.acc-pop button:hover,.acc-pop button:focus-visible{background:var(--sunk)}
+.acc-pop .who{padding:8px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:4px;font-size:.85rem;color:var(--muted)}
+.acc-pop .who b{display:block;color:var(--ink);font-size:.98rem}
+.acc-sync{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);padding:4px 10px}
+/* teacher dashboard */
+#td .td-box{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);width:100%;max-width:1200px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.td-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.td-top h2{margin:0;font-family:var(--f-display);font-stretch:85%;font-size:1.7rem}
+.td-classes{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.td-classes .btn{width:auto;min-height:38px;padding:5px 14px}
+.td-classes .btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.td-new{display:flex;gap:8px;flex-wrap:wrap}
+.td-new input{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;min-height:38px}
+.td-code{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 14px;border:1px dashed var(--accent);border-radius:8px;background:var(--panel);margin-bottom:14px}
+.td-code b{font-family:var(--f-mono);font-size:1.5rem;letter-spacing:.12em;color:var(--accent)}
+.td-tbl{min-width:860px}
+.td-tbl td,.td-tbl th{text-align:left;white-space:nowrap;padding:7px 10px}
+.td-tbl tbody tr{cursor:pointer}
+.td-tbl tbody tr:hover td{background:var(--sunk)}
+.td-tbl td.num,.td-tbl th.num{text-align:right}
+.td-pc{display:inline-block;min-width:44px;padding:1px 6px;border-radius:4px;text-align:center;font-weight:600}
+.td-pc.lo{background:color-mix(in srgb,var(--bad) 22%,transparent)}
+.td-pc.mid{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.td-pc.hi{background:color-mix(in srgb,var(--good) 22%,transparent)}
+.td-detail{margin-top:16px}
+.td-two{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.td-two{grid-template-columns:minmax(0,1fr)}}
+.td-two .tbl-mini td,.td-two .tbl-mini th{white-space:nowrap}
+.td-two .tbl-mini td:first-child{white-space:normal;min-width:12ch}
+.td-detail .lcard{margin-bottom:12px}
+.td-actions{display:flex;gap:8px;flex-wrap:wrap}
+.td-actions .btn,.td-actions select{width:auto;min-height:36px;padding:4px 12px}
+.td-empty{padding:18px;color:var(--muted)}
+body.acc-on{overflow:hidden}
+</style>
+<script>
+/* Accounts: Supabase sign-in, progress sync across devices, and the teacher dashboard.
+   Only active when config.js provides ALP_CONFIG.url and ALP_CONFIG.key. */
+(()=>{
+const CFG=window.ALP_CONFIG||{};
+if(!CFG.url||!CFG.key||/PASTE|YOUR/i.test(CFG.url+CFG.key)||!window.supabase) return;
+const {$,$$,store}=LAB;
+const sb=window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"alp-auth"}});
+const DOMAIN=CFG.emailDomain||"accounts.physicsalevel.prodigyai.uk";
+const SITES={"alevel-physics":["A Level Physics","physicsalevel.prodigyai.uk"],"gcse-physics":["GCSE Physics","physicsgcse.prodigyai.uk"],"gcse-maths":["GCSE Maths","mathsgcse.prodigyai.uk"]};
+const SITE=window.ALP_SITE&&SITES[window.ALP_SITE]?window.ALP_SITE:"alevel-physics", SITENAME=SITES[SITE][0];
+const isSync=k=>/^learn-/.test(k)||/^maths-/.test(k)||/^pl-.*-runs$/.test(k)||k==="alp-activity";
+const SPECIAL=new Set(["learn-motion-done","learn-check-state","learn-motion-exam","alp-activity"]);
+const OWNER="alp-owner";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const raw={get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },del(k){ try{ localStorage.removeItem(k); }catch(e){} },keys(){ try{ return Object.keys(localStorage); }catch(e){ return []; } }};
+let user=null, profile=null, dirty=false, pushT=null, lastSync=null;
+
+/* ---------- local progress bundle ---------- */
+function gather(){ const o={}; raw.keys().filter(isSync).forEach(k=>{ try{ o[k]=JSON.parse(raw.get(k)); }catch(e){} }); return o; }
+function writeAll(o){ raw.keys().filter(isSync).forEach(k=>{ if(!(k in o)) raw.del(k); }); Object.entries(o).forEach(([k,v])=>raw.set(k,JSON.stringify(v))); }
+function clearLocal(){ raw.keys().filter(isSync).forEach(k=>raw.del(k)); raw.del(OWNER); }
+
+/* merge two bundles so that no progress is lost */
+function merge(a,b){ a=a||{}; b=b||{}; const out={...b,...a};
+  const D="learn-motion-done"; if(a[D]||b[D]) out[D]=[...new Set([...(b[D]||[]),...(a[D]||[])])];
+  const C="learn-check-state", rank={ok:3,shown:2,no:1}; if(a[C]||b[C]){ const m={...(b[C]||{})}; Object.entries(a[C]||{}).forEach(([k,v])=>{ if(!m[k]||(rank[v]||0)>(rank[m[k]]||0)) m[k]=v; }); out[C]=m; }
+  const E="learn-motion-exam"; if(a[E]||b[E]){ const sc=s=>!s||!s.done?-1:(s.t?s.t.filter(Boolean).length:0)+(+s.v||0)+(s.c!=null?1:0); const m={...(b[E]||{})};
+    Object.entries(a[E]||{}).forEach(([k,v])=>{ const w=m[k]; if(!w||sc(v)>sc(w)||(sc(v)===sc(w)&&(v.w||"").length>(w.w||"").length)) m[k]=v; }); out[E]=m; }
+  const A="alp-activity"; if(a[A]||b[A]){ const x=a[A]||{}, y=b[A]||{}, r={time:{},first:{},last:{},days:[]};
+    new Set([...Object.keys(x.time||{}),...Object.keys(y.time||{})]).forEach(id=>{ r.time[id]=Math.max((x.time||{})[id]||0,(y.time||{})[id]||0);
+      const f=[(x.first||{})[id],(y.first||{})[id]].filter(Boolean).sort(); if(f[0]) r.first[id]=f[0];
+      const l=[(x.last||{})[id],(y.last||{})[id]].filter(Boolean).sort(); if(l.length) r.last[id]=l[l.length-1]; });
+    r.days=[...new Set([...(x.days||[]),...(y.days||[])])].sort(); out[A]=r; }
+  const plain=o=>o&&typeof o==="object"&&!Array.isArray(o);
+  Object.keys(out).forEach(k=>{ if(SPECIAL.has(k)||!(k in a)||!(k in b)) return;
+    if(plain(a[k])&&plain(b[k])) out[k]={...b[k],...a[k]}; else if(Array.isArray(a[k])&&Array.isArray(b[k])) out[k]=a[k].length>=b[k].length?a[k]:b[k]; });
+  return out; }
+
+/* ---------- push / pull ---------- */
+const origSet=store.set.bind(store);
+store.set=(k,v)=>{ origSet(k,v); if(user&&isSync(k)){ dirty=true; if(!pushT) pushT=setTimeout(()=>{ pushT=null; push(); },4000); } };
+async function push(){ if(!user||!dirty) return; dirty=false; const data=gather();
+  const {error}=await sb.from("progress").upsert({user_id:user.id,site:SITE,data,updated_at:new Date().toISOString()},{onConflict:"user_id,site"});
+  if(error){ dirty=true; showSync("Not saved yet: will retry"); } else { lastSync=new Date(); showSync(); } }
+setInterval(()=>{ if(dirty) push(); },60000);
+window.addEventListener("pagehide",()=>{ if(dirty) push(); });
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&dirty) push(); });
+
+async function pull(){ const {data,error}=await sb.from("progress").select("data,updated_at").eq("user_id",user.id).eq("site",SITE).maybeSingle();
+  if(error) return false; const server=(data&&data.data)||{}; const owner=raw.get(OWNER);
+  const local=owner&&owner!==user.id?{}:gather(); const merged=merge(local,server);
+  const changedLocal=JSON.stringify(sortDeep(merged))!==JSON.stringify(sortDeep(gather()))||owner!==user.id;
+  if(JSON.stringify(sortDeep(merged))!==JSON.stringify(sortDeep(server))){ await sb.from("progress").upsert({user_id:user.id,site:SITE,data:merged,updated_at:new Date().toISOString()},{onConflict:"user_id,site"}); }
+  writeAll(merged); raw.set(OWNER,user.id); lastSync=new Date();
+  return changedLocal; }
+function sortDeep(o){ if(Array.isArray(o)) return o.map(sortDeep); if(o&&typeof o==="object"){ const r={}; Object.keys(o).sort().forEach(k=>r[k]=sortDeep(o[k])); return r; } return o; }
+
+/* ---------- header button and menu ---------- */
+const head=$("header.top"); let wrap=head&&head.querySelector(".top-actions"); if(head&&!wrap){ wrap=document.createElement("div"); wrap.className="top-actions"; head.appendChild(wrap); }
+const menu=document.createElement("div"); menu.className="acc-menu"; menu.innerHTML=`<button class="btn acc-btn" id="acc-b" aria-haspopup="true" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="acc-bl">Sign in</span></button><div class="acc-pop" id="acc-pop" hidden></div>`;
+if(wrap) wrap.appendChild(menu);
+function showSync(msg){ const e=$("#acc-sync"); if(e) e.textContent=msg||(lastSync?`Saved ${lastSync.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}`:""); }
+function renderMenu(){ const pop=$("#acc-pop"); $("#acc-bl").textContent=user?(profile&&(profile.display_name||profile.username))||"Account":"Sign in";
+  if(!user){ pop.hidden=true; return; }
+  pop.innerHTML=`<div class="who"><b>${esc(profile?profile.display_name||profile.username:"")}</b>${esc(profile?profile.username:"")}${profile&&profile.role==="teacher"?" · teacher":""}</div>${profile&&profile.role==="teacher"?`<button data-acc="dash">Teacher dashboard</button>`:`<button data-acc="join">Join a class</button>`}<button data-acc="out">Sign out</button><button data-acc="del">Delete my account</button><div class="acc-sync" id="acc-sync"></div>`; showSync(); }
+$("#acc-b").addEventListener("click",e=>{ e.stopPropagation(); if(!user){ openAuth("in"); return; } const p=$("#acc-pop"); p.hidden=!p.hidden; $("#acc-b").setAttribute("aria-expanded",String(!p.hidden)); });
+document.addEventListener("click",e=>{ const p=$("#acc-pop"); if(p&&!p.hidden&&!e.target.closest(".acc-menu")) p.hidden=true; });
+$("#acc-pop").addEventListener("click",async e=>{ const a=e.target.closest("[data-acc]"); if(!a) return; $("#acc-pop").hidden=true;
+  if(a.dataset.acc==="out"){ await push(); await sb.auth.signOut(); clearLocal(); location.reload(); }
+  else if(a.dataset.acc==="dash") openDash();
+  else if(a.dataset.acc==="join") openJoin(false);
+  else if(a.dataset.acc==="del"){ if(!confirm("Delete your account and all your saved progress on every site (A Level Physics, GCSE Physics and GCSE Maths)? This cannot be undone.")) return; const {error}=await sb.rpc("delete_my_account"); if(error){ alert("Sorry, the account could not be deleted: "+error.message); return; } await sb.auth.signOut(); clearLocal(); location.reload(); } });
+
+/* ---------- sign-in / sign-up dialog ---------- */
+const ov=document.createElement("div"); ov.id="acc-ov"; ov.hidden=true; ov.setAttribute("role","dialog"); ov.setAttribute("aria-modal","true"); ov.setAttribute("aria-labelledby","acc-h"); document.body.appendChild(ov);
+let mode="in";
+function form(){ const t=mode==="teacher";
+  if(mode==="in") return `<form class="acc-form" id="acc-f" autocomplete="on"><label>Username<input name="u" autocomplete="username" required autocapitalize="none" spellcheck="false"></label><label>Password<input name="p" type="password" autocomplete="current-password" required></label><div class="acc-err" id="acc-e" role="alert"></div><button class="btn primary" type="submit">Sign in</button><p class="hint">Forgotten your password? Ask your teacher to reset it.</p></form>`;
+  return `<form class="acc-form" id="acc-f" autocomplete="on"><label>Your name<input name="n" autocomplete="name" required maxlength="60"></label><label>Choose a username<input name="u" autocomplete="username" required autocapitalize="none" spellcheck="false" pattern="[A-Za-z0-9._\\-]{3,30}" title="3 to 30 letters, numbers, dots, dashes or underscores"><span class="hint">3–30 letters or numbers. You will use this to sign in.</span></label><label>Choose a password<input name="p" type="password" autocomplete="new-password" required minlength="6"></label><label>Type the password again<input name="p2" type="password" autocomplete="new-password" required minlength="6"></label>${t?`<label>Teacher code<input name="c" required autocomplete="off"><span class="hint">The secret code set up for this site.</span></label>`:`<label>Class code<input name="c" required autocomplete="off" autocapitalize="characters" maxlength="10"><span class="hint">Your teacher will give you this 6-character code. Already have an account from another of our sites? Choose Sign in instead.</span><span class="ok-note" id="acc-cn"></span></label>`}<div class="acc-err" id="acc-e" role="alert"></div><button class="btn primary" type="submit">${t?"Create teacher account":"Create account"}</button></form>`; }
+function openAuth(m){ mode=m||"in"; ov.innerHTML=`<div class="acc-box"><h2 id="acc-h">${mode==="teacher"?"Teacher sign-up":"Save your progress"}</h2><p class="muted">${mode==="teacher"?"Create a teacher account to set up classes and see your students' progress.":"Sign in so your progress is saved and follows you to any device."}</p>${mode==="teacher"?"":`<div class="acc-tabs"><button class="btn" data-m="in" aria-pressed="${mode==="in"}">Sign in</button><button class="btn" data-m="new" aria-pressed="${mode==="new"}">New student</button></div>`}${form()}<div class="acc-links"><button data-skip>Continue without saving</button>${mode==="teacher"?`<button data-m="in">Back to sign in</button>`:`<button data-m="teacher">I'm a teacher</button>`}</div></div>`;
+  ov.hidden=false; document.body.classList.add("acc-on"); const f=$("#acc-f"); setTimeout(()=>{ const i=f.querySelector("input"); if(i) i.focus(); },30);
+  f.addEventListener("submit",submit); const cc=f.querySelector('input[name="c"]'); if(cc&&mode==="new") cc.addEventListener("input",e=>{ const v=e.target.value.trim(); if(v.length===6) checkCode(e); else { $("#acc-cn").textContent=""; } }); }
+function closeAuth(){ ov.hidden=true; document.body.classList.remove("acc-on"); }
+ov.addEventListener("click",e=>{ const m=e.target.closest("[data-m]"); if(m){ openAuth(m.dataset.m); return; } if(e.target.closest("[data-skip]")){ try{ sessionStorage.setItem("alp-guest","1"); }catch(_){} closeAuth(); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!ov.hidden){ try{ sessionStorage.setItem("alp-guest","1"); }catch(_){} closeAuth(); } });
+async function codeInfo(v){ const {data}=await sb.rpc("class_info",{class_code:v}); if(!data) throw new Error("That class code was not recognised. Check it with your teacher.");
+  if(data.site!==SITE){ const o=SITES[data.site]||["another course",""]; throw new Error(`That code is for a ${o[0]} class. Use it on ${o[1]} — your username and password work there too.`); } return data; }
+async function checkCode(e){ const v=e.target.value.trim(), out=$("#acc-cn"), er=$("#acc-e"); out.textContent=""; er.textContent=""; if(!v) return; try{ const d=await codeInfo(v); out.textContent=`Class: ${d.name}`; }catch(x){ er.textContent=x.message; } }
+const email=u=>`${u.trim().toLowerCase()}@${DOMAIN}`;
+function nice(err){ const m=(err&&err.message)||String(err||""); if(/invalid login/i.test(m)) return "Username or password is not right."; if(/already registered|already exists/i.test(m)) return "That username is already taken. Try another."; if(/invalid teacher code/i.test(m)) return "The teacher code was not accepted."; if(/invalid class code/i.test(m)) return "The class code was not accepted. Check it with your teacher."; if(/invalid username/i.test(m)) return "Usernames are 3–30 characters: letters, numbers, dots, dashes or underscores."; if(/database error/i.test(m)) return mode==="teacher"?"The teacher code was not accepted.":"The class code was not accepted. Check it with your teacher."; if(/rate limit|too many/i.test(m)) return "Too many attempts from this network. Wait a minute and try again."; if(/fetch|network/i.test(m)) return "Could not reach the server. Check your internet connection."; return m; }
+async function submit(e){ e.preventDefault(); const f=e.target, err=$("#acc-e"), btn=f.querySelector('button[type="submit"]'); const v=n=>(f.elements[n]?f.elements[n].value:"").trim(); err.textContent="";
+  const u=v("u").toLowerCase(); if(!/^[a-z0-9._-]{3,30}$/.test(u)){ err.textContent="Usernames are 3–30 letters, numbers, dots, dashes or underscores."; return; }
+  btn.disabled=true;
+  try{
+    if(mode==="in"){ const {error}=await sb.auth.signInWithPassword({email:email(u),password:f.elements.p.value}); if(error) throw error; }
+    else { if(f.elements.p.value!==f.elements.p2.value){ throw new Error("The two passwords do not match."); }
+      const meta={username:u,display_name:v("n")}; if(mode==="teacher") meta.teacher_code=v("c"); else { await codeInfo(v("c")); meta.class_code=v("c"); }
+      const {data,error}=await sb.auth.signUp({email:email(u),password:f.elements.p.value,options:{data:meta}}); if(error) throw error;
+      if(!data.session){ const r=await sb.auth.signInWithPassword({email:email(u),password:f.elements.p.value}); if(r.error) throw new Error("Account created, but sign-in failed. In Supabase, turn off \"Confirm email\" (see the setup guide)."); } }
+    closeAuth(); await afterSignIn(true);
+  }catch(x){ err.textContent=nice(x); } btn.disabled=false; }
+
+async function loadProfile(){ const {data}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle(); profile=data; }
+async function afterSignIn(fresh){ const {data:{session}}=await sb.auth.getSession(); user=session?session.user:null; if(!user){ renderMenu(); return; }
+  await loadProfile(); renderMenu(); const changed=await pull(); showSync(); if(changed){ location.reload(); return; } if(fresh&&LEARN.mark) LEARN.mark();
+  if(profile&&profile.role!=="teacher"){ let asked=false; try{ asked=sessionStorage.getItem("alp-join-asked")==="1"; }catch(_){}
+    if(!asked&&!(await myClassesHere()).length){ try{ sessionStorage.setItem("alp-join-asked","1"); }catch(_){} openJoin(true); } } }
+async function myClassesHere(){ const {data:m}=await sb.from("memberships").select("class_id").eq("user_id",user.id); const ids=(m||[]).map(r=>r.class_id); if(!ids.length) return [];
+  const {data:c}=await sb.from("classes").select("id,name,site").in("id",ids).eq("site",SITE); return c||[]; }
+function openJoin(first){ ov.innerHTML=`<div class="acc-box"><h2 id="acc-h">Join your ${esc(SITENAME)} class</h2><p class="muted">${first?`You're signed in, but not yet in a ${esc(SITENAME)} class. `:""}Type the class code from your teacher so they can see your progress.</p><form class="acc-form" id="acc-j"><label>Class code<input name="c" required autocomplete="off" autocapitalize="characters" maxlength="10"></label><div class="acc-err" id="acc-e" role="alert"></div><span class="ok-note" id="acc-cn"></span><button class="btn primary" type="submit">Join class</button></form><div class="acc-links"><button data-skip>${first?"Not now":"Cancel"}</button></div></div>`;
+  ov.hidden=false; document.body.classList.add("acc-on"); const f=$("#acc-j"); setTimeout(()=>f.elements.c.focus(),30);
+  f.addEventListener("submit",async e=>{ e.preventDefault(); const er=$("#acc-e"), b=f.querySelector("button"); er.textContent=""; b.disabled=true;
+    try{ await codeInfo(f.elements.c.value.trim()); const {data,error}=await sb.rpc("join_class",{class_code:f.elements.c.value.trim()}); if(error) throw error; $("#acc-cn").textContent=`Joined ${data.name}.`; setTimeout(closeAuth,900); }catch(x){ er.textContent=nice(x); } b.disabled=false; }); }
+
+/* ---------- teacher dashboard ---------- */
+const td=document.createElement("div"); td.id="td"; td.hidden=true; td.setAttribute("role","dialog"); td.setAttribute("aria-modal","true"); td.setAttribute("aria-labelledby","td-h"); document.body.appendChild(td);
+let classes=[], cur=null, students=[], prog={}, sel=null;
+/* map course structure once */
+const lessons=LAB.list.filter(p=>p.unit), lessonIds=new Set(lessons.map(p=>p.id));
+const units=(window.HUB_UNITS||[]).filter(u=>u.key!=="lab"&&u.key!=="papers");
+const unitOf=id=>{ const p=LAB.list.find(q=>q.id===id); return p&&units.find(u=>u.groups.some(([g])=>g===p.group)); };
+const cqTotal={}; lessons.forEach(p=>{ const s=document.getElementById("lab-"+p.id); cqTotal[p.id]=s?s.querySelectorAll(".qi[data-q]").length:0; });
+const partLesson={}; Object.values(EXAM.PARTS).forEach(q=>{ const c=document.getElementById(q.card), s=c&&c.closest("section.lab"); if(s) partLesson[q.id]=s.id.slice(4); });
+const PU=(window.HUB_UNITS||[]).find(u=>u.key==="papers"), PIDS=new Set();
+const PAPERS=PU?LAB.list.filter(p=>PU.groups.some(([g])=>g===p.group)).map(p=>{ PIDS.add(p.id); const g=PU.groups.find(([g])=>g===p.group); return {id:p.id,name:p.name.replace(/:.*$/,"").trim(),set:g?g[1]:""}; }):[];
+function partScore(p,s){ if(!s||!s.done) return null; if(p.opts) return s.c===p.a?1:0; if(p.lor) return +s.v||0; return (s.t||[]).filter(Boolean).length; }
+function stats(d){ d=d||{}; const done=new Set((d["learn-motion-done"]||[]).filter(id=>lessonIds.has(id))), cs=d["learn-check-state"]||{}, ex=d["learn-motion-exam"]||{}, act=d["alp-activity"]||{};
+  const R={done:done.size,cok:0,cq:0,em:0,emk:0,time:Object.values(act.time||{}).reduce((a,b)=>a+b,0),last:(act.days||[]).slice(-1)[0]||null,days:(act.days||[]).length,unit:{},paper:{}};
+  units.forEach(u=>R.unit[u.key]={n:0,done:0,cok:0,cq:0,em:0,emk:0,title:u.title});
+  lessons.forEach(p=>{ const u=unitOf(p.id); if(!u) return; const x=R.unit[u.key]; x.n++; if(done.has(p.id)) x.done++; x.cq+=cqTotal[p.id]; R.cq+=cqTotal[p.id]; });
+  Object.entries(cs).forEach(([k,v])=>{ const lid=k.split(":")[0]; const u=unitOf(lid); if(v==="ok"){ R.cok++; if(u) R.unit[u.key].cok++; } });
+  Object.values(EXAM.PARTS).forEach(p=>{ const v=partScore(p,ex[p.id]); if(v==null) return; const lid=partLesson[p.id], u=unitOf(lid);
+    if(PIDS.has(lid)){ const pp=R.paper[lid]=R.paper[lid]||{g:0,m:0}; pp.g+=v; pp.m+=p.m; } else { R.em+=v; R.emk+=p.m; if(u){ R.unit[u.key].em+=v; R.unit[u.key].emk+=p.m; } } });
+  return R; }
+const pc=(a,b)=>b?Math.round(a/b*100):null;
+const pcell=(a,b)=>{ const p=pc(a,b); return p==null?`<span class="muted">–</span>`:`<span class="td-pc ${p<50?"lo":p<70?"mid":"hi"}">${p} %</span>`; };
+const hm=s=>{ const m=Math.round(s/60); return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`; };
+const dt=d=>d?new Date(d).toLocaleDateString([], {day:"numeric",month:"short"}):"never";
+async function openDash(){ td.hidden=false; document.body.classList.add("acc-on"); td.innerHTML=`<div class="td-box"><p class="muted">Loading…</p></div>`; await loadClasses(); renderDash(); }
+function closeDash(){ td.hidden=true; document.body.classList.remove("acc-on"); }
+async function loadClasses(){ const {data}=await sb.from("classes").select("*").eq("teacher_id",user.id).eq("site",SITE).order("created_at"); classes=data||[]; if(!cur&&classes.length) cur=classes[0].id; if(cur) await loadStudents(); }
+async function loadStudents(){ students=[]; prog={}; const {data:m}=await sb.from("memberships").select("user_id").eq("class_id",cur); const ids=(m||[]).map(r=>r.user_id);
+  if(ids.length){ const {data}=await sb.from("profiles").select("id,username,display_name,role,created_at").in("id",ids).order("username"); students=(data||[]).filter(s=>s.role!=="teacher"); }
+  if(students.length){ const {data:pr}=await sb.from("progress").select("user_id,data,updated_at").eq("site",SITE).in("user_id",students.map(s=>s.id)); (pr||[]).forEach(r=>prog[r.user_id]={data:r.data,updated:r.updated_at,st:stats(r.data)}); } }
+function renderDash(){ const c=classes.find(x=>x.id===cur);
+  const rows=students.map(s=>{ const p=prog[s.id]||{st:stats({})}, S=p.st; const pd=PAPERS.filter(x=>S.paper[x.id]), pg=pd.reduce((a,x)=>a+S.paper[x.id].g,0), pm=pd.reduce((a,x)=>a+S.paper[x.id].m,0); const papers=pd.length?`${pd.length} started · ${pcell(pg,pm)}`:"";
+    return `<tr data-s="${s.id}" tabindex="0"><td><b>${esc(s.display_name||s.username)}</b></td><td>${esc(s.username)}</td><td>${dt(p.updated)}</td><td class="num">${S.done} / ${lessons.length}</td><td class="num">${pcell(S.cok,S.cq)} <span class="muted">(${S.cok}/${S.cq})</span></td><td class="num">${pcell(S.em,S.emk)} <span class="muted">${S.emk?`(${S.em}/${S.emk})`:""}</span></td><td>${papers||`<span class="muted">none</span>`}</td><td class="num">${hm(S.time)}</td></tr>`; }).join("");
+  td.innerHTML=`<div class="td-box"><div class="td-top"><h2 id="td-h">Teacher dashboard · ${esc(SITENAME)}</h2><div class="td-actions"><button class="btn" id="td-ref">Refresh</button>${students.length?`<button class="btn" id="td-csv">Download CSV</button>`:""}<button class="btn" id="td-x" aria-label="Close dashboard">✕ Close</button></div></div>
+  <div class="td-classes">${classes.map(x=>`<button class="btn" data-c="${x.id}" aria-pressed="${x.id===cur}">${esc(x.name)}</button>`).join("")}<form class="td-new" id="td-nf"><input name="n" placeholder="New ${esc(SITENAME)} class name" maxlength="60" required aria-label="New class name"><button class="btn primary" type="submit">Create class</button></form></div>
+  ${c?`<div class="td-code"><span>Students join <b>${esc(c.name)}</b> with class code</span><b>${esc(c.code)}</b><span class="muted">New students choose “New student”; students with an account from another site choose “Join a class” in their account menu.</span><span style="flex:1"></span><button class="btn" id="td-del-c">Delete class</button></div>`:`<div class="td-empty">Create your first class. You will get a class code to give to your students.</div>`}
+  ${!classes.length?`<p class="muted" style="font-size:.9rem;margin:-6px 0 12px">Classes are separate for each site. Your ${esc(SITENAME)} classes appear here; classes on the other sites are managed from their dashboards.</p>`:""}${c?(students.length?`<div class="tbl-wrap"><table class="td-tbl"><thead><tr><th>Name</th><th>Username</th><th>Last saved</th><th class="num">Lessons done</th><th class="num">Check questions</th><th class="num">Lesson exam questions</th><th>Full papers</th><th class="num">Time</th></tr></thead><tbody>${rows}</tbody></table></div><p class="muted" style="font-size:.88rem;margin-top:8px">Percentages are of marks attempted and self-marked. Select a student for details and account options.</p>`:`<div class="td-empty">No students have joined this class yet.</div>`):""}
+  <div class="td-detail" id="td-d"></div></div>`;
+  if(sel&&students.some(s=>s.id===sel)) detail(sel); }
+function detail(id){ sel=id; const s=students.find(x=>x.id===id), p=prog[id]||{st:stats({})}, S=p.st;
+  const ur=units.map(u=>{ const x=S.unit[u.key]; return `<tr><td>${esc(x.title)}</td><td class="num">${x.done} / ${x.n}</td><td class="num">${pcell(x.cok,x.cq)}</td><td class="num">${pcell(x.em,x.emk)}</td></tr>`; }).join("");
+  const pr=PAPERS.map(x=>{ const q=S.paper[x.id]; return `<tr><td>${esc(x.set?x.set+" · ":"")}${esc(x.name)}</td><td class="num">${q?`${q.g} / ${q.m}`:"–"}</td><td class="num">${q?pcell(q.g,q.m):"<span class=\"muted\">not started</span>"}</td></tr>`; }).join("");
+  const opts=classes.filter(c=>c.id!==cur).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+  $("#td-d").innerHTML=`<div class="lcard"><h3>${esc(s.display_name||s.username)} <span class="muted" style="font-weight:400;font-size:.95rem">${esc(s.username)} · ${S.days} day${S.days===1?"":"s"} active · ${hm(S.time)}</span></h3>
+   <div class="td-two"><div class="tbl-wrap"><table class="tbl-mini"><tr><th>Unit</th><th>Lessons</th><th>Checks</th><th>Exam Qs</th></tr>${ur}</table></div><div class="tbl-wrap"><table class="tbl-mini"><tr><th>Full paper</th><th>Marks</th><th>Score</th></tr>${pr}</table></div></div>
+   <div class="td-actions" style="margin-top:14px"><button class="btn" id="td-pw">Reset password</button>${opts?`<select id="td-mv" aria-label="Move to class"><option value="">Move to class…</option>${opts}</select>`:""}<button class="btn" id="td-out">Remove from class</button><button class="btn" id="td-rm">Delete account</button></div></div>`;
+  $("#td-d").scrollIntoView({behavior:"smooth",block:"nearest"}); }
+td.addEventListener("click",async e=>{ const t=e.target;
+  if(t.closest("#td-x")){ closeDash(); return; }
+  if(t.closest("#td-ref")){ await loadClasses(); renderDash(); return; }
+  const cb=t.closest("[data-c]"); if(cb){ cur=cb.dataset.c; sel=null; await loadStudents(); renderDash(); return; }
+  const tr=t.closest("tr[data-s]"); if(tr){ detail(tr.dataset.s); return; }
+  if(t.closest("#td-csv")){ csv(); return; }
+  if(t.closest("#td-del-c")){ const c=classes.find(x=>x.id===cur); if(!confirm(`Delete the class “${c.name}”? Students keep their accounts and progress but leave the class.`)) return; const {error}=await sb.from("classes").delete().eq("id",cur); if(error){ alert(error.message); return; } cur=null; sel=null; await loadClasses(); renderDash(); return; }
+  if(t.closest("#td-pw")){ const np=prompt("New password for this student (at least 6 characters). Tell them the new password; they can keep using it."); if(!np) return; const {error}=await sb.rpc("reset_student_password",{student:sel,new_password:np}); alert(error?("Not changed: "+error.message):"Password changed."); return; }
+  if(t.closest("#td-out")){ const s=students.find(x=>x.id===sel); if(!confirm(`Remove ${s.display_name||s.username} from this class? Their account and progress are kept.`)) return; const {error}=await sb.rpc("remove_from_class",{student:sel,from_class:cur}); if(error){ alert(error.message); return; } sel=null; await loadStudents(); renderDash(); return; }
+  if(t.closest("#td-rm")){ const s=students.find(x=>x.id===sel); if(!confirm(`Permanently delete ${s.display_name||s.username}'s account and all their progress on every site?`)) return; const {error}=await sb.rpc("delete_student",{student:sel}); if(error){ alert(error.message); return; } sel=null; await loadStudents(); renderDash(); return; } });
+td.addEventListener("change",async e=>{ if(e.target.id==="td-mv"&&e.target.value){ const {error}=await sb.rpc("move_student",{student:sel,from_class:cur,to_class:e.target.value}); if(error){ alert(error.message); return; } sel=null; await loadStudents(); renderDash(); } });
+td.addEventListener("keydown",e=>{ if(e.key==="Enter"){ const tr=e.target.closest("tr[data-s]"); if(tr) detail(tr.dataset.s); } if(e.key==="Escape") closeDash(); });
+td.addEventListener("submit",async e=>{ if(e.target.id!=="td-nf") return; e.preventDefault(); const n=e.target.elements.n.value.trim(); if(!n) return; const {data,error}=await sb.rpc("create_class",{class_name:n,for_site:SITE}); if(error){ alert(error.message); return; } cur=(Array.isArray(data)?data[0]:data).id; sel=null; await loadClasses(); renderDash(); });
+function csv(){ const c=classes.find(x=>x.id===cur); const head=["Name","Username","Last saved","Lessons done","Lessons total","Check questions right","Check questions total","Lesson exam marks","Lesson exam marks attempted",...PAPERS.flatMap(p=>{ const n=(p.set?p.set+" · ":"")+p.name; return [`${n} marks`,`${n} attempted`]; }),"Minutes"];
+  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const lines=[head.map(q).join(",")].concat(students.map(s=>{ const p=prog[s.id]||{st:stats({})}, S=p.st; return [s.display_name||"",s.username,p.updated?new Date(p.updated).toISOString().slice(0,10):"",S.done,lessons.length,S.cok,S.cq,S.em,S.emk,...PAPERS.flatMap(x=>S.paper[x.id]?[S.paper[x.id].g,S.paper[x.id].m]:["",""]),Math.round(S.time/60)].map(q).join(","); }));
+  const url=URL.createObjectURL(new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv"})); const a=document.createElement("a"); a.href=url; a.download=`${SITE}_${(c?c.name:"class").replace(/[^\w-]+/g,"_")}_progress.csv`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); }
+
+/* ---------- start ---------- */
+(async()=>{ const {data:{session}}=await sb.auth.getSession(); if(session){ await afterSignIn(false); }
+  else { renderMenu(); let guest=false; try{ guest=sessionStorage.getItem("alp-guest")==="1"; }catch(_){} if(!guest) openAuth("in"); } })();
+window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; }};
+})();
 </script>
 
 </body></html>
