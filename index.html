@@ -1,5 +1,8 @@
 <!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
+<script src="revision-maths.js"></script>
 <title>A Level Physics</title>
 <meta name="description" content="OCR A Level Physics A: interactive lessons, practicals, topic tests and full practice papers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -584,11 +587,15 @@ let uid=0; const nid=p=>`${p}${++uid}`;
 /* ---------------- maths ---------------- */
 function linfit(pts){ const n=pts.length; if(n<2) return null; let sx=0,sy=0,sxx=0,sxy=0; pts.forEach(([x,y])=>{sx+=x;sy+=y;sxx+=x*x;sxy+=x*y}); const d=n*sxx-sx*sx; if(Math.abs(d)<1e-12) return null; const m=(n*sxy-sx*sy)/d; return {m,c:(sy-m*sx)/n}; }
 function triX(xs){ const a=Math.min(...xs), b=Math.max(...xs), i=(b-a)*.1, st=nice(b-a,10); let xa=Math.ceil((a+i)/st)*st, xb=Math.floor((b-i)/st)*st; if(xb<=xa){xa=a;xb=b;} return [xa,xb]; }
-/* worst-fit line through the error bars of the end points; returns the line whose gradient differs most from best */
-function worst(pts,ey,best){ const P=pts.map((p,i)=>[p[0],p[1],Array.isArray(ey)?ey[i]:ey]).sort((a,b)=>a[0]-b[0]); if(P.length<2) return null;
-  const a=P[0], b=P[P.length-1]; const l1=[[a[0],a[1]+a[2]],[b[0],b[1]-b[2]]], l2=[[a[0],a[1]-a[2]],[b[0],b[1]+b[2]]];
-  const mk=l=>{ const m=(l[1][1]-l[0][1])/(l[1][0]-l[0][0]); return {m,c:l[0][1]-m*l[0][0]}; }; const A=mk(l1), B=mk(l2);
-  const W=Math.abs(A.m-best.m)>Math.abs(B.m-best.m)?A:B; return {...W,pc:Math.abs(W.m-best.m)/Math.abs(best.m)*100}; }
+/* Steepest/shallowest line that intersects every supplied error bar. */
+function worst(pts,ey,best){ return RevisionMath.worst(pts,ey,best); }
+const FIT_WARNING='<p class="note" role="status"><b>No acceptable straight line.</b> No single straight line passes through every error bar in these readings. Check for anomalous readings, repeat measurements and review the uncertainty estimates. A worst-fit uncertainty cannot be calculated from this data set.</p>';
+function fitProblem(a){
+  if(!a) return "";
+  if(!a.w) return FIT_WARNING;
+  if(a.w.pc==null) return `<p class="note" role="status">The best-fit gradient is zero, so its percentage uncertainty is undefined. The absolute gradient uncertainty is ${sci(a.w.dm,3)} in the graph’s gradient units. A derived result requiring a non-zero gradient cannot be evaluated.</p>`;
+  return "";
+}
 function nice(span,n=6){ if(!(span>0)) return 1; const raw=span/n, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
 
 /* ---------------- worked-solution markup ---------------- */
@@ -1005,7 +1012,7 @@ function boot(opts={}){
 function svgPt(svg,e){ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
 
 document.body.insertAdjacentHTML("afterbegin",DEFS);
-return {ICONS,$,$$,css,store,fmt,fx,sci,RUNCOL,gauss,clamp,nid,linfit,worst,nice,triX,W,C,setThermo,setStopwatch,setPsu,plot,bars,rows,build,register,boot,svgPt,list};
+return {ICONS,$,$$,css,store,fmt,fx,sci,RUNCOL,gauss,clamp,nid,linfit,worst,nice,triX,FIT_WARNING,fitProblem,W,C,setThermo,setStopwatch,setPsu,plot,bars,rows,build,register,boot,svgPt,list};
 })();
 
 </script>
@@ -1118,10 +1125,10 @@ function refresh(){
 function draw(){
   const a=analyse(); const D=st.data;
   const o={x:{label:"t² / s²",def:[0,.25]},y:{label:"h / m",def:[0,1]},series:[{pts:D.map(d=>[stats(d).t2,d.h]),col:LAB.RUNCOL[0],ex:D.map(d=>stats(d).dt2),ey:0.002}],empty:"Drop the ball from several heights"};
-  if(a){ const xm=Math.max(...a.pts.map(p=>p[0]))*1.05; o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ const xm=Math.max(...a.pts.map(p=>p[0]))*1.05; o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#g-graph"),o);
 }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#g-work").innerHTML=problem; return; }
   const el=$("#g-work"), {v,fr,res,step,chips}=W, a=analyse(), d=st.data[st.data.length-1];
   if(!d){ el.innerHTML=`<p class="empty">Drop the ball and the calculation will appear here.</p>`; return; }
   const cur=st.data.find(x=>Math.abs(x.h-st.h)<1e-9)||d, s=stats(cur);
@@ -1130,7 +1137,7 @@ function work(){
   if(a){ const g=2*a.f.m, gw=2*a.w.m, dg=Math.abs(gw-g), pc=dg/g*100;
     h=chips([["g measured",`${fx(g,2)} m s⁻²`,1],["Uncertainty",`± ${fx(dg,2)} m s⁻²`],["Percentage",`${fx(pc,1)}%`],["Accepted",`9.81 m s⁻²`]])+`<div style="margin-top:14px"></div>`+h+
     step(3,"Gradient of the best-fit line","h = ½gt², so the gradient of h against t² is g/2.",[`gradient = ${fr("Δ"+v("h"),"Δ("+v("t")+"²)")} = ${fr(`${fx(a.f.m*a.xb+a.f.c,3)} − ${fx(a.f.m*a.xa+a.f.c,3)}`,`${fx(a.xb,4)} − ${fx(a.xa,4)}`)} = ${fx(a.f.m,3)} m s⁻²`,`${v("g")} = 2 × gradient = ${res(`${fx(g,2)} m s⁻²`)}`])+
-    step(4,"Uncertainty from the worst-fit line","The worst acceptable line passes through the ends of the outermost error bars.",[`worst gradient = ${fx(a.w.m,3)} m s⁻² ⇒ ${v("g")}<sub>worst</sub> = ${fx(gw,2)} m s⁻²`,`Δ${v("g")} = |${fx(gw,2)} − ${fx(g,2)}| = ${fx(dg,2)} m s⁻² &nbsp;(${fx(pc,1)}%)`,`${v("g")} = ${res(`(${fx(g,2)} ± ${fx(dg,2)}) m s⁻²`)}`])+
+    step(4,"Uncertainty from the worst-fit line","The worst acceptable line has the steepest or shallowest gradient that still passes through every error bar. It need not pass through the ends of the outermost bars.",[`worst gradient = ${fx(a.w.m,3)} m s⁻² ⇒ ${v("g")}<sub>worst</sub> = ${fx(gw,2)} m s⁻²`,`Δ${v("g")} = |${fx(gw,2)} − ${fx(g,2)}| = ${fx(dg,2)} m s⁻² &nbsp;(${fx(pc,1)}%)`,`${v("g")} = ${res(`(${fx(g,2)} ± ${fx(dg,2)}) m s⁻²`)}`])+
     step(5,"Evaluation",null,[`<span>${Math.abs(g-9.81)<=dg?"The accepted value of 9.81 m s⁻² lies within the uncertainty, so the result is consistent with it.":"The accepted value of 9.81 m s⁻² is outside the uncertainty, which suggests a systematic error."} The y-intercept is ${fx(a.f.c*1000,0)} mm. ${a.f.c<-0.002?"A negative intercept fits a delay in releasing the ball: every time is slightly too long.":""}</span>`]); }
   else h+=`<p class="note" style="margin-left:46px">Record at least three heights to draw the graph and find g.</p>`;
   el.innerHTML=h+`</div>`;
@@ -1247,9 +1254,9 @@ function refresh(){
 }
 function draw(){ const D=derived(), a=analyse();
   const o={x:{label:"Strain ε / 10⁻³",def:[0,2]},y:{label:"Stress σ / 10⁸ Pa",def:[0,2.5]},series:[{pts:D?D.map(r=>[r.e*1e3,r.s/1e8]):[],col:LAB.RUNCOL[0],ex:a?a.ex:0.5/1000/L0*1e3}],empty:st.dia.length?"Record the starting reading, then add masses":"Measure the diameter, then record readings"};
-  if(a){ const xm=Math.max(...a.lin.map(r=>r.e*1e3))*1.08; o.fits=[{m:a.fs.m,c:a.fs.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ const xm=Math.max(...a.lin.map(r=>r.e*1e3))*1.08; o.fits=[{m:a.fs.m,c:a.fs.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#ym-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#ym-work").innerHTML=problem; return; }
   const el=$("#ym-work"), {v,fr,res,step,chips}=W;
   if(!st.dia.length){ el.innerHTML=`<p class="empty">Measure the diameter and record some loads to see the calculation.</p>`; return; }
   const dm=meanD(), dd=st.dia.length>1?Math.max(0.005,(Math.max(...st.dia)-Math.min(...st.dia))/2):0.005, Ar=Math.PI*(dm/1000)**2/4, pcd=dd/dm*100;
@@ -1364,9 +1371,9 @@ function analyse(){ const pts=st.data.map(r=>[r.L/100,r.V/r.I]); if(pts.length<3
 function refresh(){ rows($("#rh-tbody"),st.data.map(r=>[fx(r.L/100,3),fx(r.V,2),fx(r.I,3),fx(r.V/r.I,2)]),"Close the switch and record readings at several lengths.",4,true); draw(); work(); }
 function draw(){ const a=analyse();
   const o={x:{label:"L / m",min:0,max:1},y:{label:"R / Ω",def:[0,5]},series:[{pts:st.data.map(r=>[r.L/100,r.V/r.I]),col:LAB.RUNCOL[0],ey:a?a.ey:null,ex:0.002}],empty:"Record readings at several lengths"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#rh-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#rh-work").innerHTML=problem; return; }
   const el=$("#rh-work"), {v,fr,res,step,chips}=W, a=analyse();
   let h=`<div class="work">`, n=1;
   let Ar=null, pcd=0;
@@ -1754,9 +1761,9 @@ function analyse(){ const A=agg(); if(A.length<3) return null; const pts=A.map(a
 function refresh(){ rows($("#pl-tbody"),st.data.map(r=>[LEDS[r.led].name,LEDS[r.led].nm,fx(1e3/LEDS[r.led].nm,3),fx(r.V,2)]),"Record the voltage at which each LED just lights.",4,true); draw(); work(); }
 function draw(){ const A=agg(), a=analyse();
   const o={x:{label:"1/λ / 10⁶ m⁻¹",min:1.4,max:2.3},y:{label:"V₀ / V",min:1.4,max:2.8,zero:false},series:[{pts:A.map(x=>[1e3/x.nm,x.V]),col:LAB.RUNCOL[0],ey:A.map(x=>x.dv)}],empty:"Record V₀ for at least three LEDs"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:1.4,x1:2.3,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:1.4,x1:2.3,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:1.4,x1:2.3,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:1.4,x1:2.3,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#pl-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#pl-work").innerHTML=problem; return; }
   const el=$("#pl-work"), {v,fr,res,step,chips}=W, a=analyse(), A=agg();
   if(!A.length){ el.innerHTML=`<p class="empty">Record threshold voltages and the calculation will appear here.</p>`; return; }
   const one=A[0];
@@ -2012,13 +2019,13 @@ function loop(now){ const dt=Math.min(.1,(now-last)/1000); last=now;
   render(); requestAnimationFrame(loop); }
 
 /* ---------- analysis ---------- */
-function analyse(){ const pts=st.data.map(r=>[r.T,r.p]); if(pts.length<3) return null; const f=linfit(pts); const w=worst(pts,1,f); return {pts,f,w,z:-f.c/f.m,zw:-w.c/w.m}; }
+function analyse(){ const pts=st.data.map(r=>[r.T,r.p]); if(pts.length<3) return null; const f=linfit(pts); const w=worst(pts,1,f); return {pts,f,w,z:-f.c/f.m,zw:w?-w.c/w.m:null}; }
 function refresh(){ rows($("#az-tbody"),st.data.map(r=>[fx(r.T,1),r.p]),"Record pressure and temperature as the water heats.",2,true); draw(); work(); }
 function draw(){ const a=analyse();
   const o={x:{label:"Temperature θ / °C",min:-300,max:100},y:{label:"Pressure p / kPa",min:0,max:140},series:[{pts:st.data.map(r=>[r.T,r.p]),col:LAB.RUNCOL[0],ey:1,ex:0.5}],empty:"Readings will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:Math.max(-300,a.z),x1:100,dash:[],label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:Math.max(-300,a.zw),x1:100,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:Math.max(-300,a.z),x1:100,dash:[],label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:Math.max(-300,a.zw),x1:100,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#az-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#az-work").innerHTML=problem; return; }
   const el=$("#az-work"), {v,fr,res,step,chips}=W, a=analyse();
   if(!a){ el.innerHTML=`<p class="empty">Record at least three readings and the calculation will appear here.</p>`; return; }
   const d=Math.abs(a.zw-a.z), [xa,xb]=LAB.triX(a.pts.map(p=>p[0]));
@@ -2135,7 +2142,7 @@ function draw(){ const a=analyse(), ln=st.ln;
   if(a&&ln){ const xm=Math.max(...a.pts.map(p=>p[0])); o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="right"; }
   if(a&&!ln){ const T=-1/a.f.m, V0=Math.exp(a.f.c); o.fits=[{fn:x=>V0*Math.exp(-x/T),x0:0,x1:Math.max(...a.pts.map(p=>p[0])),label:"V₀e^(−t/RC)"}]; o.legend="right"; }
   plot($("#cp-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#cp-work").innerHTML=problem; return; }
   const el=$("#cp-work"), {v,fr,res,step,chips}=W, a=analyse();
   if(!a){ el.innerHTML=`<p class="empty">Record at least three readings during discharge and the calculation will appear here.</p>`; return; }
   const RC=-1/a.f.m, RCw=-1/a.w.m, pc=Math.abs(RCw-RC)/RC*100, Cm=RC/st.R, r=a.d[Math.min(2,a.d.length-1)];
@@ -2250,9 +2257,9 @@ function analyse(){ const D=st.data; if(D.length<3) return null; const pts=D.map
 function refresh(){ rows($("#sh-tbody"),st.data.map(d=>{ const s=stats(d); return [fx(d.m,3),...[0,1,2].map(i=>d.t[i]!=null?fx(d.t[i],st.auto?3:2):"—"),d.N,fx(s.T,3),fx(s.dT,3),fx(s.T2,3)]; }),"Time 10 oscillations for each mass.",8,true); draw(); work(); }
 function draw(){ const a=analyse(), D=st.data;
   const o={x:{label:"m / kg",min:0,max:0.6},y:{label:"T² / s²",min:0,max:1},series:[{pts:D.map(d=>[d.m,stats(d).T2]),col:LAB.RUNCOL[0],ey:D.map(d=>stats(d).dT2)}],empty:"Time oscillations for at least three masses"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:0.6,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:0.6,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:0.6,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:0.6,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#sh-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#sh-work").innerHTML=problem; return; }
   const el=$("#sh-work"), {v,fr,res,step,chips}=W, a=analyse(), d=st.data[st.data.length-1];
   if(!d){ el.innerHTML=`<p class="empty">Time some oscillations and the calculation will appear here.</p>`; return; }
   const s=stats(d);
@@ -2360,9 +2367,9 @@ function analyse(){ const pts=st.data.map(r=>[r.I,r.m/1000*g*1000]); if(pts.leng
 function refresh(){ rows($("#bf-tbody"),st.data.map(r=>[fx(r.I,1),fx(r.m,2),fx(r.m/1000*g*1000,3)]),"Zero the balance, switch on and record readings.",3,true); draw(); work(); }
 function draw(){ const a=analyse();
   const neg=st.data.some(r=>r.I<0); const o={x:{label:"I / A",min:neg?-6.5:0,max:6.5},y:{label:"F / 10⁻³ N",def:[0,25]},series:[{pts:st.data.map(r=>[r.I,r.m/1000*g*1000]),col:LAB.RUNCOL[0],ey:0.15}],empty:"Readings will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:neg?-6.5:0,x1:6.5,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:neg?-6.5:0,x1:6.5,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:neg?-6.5:0,x1:6.5,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:neg?-6.5:0,x1:6.5,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#bf-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#bf-work").innerHTML=problem; return; }
   const el=$("#bf-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
   if(!r){ el.innerHTML=`<p class="empty">Record readings and the calculation will appear here.</p>`; return; }
   let h=`<div class="work">`+step(1,"Force from one reading",`At I = ${fx(r.I,1)} A the balance reads ${fx(r.m,2)} g.`,[`${v("F")} = ${v("m")}${v("g")} = ${fx(r.m/1000,5)} × 9.81 = ${res(`${sci(r.m/1000*g,3)} N`)}`]);
@@ -2503,7 +2510,7 @@ function draw(){ const D=rowsD(), a=analyse(), ln=st.ln;
   if(a&&ln){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:st.dur,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:st.dur,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="right"; }
   if(a&&!ln){ const A=Math.exp(a.f.c), l=-a.f.m; o.fits=[{fn:x=>A*Math.exp(-l*x),x0:0,x1:st.dur,label:"exponential fit"}]; o.legend="right"; }
   plot($("#pa-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#pa-work").innerHTML=problem; return; }
   const el=$("#pa-work"), {v,fr,res,step,chips}=W, B=bg(), D=rowsD(), a=analyse();
   if(!D.length){ el.innerHTML=`<p class="empty">${B==null?"Measure the background, then shake the generator.":"Shake the generator to start counting."}</p>`; return; }
   const r=D[Math.min(2,D.length-1)];
@@ -2528,7 +2535,7 @@ $("#pa-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#pa-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 
 refresh(); requestAnimationFrame(loop);
-register({id:"pa",group:"ocr",num:73,pag:"7.3",name:"Half-life of protactinium",icon:"gm",onShow:draw});
+register({id:"pa",group:"ocr",num:73,pag:"7.3",lvl:"PAG 7.3 · adapted apparatus",name:"Half-life of protactinium",icon:"gm",onShow:draw});
 })();
 
 </script>
@@ -2622,13 +2629,13 @@ function analyse(){ const pts=st.data.map(r=>[r.I,r.V]); if(pts.length<3) return
 function refresh(){ rows($("#em-tbody"),st.data.map(r=>[fx(r.I,3),fx(r.V,2),fx(r.V/r.I,2),fx(r.V*r.I,3)]),"Close the switch and record readings for several rheostat settings.",4,true); draw(); work(); }
 function draw(){ const a=analyse(), vi=st.view==="vi";
   if(vi){ const o={x:{label:"I / A",min:0,def:[0,2]},y:{label:"V / V",min:0,def:[0,1.6]},series:[{pts:st.data.map(r=>[r.I,r.V]),col:LAB.RUNCOL[0],ey:0.01}],empty:"Readings will be plotted here"};
-    if(a){ const x1=Math.max(...a.pts.map(p=>p[0]))*1.15; o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="right"; }
+    if(a&&a.w){ const x1=Math.max(...a.pts.map(p=>p[0]))*1.15; o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="right"; }
     plot($("#em-graph"),o); }
   else { const o={x:{label:"Load resistance R / Ω",min:0,max:22},y:{label:"Power P / W",min:0},series:[{pts:st.data.map(r=>[r.V/r.I,r.V*r.I]),col:LAB.RUNCOL[0],join:"curve"}],empty:"Readings will be plotted here"};
-    if(a){ const E=a.f.c, r=-a.f.m; o.fits=[{fn:R=>E*E*R/((R+r+RL)**2),x0:0.2,x1:22,col:LAB.css("--data"),dash:[6,4],label:"P = E²R/(R + r)²"}]; o.legend="right"; }
+    if(a&&a.w){ const E=a.f.c, r=-a.f.m; o.fits=[{fn:R=>E*E*R/((R+r+RL)**2),x0:0.2,x1:22,col:LAB.css("--data"),dash:[6,4],label:"P = E²R/(R + r)²"}]; o.legend="right"; }
     plot($("#em-graph"),o); }
   $("#lab-em .lower .card:nth-child(2) h3").textContent=vi?"Terminal p.d. against current":"Power delivered against load resistance"; }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#em-work").innerHTML=problem; return; }
   const el=$("#em-work"), {v,fr,res,step,chips}=W, a=analyse(), d=st.data[st.data.length-1];
   if(!d){ el.innerHTML=`<p class="empty">Record readings and the calculation will appear here.</p>`; return; }
   let h=`<div class="work">`+step(1,"Lost volts for one reading",`I = ${fx(d.I,3)} A, V = ${fx(d.V,2)} V.`,[`${v("R")} = ${fr(v("V"),v("I"))} = ${fx(d.V/d.I,2)} Ω, ${v("P")} = ${v("V")}${v("I")} = ${res(`${fx(d.V*d.I,3)} W`)}`]);
@@ -2738,9 +2745,9 @@ function analyse(){ if(st.data.length<3) return null; const pts=st.data.map(d=>[
 function refresh(){ rows($("#pd-tbody"),st.data.map(d=>{ const s=stats(d); return [fx(d.L,3),...[0,1,2].map(i=>d.t[i]!=null?fx(d.t[i],st.auto?3:2):"—"),fx(s.T,3),fx(s.dT,3),fx(s.T2,3)]; }),"Time 20 oscillations at each length.",7,true); draw(); work(); }
 function draw(){ const a=analyse();
   const o={x:{label:"L / m",min:0,max:1.1},y:{label:"T² / s²",min:0,max:4.5},series:[{pts:st.data.map(d=>[d.L,stats(d).T2]),col:LAB.RUNCOL[0],ey:st.data.map(d=>stats(d).dT2),ex:0.002}],empty:"Time oscillations for at least three lengths"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1.1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1.1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1.1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1.1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#pd-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#pd-work").innerHTML=problem; return; }
   const el=$("#pd-work"), {v,fr,res,step,chips}=W, a=analyse(), d=st.data[st.data.length-1];
   if(!d){ el.innerHTML=`<p class="empty">Time some oscillations and the calculation will appear here.</p>`; return; }
   const s=stats(d);
@@ -2859,9 +2866,9 @@ function analyse(){ const F=first(); if(F.length<3) return null; const pts=F.map
 function refresh(){ rows($("#sn-tbody"),st.data.map(r=>[fmt(r.f,4),fx(r.l,1),fx(1000/r.f,3)]),"Find the loudest resonance and record its length.",3,true); draw(); work(); }
 function draw(){ const a=analyse(), F=first();
   const o={x:{label:"1/f / 10⁻³ s",min:0,max:4.5},y:{label:"l / cm",min:-2,max:35,zero:false},series:[{pts:F.map(p=>[1000/p.f,p.l]),col:LAB.RUNCOL[0],ey:F.map(p=>p.dl)}],empty:"Record the first resonance for at least three forks"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:4.5,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:4.5,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:4.5,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:4.5,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#sn-graph"),o); }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#sn-work").innerHTML=problem; return; }
   const el=$("#sn-work"), {v,fr,res,step,chips}=W, a=analyse(), d=st.data[st.data.length-1];
   if(!d){ el.innerHTML=`<p class="empty">Record a resonance length and the calculation will appear here.</p>`; return; }
   let h=`<div class="work">`+step(1,"Estimate from one fork (ignoring end correction)",`f = ${fmt(d.f,4)} Hz, l = ${fx(d.l,1)} cm.`,[`λ ≈ 4${v("l")} = 4 × ${fx(d.l/100,3)} = ${fx(4*d.l/100,3)} m`,`${v("v")} = ${v("f")}λ ≈ ${fmt(d.f,4)} × ${fx(4*d.l/100,3)} = ${res(`${fx(d.f*4*d.l/100,0)} m s⁻¹`)} (an underestimate: e is ignored)`]);
@@ -3092,12 +3099,12 @@ function analyse(){ const pts=st.data.map(r=>[1/r.V,r.p]); if(pts.length<3) retu
 function refresh(){ rows($("#bl-tbody"),st.data.map(r=>[r.p,fx(r.V,1),fx(1/r.V,4),Math.round(r.p*r.V)]),"Record the starting reading, then pump and record.",4,true); draw(); work(); }
 function draw(){ const a=analyse(), inv=st.view==="inv";
   if(inv){ const o={x:{label:"1/V / cm⁻³",min:0,max:0.08},y:{label:"p / kPa",min:0,max:350},series:[{pts:st.data.map(r=>[1/r.V,r.p]),col:LAB.RUNCOL[0],ey:5,ex:st.data.map(r=>0.5/r.V/r.V)}],empty:"Readings will be plotted here"};
-    if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:0.08,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:0.08,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+    if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:0.08,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:0.08,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
     plot($("#bl-graph"),o); }
   else { const o={x:{label:"V / cm³",min:0,max:50},y:{label:"p / kPa",min:0,max:350},series:[{pts:st.data.map(r=>[r.V,r.p]),col:LAB.RUNCOL[0],join:"curve"}],empty:"Readings will be plotted here"};
-    if(a){ o.fits=[{fn:v=>a.f.m/v,x0:10,x1:50,col:LAB.css("--data"),dash:[6,4],label:"p = constant / V"}]; o.legend="right"; } plot($("#bl-graph"),o); }
+    if(a&&a.w){ o.fits=[{fn:v=>a.f.m/v,x0:10,x1:50,col:LAB.css("--data"),dash:[6,4],label:"p = constant / V"}]; o.legend="right"; } plot($("#bl-graph"),o); }
   $("#lab-bl .lower .card:nth-child(2) h3").textContent=inv?"Pressure against 1/volume":"Pressure against volume"; }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#bl-work").innerHTML=problem; return; }
   const el=$("#bl-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
   if(!r){ el.innerHTML=`<p class="empty">Record readings and the calculation will appear here.</p>`; return; }
   const pvs=st.data.map(x=>x.p*x.V), mean=pvs.reduce((s,x)=>s+x,0)/pvs.length, spread=(Math.max(...pvs)-Math.min(...pvs))/2;
@@ -3203,8 +3210,8 @@ function cur(){ return st.data.filter(r=>r.laser===st.laser&&r.a===st.a); }
 function analyse(){ const d=cur(); if(d.length<3) return null; const pts=d.map(r=>[r.D,calc(r).x]); const f=linfit(pts); const w=worst(pts,d.map(r=>0.5/r.N),f); const [xa,xb]=LAB.triX(pts.map(p=>p[0])); return {pts,f,w,xa,xb}; }
 function refresh(){ rows($("#ys-tbody"),st.data.map(r=>{ const k=calc(r); return [LASERS[r.laser].name,fx(r.a,2),fx(r.D,2),fx(r.dist,1),r.N,fx(k.x,2),fx(k.lam*1e9,0)]; }),"Measure across several fringes and record.",7,true); draw(); work(); }
 function draw(){ const a=analyse(), d=cur(); const o={x:{label:"D / m",min:0,max:4.2},y:{label:"x / mm",min:0},series:[{pts:d.map(r=>[r.D,calc(r).x]),col:LAB.RUNCOL[0],ey:d.map(r=>0.5/r.N)}],empty:"Record at three or more distances for this laser and slit"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:4.2,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:4.2,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; } plot($("#ys-graph"),o); }
-function work(){
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:4.2,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:4.2,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; } plot($("#ys-graph"),o); }
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#ys-work").innerHTML=problem; return; }
   const el=$("#ys-work"), {v,fr,res,step,chips}=W, r=st.data[st.data.length-1];
   if(!r){ el.innerHTML=`<p class="empty">Record a measurement and the calculation will appear here.</p>`; return; }
   const k=calc(r), dl=lamUnc(r);
@@ -3233,7 +3240,7 @@ register({id:"ys",group:"ocr",num:62,pag:"6.2",name:"Young's double slit",icon:"
 
 </script>
 <script>
-/* OCR PAG 4.1 Potential divider with a resistance box */
+/* OCR PAG 4.3 Potential divider with a resistance box */
 (()=>{
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setPsu}=LAB;
 const VIN=6.00, RS=0.25, R1=100*(1+(Math.random()-.5)*.04);
@@ -3265,7 +3272,7 @@ const panel=`
 <div class="field"><div class="lbl">Graph</div><div class="seg c2" id="pv-view"><label class="opt"><input type="radio" name="pv-view" value="inv" checked><span>1/V<sub>out</sub> against 1/R₂</span></label><label class="opt"><input type="radio" name="pv-view" value="v"><span>V<sub>out</sub> against R₂</span></label></div></div>
 <div class="schem"><svg viewBox="0 0 300 150" aria-label="Potential divider circuit"><g fill="none" stroke-width="2"><path d="M40 20 H150 V35 M150 75 V90 M150 130 V140 H40 V80 M40 70 V20"/><path d="M28 70 H52"/><path d="M32 80 H48" stroke-width="4"/><rect x="138" y="35" width="24" height="40" fill="var(--sunk)"/><rect x="138" y="90" width="24" height="40" fill="var(--sunk)"/><path d="M128 128 L172 92 M172 92 h-9" stroke-width="1.5"/><path d="M150 82 H230 V96 M150 140 H230 V124"/><circle cx="230" cy="110" r="14" fill="var(--sunk)"/></g><text x="230" y="115" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">V</text><text x="170" y="60" font-family="Arial" font-size="11">R₁</text><text x="176" y="114" font-family="Arial" font-size="11">R₂</text><text x="4" y="64" font-family="Arial" font-size="11">6.00 V</text></svg></div>`;
 
-build({id:"pv",eyebrow:"OCR A Level Physics A · PAG 4.1 · Investigating electrical circuits",title:"Potential divider",
+build({id:"pv",eyebrow:"OCR A Level Physics A · PAG 4.3 · Potential divider circuits",title:"Potential divider",
  intro:"A fixed resistor R₁ and a resistance box R₂ share the supply p.d. Measure the output V_out across R₂ for many settings. Rearranging V_out = V_in R₂/(R₁ + R₂) gives 1/V_out = 1/V_in + (R₁/V_in)(1/R₂), so a graph of 1/V_out against 1/R₂ gives both V_in and R₁.",
  stage,bar:`<span>Voltmeter <b>±0.01 V</b>, resistance <b>10 MΩ</b></span><span>Resistance box <b>±0.1%</b></span><span id="pv-status"></span>`,
  panel,
@@ -3307,11 +3314,11 @@ function analyse(){ const d=st.data.filter(r=>r.R>0&&r.V>0); if(d.length<3) retu
 function refresh(){ rows($("#pv-tbody"),st.data.map(r=>[r.R,fx(r.V,2),fx(1000/r.R,3),fx(1/r.V,4)]),"Set the resistance box and record V_out.",4,true); draw(); work(); }
 function draw(){ const a=analyse(), inv=st.view==="inv";
   if(inv){ const o={x:{label:"1/R₂ / 10⁻³ Ω⁻¹",min:0},y:{label:"1/Vout / V⁻¹",min:0},series:[{pts:st.data.map(r=>[1000/r.R,1/r.V]),col:LAB.RUNCOL[0],ey:st.data.map(r=>0.01/(r.V*r.V))}],empty:"Readings will be plotted here"};
-    if(a){ const xm=Math.max(...a.pts.map(p=>p[0]))*1.05; o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+    if(a&&a.w){ const xm=Math.max(...a.pts.map(p=>p[0]))*1.05; o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:xm,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:xm,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
     plot($("#pv-graph"),o); }
   else plot($("#pv-graph"),{x:{label:"R₂ / Ω",min:0},y:{label:"Vout / V",min:0,max:6.5},series:[{pts:st.data.map(r=>[r.R,r.V]),col:LAB.RUNCOL[0],join:"curve"}],fits:[{fn:r=>VIN*r/(R1+r),x0:0,x1:Math.max(500,...st.data.map(r=>r.R)),col:LAB.css("--muted"),dash:[4,4],label:"V_in R₂/(R₁+R₂)"}],legend:"right",empty:"Readings will be plotted here"});
   $("#lab-pv .lower .card:nth-child(2) h3").textContent=inv?"1/V_out against 1/R₂":"V_out against R₂"; }
-function work(){
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#pv-work").innerHTML=problem; return; }
   const el=$("#pv-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
   if(!r){ el.innerHTML=`<p class="empty">Record readings and the calculation will appear here.</p>`; return; }
   let h=`<div class="work">`+step(1,"Check one reading",`R₂ = ${r.R} Ω, V_out = ${fx(r.V,2)} V. Taking R₁ = 100 Ω and V_in = 6.00 V:`,[`predicted ${v("V","out")} = ${fr(`6.00 × ${r.R}`,`100 + ${r.R}`)} = ${res(`${fx(6*r.R/(100+r.R),2)} V`)}`]);
@@ -3331,7 +3338,7 @@ $("#pv-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#pv-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 
 dials(); render(); refresh();
-register({id:"pv",group:"ocr",num:41,pag:"4.1",name:"Potential divider",icon:"sensor",onShow:draw});
+register({id:"pv",group:"ocr",num:42,pag:"4.3",name:"Potential divider",icon:"sensor",onShow:draw});
 })();
 
 </script>
@@ -3410,13 +3417,13 @@ function load(m){ st.m=clamp(m,0,500); st.y0=st.y; st.target=reading(st.m); st.t
 
 /* ---------- analysis ---------- */
 function rowsFor(a){ const d=st.data.filter(r=>r.arr===a); const z=d.find(r=>r.m===0); return z?d.map(r=>({...r,F:r.m/1000*G,e:r.R-z.R})):[]; }
-function fitFor(a){ const d=rowsFor(a).filter(r=>r.m>0); if(d.length<2) return null; const pts=[[0,0],...d.map(r=>[r.e,r.F])]; const f=linfit(pts); const w=worst(d.map(r=>[r.e,r.F]),0.01,f)||f; return {f,w,k:f.m*100,kw:(w.m||f.m)*100}; }
+function fitFor(a){ const d=rowsFor(a).filter(r=>r.m>0); if(d.length<2) return null; const pts=[[0,0],...d.map(r=>[r.e,r.F])]; const f=linfit(pts); const w=worst(d.map(r=>[r.e,r.F]),0.01,f); return {f,w,k:f.m*100,kw:w?w.m*100:null}; }
 function refresh(){ rows($("#ss-tbody"),st.data.map(r=>{ const z=st.data.find(x=>x.arr===r.arr&&x.m===0); return [ARR[r.arr].name,r.m,fx(r.m/1000*G,2),fx(r.R,1),z?fx(r.R-z.R,1):"—"]; }),"Record the unloaded reading, then add masses.",5,true); draw(); work(); }
 function draw(){ const keys=Object.keys(ARR).filter(a=>rowsFor(a).length);
   const series=keys.map((a,i)=>({pts:rowsFor(a).map(r=>[r.e,r.F]),col:LAB.RUNCOL[i],label:ARR[a].name,ex:0.14}));
   const fits=keys.map((a,i)=>{ const f=fitFor(a); return f?{m:f.f.m,c:f.f.c,x0:0,x1:Math.max(...rowsFor(a).map(r=>r.e)),col:LAB.RUNCOL[i],dash:[4,3]}:null; }).filter(Boolean);
   plot($("#ss-graph"),{x:{label:"Extension e / cm",min:0},y:{label:"Force F / N",min:0,max:5.5},series,fits,legend:"left",empty:"Record readings for each arrangement"}); }
-function work(){
+function work(){ const fitChecks=Object.keys(ARR).map(fitFor); const problem=fitChecks.map(LAB.fitProblem).find(Boolean); if(problem){ $("#ss-work").innerHTML=problem; return; }
   const el=$("#ss-work"), {v,fr,res,step,chips}=W; const F={}; Object.keys(ARR).forEach(a=>F[a]=fitFor(a));
   if(!F.single&&!F.series&&!F.parallel){ el.innerHTML=`<p class="empty">Record at least two loads for an arrangement to find its spring constant.</p>`; return; }
   const ks=F.single?.k;
@@ -3506,7 +3513,7 @@ function draw(){ const keys=["air","poly"].filter(k=>st.data.some(r=>r.diel===k)
   const series=keys.map((k,i)=>({pts:st.data.filter(r=>r.diel===k).map(r=>[1/(r.n*T),r.C]),col:LAB.RUNCOL[i],label:k==="air"?"Air":"Polythene",ey:1,ex:st.data.filter(r=>r.diel===k).map(r=>0.02/r.n/(r.n*T))}));
   const fits=[]; keys.forEach((k,i)=>{ const f=fitFor(k); if(f){ fits.push({m:f.f.m,c:f.f.c,x0:0,x1:1100,col:LAB.RUNCOL[i]}); if(k==="air"&&f.w) fits.push({m:f.w.m,c:f.w.c,x0:0,x1:1100,dash:[6,4],col:LAB.css("--data"),label:"worst fit (air)"}); } });
   plot($("#pp-graph"),{x:{label:"1/d / m⁻¹",min:0,max:1100},y:{label:"C / pF",min:0},series,fits,legend:"left",empty:"Readings will be plotted here"}); }
-function work(){
+function work(){ const fitChecks=[fitFor("air"),fitFor("poly")]; const problem=fitChecks.map(LAB.fitProblem).find(Boolean); if(problem){ $("#pp-work").innerHTML=problem; return; }
   const el=$("#pp-work"), {v,fr,res,step,chips}=W, r=st.data[st.data.length-1], fa=fitFor("air"), fp=fitFor("poly");
   if(!r){ el.innerHTML=`<p class="empty">Record readings and the calculation will appear here.</p>`; return; }
   let h=`<div class="work">`+step(1,"Plate area",null,[`${v("A")} = 0.200 × 0.200 = ${res("0.0400 m²")} (± 2 × 0.5% = 1%)`]);
@@ -3609,7 +3616,7 @@ function draw(){ const keys=[true,false].filter(k=>st.data.some(r=>r.closed===k)
   const series=keys.map((k,i)=>({pts:st.data.filter(r=>r.closed===k).map(r=>[r.Ns/r.Np,r.Vs/r.Vp]),col:LAB.RUNCOL[i],label:k?"core closed":"gap in core"}));
   const fits=[{m:1,c:0,x0:0,x1:5.2,col:LAB.css("--muted"),dash:[4,4],label:"ideal"}]; keys.forEach((k,i)=>{ const f=fitFor(k); if(f) fits.push({m:f.f.m,c:f.f.c,x0:0,x1:5.2,col:LAB.RUNCOL[i]}); });
   plot($("#tf-graph"),{x:{label:"Ns / Np",min:0,max:5.2},y:{label:"Vs / Vp",min:0,max:5.2},series,fits,legend:"left",empty:"Readings will be plotted here"}); }
-function work(){
+function work(){ const fitChecks=[fitFor(true),fitFor(false)]; const problem=fitChecks.map(LAB.fitProblem).find(Boolean); if(problem){ $("#tf-work").innerHTML=problem; return; }
   const el=$("#tf-work"), {v,fr,res,step,chips}=W, r=st.data[st.data.length-1], fc=fitFor(true), fo=fitFor(false);
   if(!r){ el.innerHTML=`<p class="empty">Record readings and the calculation will appear here.</p>`; return; }
   const ideal=r.Vp*r.Ns/r.Np;
@@ -3977,7 +3984,7 @@ function draw(){ const a=analyse(), mx=Math.max(500,...st.data.map(r=>Math.max(r
   const o={x:{label:"Dial setting / Hz",min:0,max:mx},y:{label:"Measured frequency / Hz",min:0,max:mx},series:[{pts:st.data.map(r=>[r.fs,r.f]),col:LAB.RUNCOL[0],ey:st.data.map(r=>r.f*r.uT)}],empty:"Readings will be plotted here"};
   if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:mx,label:"best fit"},{m:1,c:0,x0:0,x1:mx,dash:[4,4],col:LAB.css("--muted"),label:"gradient 1"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#os-graph"),o); }
-function work(){ const el=$("#os-work"), {v,fr,res,step,chips,sq}=W, r=st.data[st.data.length-1], a=analyse();
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#os-work").innerHTML=problem; return; } const el=$("#os-work"), {v,fr,res,step,chips,sq}=W, r=st.data[st.data.length-1], a=analyse();
   if(!r){ el.innerHTML=`<p class="empty">Enter your screen readings and record them; the calculation will appear here.</p>`; return; }
   const pT=0.1/r.L*100, pV=0.1/r.H*100;
   let h=chips([["Period",`${fx(r.T,3)} ms`],["Frequency",`${Math.round(r.f)} Hz`,1],["Peak voltage",`${fx(r.V0,2)} V`],["r.m.s. voltage",`${fx(r.V0/Math.SQRT2,2)} V`]])+`<div style="margin-top:14px"></div><div class="work">`+
@@ -4053,7 +4060,7 @@ const panel=`
 <button class="btn primary" id="ml-rec">Record reading</button>
 <div class="field"><div class="lbl">Graph</div><div class="seg c2" id="ml-view"><label class="opt"><input type="radio" name="ml-view" value="cos" checked><span>I against cos²θ</span></label><label class="opt"><input type="radio" name="ml-view" value="th"><span>I against θ</span></label></div></div>`;
 
-build({id:"ml",eyebrow:"OCR A Level Physics A · PAG 5.4 · Investigating waves",title:"Polarisation of light: Malus's law",
+build({id:"ml",eyebrow:"OCR A Level Physics A · PAG 6.3 · Experiments with polarisation",title:"Polarisation of light: Malus's law",
  intro:"Light from a lamp passes through a fixed polariser and then a second filter, the analyser, which can be rotated. A light sensor measures the transmitted intensity. Malus's law predicts I = I₀cos²θ, where θ is the angle between the transmission axes of the two filters.",
  stage,bar:`<span>Angle scale <b>±1°</b></span><span>Light meter <b>±1 lx</b></span><span id="ml-status"></span>`,
  panel,
@@ -4099,13 +4106,13 @@ function analyse(){ const pts=st.data.map(r=>[Math.cos(r.th*Math.PI/180)**2,r.I]
 function refresh(){ rows($("#ml-tbody"),st.data.map(r=>[r.th,fx(Math.cos(r.th*Math.PI/180)**2,3),r.I,r.lt==="on"?"on":"off"]),"Set an angle and record the light meter reading.",4,true); draw(); work(); }
 function draw(){ const a=analyse(), ymax=Math.ceil((I0+20)/50)*50;
   if(st.view==="cos"){ const o={x:{label:"cos²θ",min:0,max:1},y:{label:"I / lx",min:0,max:ymax},series:[{pts:st.data.map(r=>[Math.cos(r.th*Math.PI/180)**2,r.I]),col:LAB.RUNCOL[0],ey:1}],empty:"Readings will be plotted here"};
-    if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+    if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
     plot($("#ml-graph"),o); }
   else { const o={x:{label:"θ / °",min:0,max:360},y:{label:"I / lx",min:0,max:ymax},series:[{pts:st.data.map(r=>[r.th,r.I]),col:LAB.RUNCOL[0],join:"curve"}],empty:"Readings will be plotted here"};
     if(a) { o.fits=[{fn:t=>a.f.m*Math.cos(t*Math.PI/180)**2+a.f.c,x0:0,x1:360,dash:[6,4],col:LAB.css("--data"),label:"I₀cos²θ + background"}]; o.legend="right"; }
     plot($("#ml-graph"),o); }
   $("#lab-ml .lower .card:nth-child(2) h3").textContent=st.view==="cos"?"Intensity against cos²θ":"Intensity against angle"; }
-function work(){ const el=$("#ml-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#ml-work").innerHTML=problem; return; } const el=$("#ml-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
   if(!r){ el.innerHTML=`<p class="empty">Record readings and the analysis will appear here.</p>`; return; }
   const c2=Math.cos(r.th*Math.PI/180)**2;
   let h=`<div class="work">`+step(1,"Calculate cos²θ for each angle","Find cos θ, then square it. Set your calculator to degrees.",[`θ = ${r.th}°: cos ${r.th}° = ${fx(Math.cos(r.th*Math.PI/180),3)}, cos²θ = ${res(fx(c2,3))}`]);
@@ -4126,7 +4133,7 @@ $("#ml-rec").addEventListener("click",()=>{ const I=Math.max(0,Math.round(lux()+
 $("#ml-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(!b) return; st.data.splice(+b.dataset.i,1); refresh(); });
 $("#ml-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 render(); refresh();
-register({id:"ml",group:"ocr",num:54,pag:"5.4",name:"Polarisation: Malus's law",icon:"polar",onShow:draw});
+register({id:"ml",group:"ocr",num:64,pag:"6.3",name:"Polarisation: Malus's law",icon:"polar",onShow:draw});
 })();
 
 </script>
@@ -4216,9 +4223,9 @@ function refresh(){ const RS=st.runs.slice(-4), mx=Math.max(0,...RS.map(r=>r.pts
 function draw(){ const a=analyse(), ln=st.view==="ln", mx=Math.max(10,...st.runs.flatMap(r=>r.pts.map(p=>p[0])));
   const S=st.runs.map((r,i)=>({pts:r.pts.filter(p=>!ln||p[1]>0).map(p=>[p[0],ln?Math.log(p[1]):p[1]]),col:LAB.RUNCOL[i%LAB.RUNCOL.length],join:ln?null:"line",label:`Run ${r.id} (${r.sides}-sided)`}));
   const o={x:{label:"Number of throws",min:0,max:mx},y:ln?{label:"ln N",min:0,max:Math.ceil(Math.log(Math.max(100,...st.runs.map(r=>r.N0)))+.3)}:{label:"N",min:0,max:Math.max(100,...st.runs.map(r=>r.N0))},series:S.slice(-6),empty:"Start a run and throw the dice"};
-  if(a){ const N0=Math.exp(a.f.c); o.fits=ln?[{m:a.f.m,c:a.f.c,x0:0,x1:mx,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:mx,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]:[{fn:t=>N0*Math.exp(a.f.m*t),x0:0,x1:mx,dash:[6,4],col:LAB.css("--ink"),label:"N₀e^(−λt)"}]; }
+  if(a&&a.w){ const N0=Math.exp(a.f.c); o.fits=ln?[{m:a.f.m,c:a.f.c,x0:0,x1:mx,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:mx,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]:[{fn:t=>N0*Math.exp(a.f.m*t),x0:0,x1:mx,dash:[6,4],col:LAB.css("--ink"),label:"N₀e^(−λt)"}]; }
   plot($("#dd-graph"),o); $("#lab-dd .lower .card:nth-child(2) h3").textContent=ln?"ln N against number of throws":"N against number of throws"; }
-function work(){ const el=$("#dd-work"), {v,fr,res,step,chips}=W, a=analyse(), p=1/st.sides, lt=-Math.log(1-p);
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#dd-work").innerHTML=problem; return; } const el=$("#dd-work"), {v,fr,res,step,chips}=W, a=analyse(), p=1/st.sides, lt=-Math.log(1-p);
   if(!a){ el.innerHTML=`<p class="empty">Throw the dice a few times and the analysis will appear here.</p>`; return; }
   const lam=-a.f.m, pc=a.w?a.w.pc:0, th=Math.LN2/lam, pd=(lam-lt)/lt*100, runs=st.runs.filter(r=>r.sides===st.sides).length;
   el.innerHTML=chips([["Decay constant λ",`${fx(lam,3)} per throw`,1],["Uncertainty",`± ${fx(pc,0)}%`],["Half-life",`${fx(th,1)} throws`],["Theory",`${fx(lt,3)} per throw`]])+`<div class="work" style="margin-top:14px">`+
@@ -4241,7 +4248,7 @@ register({id:"dd",group:"ocr",num:71,pag:"7.1",name:"Decay modelled with dice",i
 
 </script>
 <script>
-/* OCR PAG 8.3 Charles's law: volume and temperature of a gas at constant pressure; estimating absolute zero */
+/* Adapted gas investigation: Charles's law: volume and temperature of a gas at constant pressure; estimating absolute zero */
 (()=>{
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setThermo}=LAB;
 const L0=8.6+Math.random()*0.8;            /* cm of air at 0 °C */
@@ -4276,7 +4283,7 @@ const panel=`
 <button class="btn primary" id="ch-rec">Record reading</button>
 <p class="note" id="ch-note">The sealed end of the air column is at the 0.0 cm mark. Read the scale at the bottom of the acid bead. Before each reading switch off the heater, stir, and wait for the air to reach the water temperature.</p>`;
 
-build({id:"ch",eyebrow:"OCR A Level Physics A · PAG 8.3 · Investigating gases",title:"Charles's law and absolute zero",
+build({id:"ch",eyebrow:"OCR A Level Physics A · Adapted gas investigation",title:"Charles's law and absolute zero",
  intro:"Air is trapped in a capillary tube by a short bead of concentrated sulfuric acid, which keeps the air dry and the pressure constant (atmospheric). The tube is fixed to a ruler in a water bath. As the water is heated the air expands. A graph of length against temperature in °C extrapolates to zero length at absolute zero.",
  stage,bar:`<span>Ruler <b>±0.1 cm</b></span><span>Thermometer <b>±0.5 °C</b></span><span>Pressure <b>constant</b></span><span id="ch-status"></span>`,
  panel,
@@ -4326,9 +4333,9 @@ function loop(now){ const dt=Math.min(.1,(now-last)/1000); last=now; if(!$("#lab
 function analyse(){ const pts=st.data.map(r=>[r.T,r.L]); if(pts.length<3) return null; const f=linfit(pts); const w=worst(pts,0.1,f); return {pts,f,w,z:-f.c/f.m,zw:w?-w.c/w.m:null}; }
 function refresh(){ rows($("#ch-tbody"),st.data.map(r=>[fx(r.T,1),fx(r.L,1),fx(r.T+273,0),fx(r.L/(r.T+273),4)]),"Record the starting reading, then heat in steps.",4,true); draw(); work(); }
 function draw(){ const a=analyse(); const o={x:{label:"θ / °C",min:-300,max:100},y:{label:"L / cm",min:0,max:14},series:[{pts:st.data.map(r=>[r.T,r.L]),col:LAB.RUNCOL[0],ey:0.1,ex:0.5}],empty:"Readings will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:Math.max(-300,a.z),x1:100,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:Math.max(-300,a.zw),x1:100,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:Math.max(-300,a.z),x1:100,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:Math.max(-300,a.zw),x1:100,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.legend="left"; }
   plot($("#ch-graph"),o); }
-function work(){ const el=$("#ch-work"), {v,fr,res,step,chips}=W, a=analyse();
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#ch-work").innerHTML=problem; return; } const el=$("#ch-work"), {v,fr,res,step,chips}=W, a=analyse();
   if(!a){ el.innerHTML=`<p class="empty">Record at least three readings across a wide range of temperatures.</p>`; return; }
   const u=a.zw!=null?Math.abs(a.zw-a.z):0, pd=(a.z+273.15)/273.15*100, span=Math.max(...st.data.map(r=>r.T))-Math.min(...st.data.map(r=>r.T));
   el.innerHTML=chips([["Absolute zero",`${fx(a.z,0)} °C`,1],["Uncertainty",`± ${fx(u,0)} °C`],["Accepted",`−273 °C`]])+`<div class="work" style="margin-top:14px">`+
@@ -4346,12 +4353,12 @@ $("#ch-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#ch-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 window.__ch=st;
 render(); refresh(); requestAnimationFrame(loop);
-register({id:"ch",group:"ocr",num:83,pag:"8.3",name:"Charles's law",icon:"syringe",onShow:draw});
+register({id:"ch",group:"ocr",num:83,name:"Charles's law",lvl:"Gas investigation (adapted)",icon:"syringe",onShow:draw});
 })();
 
 </script>
 <script>
-/* OCR PAG 11.2 Specific latent heat of vaporisation of water */
+/* Adapted thermal investigation: specific latent heat of vaporisation of water */
 (()=>{
 const {$,C,W,fmt,fx,sci,gauss,linfit,plot,rows,build,register,clamp,setPsu,setStopwatch}=LAB;
 const LV=2.26e6, R=2.88+Math.random()*0.08, LOSS=5.5+Math.random()*1.5, BEAKER=104.62, CW=4180;
@@ -4390,7 +4397,7 @@ const panel=`
 <button class="btn primary" id="lv-rec">Record mass</button>
 <p class="note" id="lv-note">Wait until the water is boiling steadily before starting the stopwatch. Record the mass every 60 s for about 5 minutes, then change the voltage and repeat.</p>`;
 
-build({id:"lv",eyebrow:"OCR A Level Physics A · PAG 11.2 · Investigation",title:"Specific latent heat of vaporisation of water",
+build({id:"lv",eyebrow:"OCR A Level Physics A · Adapted thermal investigation",title:"Specific latent heat of vaporisation of water",
  intro:"An immersion heater keeps water boiling in a beaker on a digital balance. The mass falls as water turns to steam. Measuring the rate of mass loss at two different heater powers lets you cancel out the heat lost to the surroundings and find the specific latent heat of vaporisation.",
  stage,bar:`<span>Balance <b>±0.01 g</b></span><span>Meters <b>±0.01 A, ±0.01 V</b></span><span id="lv-status"></span>`,
  panel,
@@ -4470,7 +4477,7 @@ $("#lv-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#lv-clear").addEventListener("click",()=>{ st.runs=[]; st.run=null; refresh(); });
 window.__lv=st;
 render(); refresh(); requestAnimationFrame(loop);
-register({id:"lv",group:"ocr",num:112,pag:"11.2",name:"Specific latent heat of vaporisation",icon:"steam",onShow:draw});
+register({id:"lv",group:"ocr",num:112,name:"Specific latent heat of vaporisation",lvl:"Thermal investigation (adapted)",icon:"steam",onShow:draw});
 })();
 
 </script>
@@ -4695,9 +4702,9 @@ function nodes(){ const xs=st.data.slice().sort((a,b)=>a-b); return xs.map((x,i)
 function analyse(){ const N=nodes(); if(N.length<3) return null; const f=linfit(N); const w=worst(N,0.1,f); const [xa,xb]=LAB.triX(N.map(p=>p[0])); return {N,f,w,xa,xb}; }
 function refresh(){ const N=nodes(); rows($("#mw-tbody"),N.map((p,i)=>[p[0],fx(p[1],1),i?fx(p[1]-N[i-1][1],1):"—"]),"Find a minimum and record its position.",3,true); draw(); work(); }
 function draw(){ const a=analyse(), N=nodes(); const o={x:{label:"Node number n",min:0,max:Math.max(5,N.length+1)},y:{label:"Position / cm",min:0,max:DMAX},series:[{pts:N,col:LAB.RUNCOL[0],ey:0.1}],empty:"Node positions will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:o.x.max,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:o.x.max,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:o.x.max,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:o.x.max,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#mw-graph"),o); }
-function work(){ const el=$("#mw-work"), {v,fr,res,step,chips}=W, a=analyse(), N=nodes();
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#mw-work").innerHTML=problem; return; } const el=$("#mw-work"), {v,fr,res,step,chips}=W, a=analyse(), N=nodes();
   if(!a){ el.innerHTML=`<p class="empty">Record at least three consecutive nodes and the calculation will appear here.</p>`; return; }
   const sp=N.slice(1).map((p,i)=>p[1]-N[i][1]), med=sp.slice().sort((x,y)=>x-y)[Math.floor(sp.length/2)], gap=sp.some(s=>s>1.5*med), tiny=sp.some(s=>s<0.5*med);
   const lam=2*a.f.m, f=3e8/(lam/100), pc=a.w.pc, span=N[N.length-1][1]-N[0][1], n=N.length-1;
@@ -4812,9 +4819,9 @@ function refresh(){ const a=st.mode==="ang";
   rows($("#sc-tbody"),D().map(r=>a?[r.th,fx(Math.cos(r.th*Math.PI/180),3),fx(r.V,3)]:[r.f,fx(r.V,3)]),"Set the coil and record the voltmeter reading.",a?3:2,true); draw(); work(); }
 function draw(){ const a=analyse(), ang=st.mode==="ang", P=D().map(r=>[xOf(r),r.V]), ymax=Math.max(0.3,...P.map(p=>p[1]))*1.15;
   const o={x:ang?{label:"cos θ",min:0,max:1}:{label:"f / Hz",min:0,max:550},y:{label:"ε (r.m.s.) / V",min:0,max:ymax},series:[{pts:P,col:LAB.RUNCOL[0],ey:0.002}],empty:"Readings will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:o.x.max,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:o.x.max,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:o.x.max,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:o.x.max,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#sc-graph"),o); $("#lab-sc .lower .card:nth-child(2) h3").textContent=ang?"E.m.f. against cos θ":"E.m.f. against frequency"; }
-function work(){ const el=$("#sc-work"), {v,fr,res,step,chips,sq}=W, a=analyse(), ang=st.mode==="ang";
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#sc-work").innerHTML=problem; return; } const el=$("#sc-work"), {v,fr,res,step,chips,sq}=W, a=analyse(), ang=st.mode==="ang";
   if(!a){ el.innerHTML=`<p class="empty">Record at least three readings and the analysis will appear here.</p>`; return; }
   const g=a.f.m, pc=a.w.pc;
   const B=ang?Math.SQRT2*g/(NT*AREA*2*Math.PI*200):Math.SQRT2*g/(NT*AREA*2*Math.PI);
@@ -4924,9 +4931,9 @@ function refresh(){ const b=B();
   $("#iq-bgline").innerHTML=b==null?"Background not yet measured.":`Background: ${st.bg.map(r=>`${r.n} in ${r.t} s`).join(", ")} ⇒ B = ${fx(b,3)} s⁻¹`; draw(); work(); }
 function draw(){ const a=analyse(), P=pts(); const ymax=Math.max(0.5,...P.map(p=>p[1]))*1.15;
   const o={x:{label:"d / cm",min:-5,max:55},y:{label:"(C − B)^−½ / s^½",min:0,max:ymax},series:[{pts:P,col:LAB.RUNCOL[0],ey:errs()}],empty:B()==null?"Measure the background first, then counts at different distances":"Readings will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:-a.e,x1:55,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:-a.ew,x1:55,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:-a.e,x1:55,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:-a.ew,x1:55,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#iq-graph"),o); }
-function work(){ const el=$("#iq-work"), {v,fr,res,step,chips,sq}=W, a=analyse(), b=B(), r=st.data[st.data.length-1];
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#iq-work").innerHTML=problem; return; } const el=$("#iq-work"), {v,fr,res,step,chips,sq}=W, a=analyse(), b=B(), r=st.data[st.data.length-1];
   if(b==null||!r){ el.innerHTML=`<p class="empty">${b==null?"Start by measuring the background count with the source in its lead box.":"Record counts at a few distances and the analysis will appear here."}</p>`; return; }
   const c=corr(r), dN=Math.sqrt(r.n);
   let h=`<div class="work">`+step(1,"Corrected count rate","Count rate = counts ÷ time; subtract the background rate. The uncertainty in a count N is √N.",[`${v("C")} = ${fr(r.n,r.t)} = ${fx(r.n/r.t,2)} s⁻¹ (±${fx(dN/r.n*100,1)}%)`,`${v("C")} − ${v("B")} = ${fx(r.n/r.t,2)} − ${fx(b,3)} = ${res(`${fx(c,2)} s⁻¹`)}`])+
@@ -4954,7 +4961,7 @@ register({id:"iq",group:"ocr",num:74,pag:"7.4",name:"Inverse-square law for γ",
 
 </script>
 <script>
-/* OCR PAG 4.4 Potentiometer: comparing e.m.f.s and finding internal resistance */
+/* Circuits extension: potentiometer: comparing e.m.f.s and finding internal resistance */
 (()=>{
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const ED=2.04, RD=0.05, RW=4.20, KW=ED*RW/(RW+RD)/100;            /* V per cm along the wire */
@@ -4995,7 +5002,7 @@ const panel=`
 <button class="btn primary" id="po-rec">Record balance length</button>
 <p class="note" id="po-note">Find the rough balance point with the protective resistor in, then short it out to find the exact point where the galvanometer reads zero.</p>`;
 
-build({id:"po",eyebrow:"OCR A Level Physics A · PAG 4.4 · Investigating electrical circuits",title:"Potentiometer: e.m.f. and internal resistance",
+build({id:"po",eyebrow:"OCR A Level Physics A · Circuits extension · Potentiometer",title:"Potentiometer: e.m.f. and internal resistance",
  intro:"A driver cell sets up a steady potential gradient along a uniform one-metre wire. At the balance point no current flows through the galvanometer, so the p.d. along the wire equals the p.d. of the cell being tested. Balancing a standard cell calibrates the wire; balancing the test cell with and without a resistor across it gives its e.m.f. and internal resistance without drawing current from the meter circuit.",
  stage,bar:`<span>Wire <b>100.0 cm</b></span><span>Rule <b>±0.1 cm</b></span><span id="po-status"></span>`,
  panel,
@@ -5047,9 +5054,9 @@ function pts(){ const z=l0(); if(z==null) return []; return st.data.filter(d=>d.
 function analyse(){ const P=pts(); if(P.length<3) return null; const f=linfit(P); const z=l0(); const ey=P.map(p=>p[1]*(0.1/z+0.1/(z/p[1]))); const w=worst(P,ey,f); const [xa,xb]=LAB.triX(P.map(p=>p[0])); return {P,f,w,xa,xb,ey}; }
 function refresh(){ const z=l0(); rows($("#po-tbody"),st.data.map(d=>[d.cell==="std"?"standard":"test",d.cell==="std"||d.R===Infinity?"∞":d.R,fx(d.l,1),d.cell==="std"||z==null?"—":fx(z/d.l,3),d.cell==="std"?"—":d.R===Infinity?"0":fx(1/d.R,3)]),"Find a balance point and record it.",5,true); draw(); work(); }
 function draw(){ const a=analyse(), P=pts(); const o={x:{label:"1/R / Ω⁻¹",min:0,max:1.1},y:{label:"l₀ / l",min:0,max:Math.max(3,...P.map(p=>p[1]+.3))},series:[{pts:P,col:LAB.RUNCOL[0],ey:a?a.ey:0.01}],empty:l0()==null?"Record the open-circuit balance length l₀ (no resistor) first":"Readings will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1.1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1.1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1.1,label:"best fit"}]; if(a.w) o.fits.push({m:a.w.m,c:a.w.c,x0:0,x1:1.1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}); o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#po-graph"),o); }
-function work(){ const el=$("#po-work"), {v,fr,res,step,chips}=W, ls=lstd(), z=l0(), a=analyse();
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#po-work").innerHTML=problem; return; } const el=$("#po-work"), {v,fr,res,step,chips}=W, ls=lstd(), z=l0(), a=analyse();
   if(ls==null&&z==null){ el.innerHTML=`<p class="empty">Balance the standard cell and the test cell (no resistor) to begin.</p>`; return; }
   let h=`<div class="work">`, n=1, chip=[];
   if(ls!=null){ const k=ES/ls; h+=step(n++,"Calibrate the wire with the standard cell","At balance, the p.d. along length lₛ equals the standard e.m.f.",[`potential gradient ${v("k")} = ${fr("1.0186 V",`${fx(ls,1)} cm`)} = ${res(`${sci(k,4)} V cm⁻¹`)}`]); chip.push(["Potential gradient",`${fx(k*100,3)} V m⁻¹`]); }
@@ -5076,12 +5083,12 @@ $("#po-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#po-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 window.__po={st,KW,ET,RT,ES,Ig};
 render(); refresh();
-register({id:"po",group:"ocr",num:44,pag:"4.4",name:"Potentiometer",icon:"pot",onShow:()=>{ render(); draw(); }});
+register({id:"po",group:"ocr",num:44,name:"Potentiometer",lvl:"Circuits extension",icon:"pot",onShow:()=>{ render(); draw(); }});
 })();
 
 </script>
 <script>
-/* OCR PAG 6.3 Photoelectric effect: stopping potential and the Planck constant */
+/* Quantum extension: photoelectric effect: stopping potential and the Planck constant */
 (()=>{
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setPsu}=LAB;
 const H=6.626e-34, EC=1.602e-19, CL=2.998e8, PHI=1.88+Math.random()*0.16, IA=0.0006;
@@ -5122,7 +5129,7 @@ const panel=`
 <div class="field"><div class="lbl">Graph</div><div class="seg c2" id="pe-view"><label class="opt"><input type="radio" name="pe-view" value="vs" checked><span>Vₛ against frequency</span></label><label class="opt"><input type="radio" name="pe-view" value="iv"><span>I against V (this filter)</span></label></div></div>
 <p class="note" id="pe-note">Increase the reverse voltage until the photocurrent just falls to zero. That voltage is the stopping potential for this frequency.</p>`;
 
-build({id:"pe",eyebrow:"OCR A Level Physics A · PAG 6.3 · Investigating quantum effects",title:"Photoelectric effect: stopping potential",
+build({id:"pe",eyebrow:"OCR A Level Physics A · Quantum extension · Photoelectric effect",title:"Photoelectric effect: stopping potential",
  intro:"Light from a mercury lamp passes through a filter onto the cathode of a vacuum photocell, releasing photoelectrons. A reverse voltage repels them from the anode; the stopping potential Vₛ is the voltage that just stops the fastest electrons, so eVₛ = KE(max) = hf − φ. Plotting Vₛ against frequency gives the Planck constant from the gradient and the work function from the intercept.",
  stage,bar:`<span>Voltmeter <b>±0.01 V</b></span><span>e <b>1.60 × 10⁻¹⁹ C</b></span><span id="pe-status"></span>`,
  panel,
@@ -5163,9 +5170,9 @@ function refresh(){ rows($("#pe-tbody"),st.data.map(r=>[r.nm,fx(fOf(r.nm)/1e14,2
 function draw(){ if(st.view==="iv"){ const P=[]; for(let V=0;V<=2.5001;V+=0.02) P.push([V,cur(V)]); plot($("#pe-graph"),{x:{label:"Reverse voltage / V",min:0,max:2.5},y:{label:"I / nA",min:0,max:Math.ceil(I0()/5)*5+2},series:[{pts:P,col:LINES[st.li].col,join:"line",noPts:true,label:LINES[st.li].lbl},{pts:[[st.V,cur(st.V)]],col:LAB.css("--ink")}],legend:"right"});
     $("#lab-pe .lower .card:nth-child(2) h3").textContent="Photocurrent against reverse voltage"; return; }
   const a=analyse(); const o={x:{label:"f / 10¹⁴ Hz",min:0,max:9},y:{label:"Vₛ / V",min:-2.5,max:2},series:[{pts:pts(),col:LAB.RUNCOL[0],ey:0.02}],empty:"Stopping potentials will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:9,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:9,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:9,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:9,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#pe-graph"),o); $("#lab-pe .lower .card:nth-child(2) h3").textContent="Stopping potential against frequency"; }
-function work(){ const el=$("#pe-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#pe-work").innerHTML=problem; return; } const el=$("#pe-work"), {v,fr,res,step,chips}=W, a=analyse(), r=st.data[st.data.length-1];
   if(!r){ el.innerHTML=`<p class="empty">Record stopping potentials for several filters and the calculation will appear here.</p>`; return; }
   const f=fOf(r.nm);
   let h=`<div class="work">`+step(1,"Frequency of the light","f = c/λ.",[`${v("f")} = ${fr("3.00 × 10⁸",`${r.nm} × 10⁻⁹`)} = ${res(`${sci(f,3)} Hz`)}`])+
@@ -5192,7 +5199,7 @@ $("#pe-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#pe-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 window.__pe={st,vzero,LINES};
 render(); refresh(); requestAnimationFrame(loop);
-register({id:"pe",group:"ocr",num:63,pag:"6.3",name:"Photoelectric effect",icon:"photo",onShow:draw});
+register({id:"pe",group:"ocr",num:63,name:"Photoelectric effect",lvl:"Quantum extension",icon:"photo",onShow:draw});
 })();
 
 </script>
@@ -5281,9 +5288,9 @@ function refresh(){ const F=freqs();
   $("#ph-tbody").innerHTML=F.length?F.map(f=>{ const r=perF(f); return `<tr><td>${f}</td><td>${r.xs.length}</td><td>${fx(r.xs[0],1)}</td><td>${fx(r.xs[r.xs.length-1],1)}</td><td>${r.lam?fx(r.lam,2):"—"}</td><td>${r.lam?fx(f*r.lam/100,0):"—"}</td><td class="xc"><button class="x" data-f="${f}" aria-label="Remove this frequency" title="Remove this frequency">×</button></td></tr>`; }).join(""):`<tr><td colspan="7" class="empty">Find in-phase positions and record them.</td></tr>`;
   draw(); work(); }
 function draw(){ const a=analyse(); const o={x:{label:"1/f / ms",min:0,max:1.1},y:{label:"λ / m",min:0,max:0.4},series:[{pts:pts(),col:LAB.RUNCOL[0],ey:a?a.ey:0.002}],empty:"Wavelengths at different frequencies will be plotted here"};
-  if(a){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1.1,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:1.1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
+  if(a&&a.w){ o.fits=[{m:a.f.m,c:a.f.c,x0:0,x1:1.1,label:"best fit"},{m:a.w.m,c:a.w.c,x0:0,x1:1.1,dash:[6,4],col:LAB.css("--data"),label:"worst fit"}]; o.tri={m:a.f.m,c:a.f.c,xa:a.xa,xb:a.xb}; o.legend="left"; }
   plot($("#ph-graph"),o); }
-function work(){ const el=$("#ph-work"), {v,fr,res,step,chips,sq}=W, a=analyse(), F=freqs(), lastF=st.data.length?st.data[st.data.length-1].f:null, r=lastF?perF(lastF):null;
+function work(){ const fitCheck=analyse(), problem=LAB.fitProblem(fitCheck); if(problem){ $("#ph-work").innerHTML=problem; return; } const el=$("#ph-work"), {v,fr,res,step,chips,sq}=W, a=analyse(), F=freqs(), lastF=st.data.length?st.data[st.data.length-1].f:null, r=lastF?perF(lastF):null;
   if(!r||!r.lam){ el.innerHTML=`<p class="empty">Record at least two in-phase positions at one frequency to see the calculation.</p>`; return; }
   const span=r.xs[r.xs.length-1]-r.xs[0], vth=331.3*Math.sqrt(1+TC/273.15);
   let h=`<div class="work">`+step(1,`Wavelength at ${lastF} Hz`,"Successive in-phase positions are one wavelength apart.",[`λ = ${fr(`${fx(r.xs[r.xs.length-1],1)} − ${fx(r.xs[0],1)}`,r.N)} = ${res(`${fx(span/r.N,2)} cm`)} (±${fx(0.2/span*100,1)}%)`])+
@@ -5763,7 +5770,7 @@ function grade(qid){ const [id,i]=qid.split(/-(?=\d+$)/), q=QZ[id][+i], fb=$(`#$
   if(q.opts){ const sel=$(`input[name="${qid}"]:checked`); if(!sel){ fb.hidden=false; fb.className="qfb nok"; fb.innerHTML="Choose an answer first."; return; } ans=+sel.value; ok=ans===q.a;
     $$(`[data-q="${qid}"] .qo label`).forEach((l,j)=>{ l.classList.toggle("right",ok&&j===q.a); l.classList.toggle("wrong",!ok&&j===ans); }); }
   else { const v=num($(`#${qid}-in`).value); if(isNaN(v)){ fb.hidden=false; fb.className="qfb nok"; fb.innerHTML="Type a number (you can write 3.2e-3 for 3.2 × 10⁻³)."; return; }
-    const tol=q.tol??0.02; ok=Math.abs(v-q.a)<=Math.abs(q.a)*tol+(q.abs||0)+1e-12; }
+    const tol=q.tol??0.02; ok=RevisionMath.matches(v,q.a,tol,q.abs||0); }
   fb.hidden=false; fb.className="qfb "+(ok?"ok":"nok"); fb.innerHTML=(ok?"<b>Correct.</b> ":"<b>Not quite.</b> ")+(ok?(q.why||""):(q.hint?q.hint+" ":"")+"Try again, or show the answer.");
   STATE[qid]=ok||STATE[qid]==="shown"?(ok?"ok":"shown"):"no"; persist(qid); score(id); }
 function reveal(qid){ const [id,i]=qid.split(/-(?=\d+$)/), q=QZ[id][+i], fb=$(`#${qid}-fb`);
@@ -5904,7 +5911,7 @@ function partHTML(p,qi){ const s=saved[p.id]||{};
   let body="";
   if(p.opts){ body=`<div class="xmcq">${p.opts.map((o,j)=>`<label class="${s.done?(j===p.a?"right":(j===s.c?"wrong":"")):""}"><input type="radio" name="${p.id}" value="${j}" ${s.c===j?"checked":""}><span><b>${"ABCD"[j]}</b> ${o}</span></label>`).join("")}</div><div class="xbtns"><button class="btn primary" data-xmcq="${p.id}">Check</button></div>`; }
   else { body=`<textarea class="xans" data-xw="${p.id}" rows="${p.lines||3}" aria-label="Your answer to part ${p.l}" placeholder="Write your answer and working here">${(s.w||"").replace(/</g,"&lt;")}</textarea>`;
-    if(p.ans) body+=`<div class="xfinal"><span>Final answer</span><input type="text" inputmode="decimal" data-xin="${p.id}" value="${s.f??""}" aria-label="Final answer" autocomplete="off"><span class="u">${p.ans.unit||""}</span><button class="btn" data-xchk="${p.id}">Check answer</button></div>`;
+    if(p.ans) body+=`<div class="xfinal"><span>Final answer</span><input type="text" inputmode="decimal" data-xin="${p.id}" value="${String(s.f??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}" aria-label="Final answer" autocomplete="off"><span class="u">${p.ans.unit||""}</span><button class="btn" data-xchk="${p.id}">Check answer</button></div>`;
     body+=`<div class="xbtns"><button class="btn primary" data-xms="${p.id}">${s.done?(s.hid?"Show mark scheme":"Hide mark scheme"):"Mark it: show mark scheme"}</button></div>`; }
   let ms="";
   if(p.lor){ ms=`<div class="xmsh"><span>Levels of response mark scheme</span><span>Award: <select data-xlor="${p.id}">${Array.from({length:p.m+1},(_,i)=>`<option value="${i}" ${+s.v===i?"selected":""}>${i}</option>`).join("")}</select> / ${p.m}</span></div>${p.lor.map(([lv,d])=>`<div class="lv"><b>${lv}</b><span>${d}</span></div>`).join("")}${p.ind?`<div class="note"><b>Indicative scientific content</b><ul>${p.ind.map(x=>`<li>${x}</li>`).join("")}</ul></div>`:""}`; }
@@ -5938,13 +5945,14 @@ document.addEventListener("click",e=>{ const t=e.target.closest("[data-xms],[dat
   if(t.dataset.xms){ const ms=$(`#${id}-ms`); if(!s.done){ s.done=true; s.hid=false; if(!s.t) s.t=[]; } else s.hid=!s.hid; ms.hidden=!!s.hid; t.textContent=s.hid?"Show mark scheme":"Hide mark scheme"; save(); refresh(p.card); return; }
   if(t.dataset.xchk){ const raw=$(`[data-xin="${id}"]`).value, v=num(raw), fb=$(`#${id}-fb`); fb.hidden=false; s.f=raw;
     if(isNaN(v)){ fb.className="xfb nok"; fb.textContent="Type a number (you can write 3.2e-3 for 3.2 × 10⁻³)."; save(); return; }
-    const a=p.ans, tol=a.tol??0.03, x=a.abs?Math.abs(v):v, ok=Math.abs(x-a.a)<=Math.abs(a.a)*tol+1e-12;
+    const a=p.ans, tol=a.tol??0.03, x=a.abs?Math.abs(v):v, ok=RevisionMath.matches(x,a.a,tol);
     if(ok){ fb.className="xfb ok"; fb.innerHTML=`<b>Final answer correct.</b> In ${window.EXAM_BOARD||"OCR"} mark schemes a correct final answer normally earns full marks, so all ${p.m} are ticked. Check your working against the scheme anyway.`; s.done=true; s.hid=false; s.t=p.ms.map(()=>true); save(); const ms=$(`#${id}-ms`); ms.hidden=false; $$(`[data-xt="${id}"]`).forEach(c=>c.checked=true); $(`[data-xms="${id}"]`).textContent="Hide mark scheme"; refresh(p.card); }
     else { fb.className="xfb nok"; fb.innerHTML=`<b>That doesn't match.</b> ${a.hint||"Check your working, units and significant figures."} You can still pick up method marks: open the mark scheme to see which you earned.`; save(); } } });
 document.addEventListener("change",e=>{ const t=e.target;
   if(t.dataset.xt){ const id=t.dataset.xt, s=saved[id]=saved[id]||{}; s.t=s.t||[]; s.t[+t.dataset.j]=t.checked; save(); refresh(PARTS[id].card); }
   else if(t.dataset.xlor){ const id=t.dataset.xlor, s=saved[id]=saved[id]||{}; s.v=+t.value; s.done=true; save(); refresh(PARTS[id].card); } });
-document.addEventListener("input",e=>{ const t=e.target; if(t.dataset.xw){ const s=saved[t.dataset.xw]=saved[t.dataset.xw]||{}; s.w=t.value; save(); } });
+document.addEventListener("input",e=>{ const t=e.target, id=t.dataset.xw||t.dataset.xin; if(!id) return; const s=saved[id]=saved[id]||{}; if(t.dataset.xw) s.w=t.value; else s.f=t.value; save(); });
+window.addEventListener("pagehide",()=>{ clearTimeout(st); store.set(KEY,saved); });
 
 return {graph,attach,build,refresh,allParts,pscore,PARTS,CARDS};
 })();
@@ -8730,7 +8738,7 @@ lesson({id:"e1",group:"c",num:1,lvl:"4.1.1 · Lesson 1",name:"Charge and current
  outcomes:[["Define electric current as the rate of flow of charge, I = ΔQ/Δt","4.1.1(a)"],["Define the coulomb","4.1.1(b)"],["Describe electron and ion conduction","4.1.1(c)"],["Use the elementary charge e and explain that charge is quantised","4.1.1(d)(e)"]],
  blocks:[
   B.text("Current is the rate of flow of charge",B.eq(`${v("I")} = ${fr("Δ"+v("Q"),"Δ"+v("t"))}<small>I in amperes (A), Q in coulombs (C), t in seconds</small>`)+`<p>The <b>coulomb</b> is the charge that passes a point when a current of 1 A flows for 1 s: <b>1 C = 1 A s</b>. (The ampere is an SI base unit; the coulomb is derived from it.)</p><p><b>Conventional current</b> is drawn from + to −, the direction positive charges would move. In metals the carriers are electrons, so they actually move the other way.</p>`),
-  B.text("Charge carriers and the elementary charge",`<ul><li><b>Electron conduction</b>: in metals, delocalised (free) electrons drift through the lattice of positive ions.</li><li><b>Ion conduction</b>: in an electrolyte (a molten or dissolved ionic compound) positive ions drift towards the negative electrode and negative ions towards the positive electrode. Both contribute to the current.</li></ul><p>The <b>elementary charge</b> e = 1.60 × 10⁻¹⁹ C is the size of the charge on an electron (−e) or proton (+e). Any charge on a particle or object is a whole-number multiple of e: charge is <b>quantised</b>.</p>`+B.eq(`${v("Q")} = ±${v("n")}${v("e")}<small>n = whole number</small>`)),
+  B.text("Charge carriers and the elementary charge",`<ul><li><b>Electron conduction</b>: in metals, delocalised (free) electrons drift through the lattice of positive ions.</li><li><b>Ion conduction</b>: in an electrolyte (a molten or dissolved ionic compound) positive ions drift towards the negative electrode and negative ions towards the positive electrode. Both contribute to the current.</li></ul><p>The <b>elementary charge</b> e = 1.60 × 10⁻¹⁹ C is the size of the charge on an electron (−e) or proton (+e). The net charge on an isolated particle or ordinary object is a whole-number multiple of e: charge is <b>quantised</b>. Quarks have fractional charges, such as +⅔e and −⅓e, but are confined inside hadrons and are not observed in isolation.</p>`+B.eq(`${v("Q")} = ±${v("n")}${v("e")}<small>n = whole number</small>`)),
   B.sim("e1-sim","Counting charge through a cross-section",stage,panel,`<span>Orange plane: the cross-section being counted</span><span>Dots show carriers, not to scale</span>`),
   B.example("Charging a phone","A phone draws a steady current of 0.25 A for 2.0 minutes. How much charge flows, and how many electrons is this?",[
    ["Charge","Convert the time to seconds.",[`${v("Q")} = ${v("I")}${v("t")} = 0.25 × 120 = ${res("30 C")}`]],
@@ -9409,7 +9417,7 @@ lesson({id:"e13",group:"r",num:13,lvl:"Review",name:"Electricity: review and exa
    {q:"In a circuit, 0.6 A enters a junction and splits into two branches of 20 Ω and 30 Ω in parallel. What is the current in the 30 Ω branch?",a:0.24,unit:"A",tol:0.02,why:"Same p.d. across both: currents in ratio 30:20 → 3:2 for 20 Ω:30 Ω. I₃₀ = 0.6 × 20/50 = 0.24 A."},
    {q:"A potential divider has a 9.0 V supply, R₁ = 6.8 kΩ on top and R₂ = 2.2 kΩ at the bottom. What is V_out across R₂?",a:2.2,unit:"V",tol:0.01,why:"2.2/9.0 × 9.0 = 2.2 V."},
    {q:"Why does the resistance of an NTC thermistor fall as it is heated?",opts:["The lattice vibrates less","More charge carriers are released, outweighing the extra vibrations","The thermistor expands","Electrons gain more charge"],a:1,why:"In a semiconductor, the number density of carriers increases sharply with temperature."}],"Exam-style questions"),
-  B.text("Where next",`<p>Revisit any lesson where you missed a question. Related practicals in the <b>A Level Physics Practical Lab</b>: <b>PAG 3.1</b> (resistivity), <b>PAG 3.3</b> (e.m.f. and internal resistance), <b>PAG 4.1</b> (potential divider), <b>PAG 4.3</b> (thermistor as a sensor) and <b>PAG 4.4</b> (potentiometer).</p>`)
+  B.text("Where next",`<p>Revisit any lesson where you missed a question. Related practicals in the <b>A Level Physics Practical Lab</b>: <b>PAG 3.1</b> (resistivity), <b>PAG 3.3</b> (e.m.f. and internal resistance), <a href="#pv">PAG 4.3 (potential divider)</a>, <a href="#ts">PAG 4.3</a> (thermistor as a sensor) and <a href="#po">potentiometer (circuits extension)</a>.</p>`)
  ]});
 })();
 
@@ -10172,7 +10180,7 @@ lesson({id:"wv12",group:"r",num:12,lvl:"Review",name:"Waves and quantum physics:
    {q:"Photons of energy 5.0 eV hit a metal with work function 3.2 eV. What is KE<sub>max</sub> in eV?",a:1.8,unit:"eV",tol:0.01,why:"5.0 − 3.2 = 1.8 eV."},
    {q:"A proton (1.67 × 10⁻²⁷ kg) moves at 1.0 × 10⁵ m s⁻¹. What is its de Broglie wavelength?",a:3.97e-12,unit:"m",tol:0.02,show:"4.0 × 10⁻¹²",why:"λ = 6.63 × 10⁻³⁴ / (1.67 × 10⁻²⁷ × 1.0 × 10⁵)."},
    {q:"Which phenomenon shows that light is a transverse wave?",opts:["Diffraction","Interference","Polarisation","Refraction"],a:2,why:"Only transverse waves can be polarised."}],"Exam-style questions"),
-  B.text("Where next",`<p>Revisit any lesson where you missed a question. Related practicals in the <b>A Level Physics Practical Lab</b>: <b>PAG 5.1</b> (diffraction grating), <b>PAG 5.2</b> (speed of sound by resonance), <b>PAG 5.3</b> (oscilloscope), <b>PAG 5.4</b> (polarisation), <b>PAG 6.1</b> (Planck constant from LEDs), <b>PAG 6.2</b> (Young's double slit) and <b>PAG 6.3</b> (photoelectric effect). Then try the timed mixed exam paper.</p>`)
+  B.text("Where next",`<p>Revisit any lesson where you missed a question. Related practicals in the <b>A Level Physics Practical Lab</b>: <b>PAG 5.1</b> (diffraction grating), <b>PAG 5.2</b> (speed of sound by resonance), <b>PAG 5.3</b> (oscilloscope), <a href="#ml">PAG 6.3 (polarisation)</a>, <b>PAG 6.1</b> (Planck constant from LEDs), <b>PAG 6.2</b> (Young's double slit) and <a href="#pe">photoelectric effect (quantum extension)</a>. Then try the timed mixed exam paper.</p>`)
  ]});
 })();
 </script>
@@ -10490,12 +10498,12 @@ const panel=`<div class="field"><div class="lbl">Heater power <b id="t5-Pl"></b>
 <p class="note" id="t5-msg">The water is already boiling. Do one run, then a second run at a different power.</p>`;
 
 lesson({id:"t5",group:"b",num:5,lvl:"5.1.3 · Lesson 5",name:"Specific latent heat",icon:"latent",
- eyebrow:"OCR A Level Physics A · 5.1.3 Thermal properties of materials · Lesson 5 · PAG 11.2",title:"Specific latent heat",
+ eyebrow:"OCR A Level Physics A · 5.1.3 Thermal properties of materials · Lesson 5 · Adapted thermal investigation",title:"Specific latent heat",
  intro:"During melting or boiling, energy goes in but the temperature does not change. The energy needed per kilogram to change state is the specific latent heat: of fusion for melting, of vaporisation for boiling.",
  outcomes:[["Define specific latent heat, L","5.1.3(d)"],["Select and use E = mL","5.1.3(e)"],["Describe an electrical experiment to determine the specific latent heat of fusion and of vaporisation","5.1.3(f)"]],
  blocks:[
   B.text("Definition",`<p>The <b>specific latent heat</b> L of a substance is the energy required to change the phase of unit mass of the substance without any change in temperature.</p>`+B.eq(`${v("E")} = ${v("m")}${v("L")}`,`unit of ${v("L")}: J kg⁻¹`)+`<ul><li><b>Specific latent heat of fusion</b>, L<sub>f</sub>: solid ↔ liquid. For water, 3.34 × 10⁵ J kg⁻¹.</li><li><b>Specific latent heat of vaporisation</b>, L<sub>v</sub>: liquid ↔ gas. For water, 2.26 × 10⁶ J kg⁻¹.</li></ul><p>L<sub>v</sub> is much larger than L<sub>f</sub>: boiling separates the molecules completely and the vapour must do work pushing back the atmosphere as it expands.</p>`),
-  B.text("Measuring L electrically",`<p><b>Vaporisation</b>: an immersion heater keeps water boiling in a beaker on a top-pan balance. Once it is boiling steadily, record the mass every minute. The mass lost Δm in time t is the water turned to steam: Pt = ΔmL.</p><p><b>Fusion</b>: crushed ice in a funnel with an immersion heater; collect and weigh the meltwater in a time t. A second, identical funnel <i>without</i> the heater (a control) shows how much melts because of the warm room; subtract it.</p><p>Some energy is always lost to the surroundings, so one run gives a value of L that is <b>too large</b>. Repeating at a second power and assuming the loss rate h is the same in both runs (same temperature) cancels it:</p>`+B.eq(`${v("P","1")}${v("t")} = Δ${v("m","1")}${v("L")} + ${v("h")}${v("t")}`,`${v("P","2")}${v("t")} = Δ${v("m","2")}${v("L")} + ${v("h")}${v("t")}`,`${v("L")} = ${fr("("+v("P","1")+" − "+v("P","2")+")"+v("t"),"Δ"+v("m","1")+" − Δ"+v("m","2"))}`)+`<p>Try it in the A Level Practical Lab: <b>PAG 11.2 Specific latent heat of vaporisation</b>.</p>`),
+  B.text("Measuring L electrically",`<p><b>Vaporisation</b>: an immersion heater keeps water boiling in a beaker on a top-pan balance. Once it is boiling steadily, record the mass every minute. The mass lost Δm in time t is the water turned to steam: Pt = ΔmL.</p><p><b>Fusion</b>: crushed ice in a funnel with an immersion heater; collect and weigh the meltwater in a time t. A second, identical funnel <i>without</i> the heater (a control) shows how much melts because of the warm room; subtract it.</p><p>Some energy is always lost to the surroundings, so one run gives a value of L that is <b>too large</b>. Repeating at a second power and assuming the loss rate h is the same in both runs (same temperature) cancels it:</p>`+B.eq(`${v("P","1")}${v("t")} = Δ${v("m","1")}${v("L")} + ${v("h")}${v("t")}`,`${v("P","2")}${v("t")} = Δ${v("m","2")}${v("L")} + ${v("h")}${v("t")}`,`${v("L")} = ${fr("("+v("P","1")+" − "+v("P","2")+")"+v("t"),"Δ"+v("m","1")+" − Δ"+v("m","2"))}`)+`<p>Try it in the A Level Practical Lab: <a href="#lv">specific latent heat of vaporisation (adapted investigation)</a>.</p>`),
   B.sim("t5-sim","Latent heat of vaporisation: two-power method",stage,panel,`<span>The room takes about ${LOSS} W from the beaker</span>`),
   B.example("From ice to water","How much energy is needed to turn 0.50 kg of ice at −10 °C into water at 0 °C? (c of ice = 2100 J kg⁻¹ K⁻¹, L<sub>f</sub> = 3.34 × 10⁵ J kg⁻¹)",[
    ["Warm the ice to 0 °C","",[`${v("E","1")} = ${v("m")}${v("c")}Δθ = 0.50 × 2100 × 10 = 1.05 × 10⁴ J`]],
@@ -10563,7 +10571,7 @@ lesson({id:"t6",group:"c",num:6,lvl:"5.1.4 · Lesson 6",name:"The gas laws and a
  outcomes:[["Use the amount of substance in moles, and the Avogadro constant N<sub>A</sub> = 6.02 × 10²³ mol⁻¹","5.1.4(a)"],["Use pV = constant (Boyle’s law), p/T = constant and V/T = constant","5.1.4(c)"],["Estimate absolute zero by extrapolation of a gas law graph; describe the experiments","5.1.4(c)(ii)"]],
  blocks:[
   B.text("The mole",`<p>The <b>mole</b> is the SI base unit of amount of substance. One mole contains <b>N<sub>A</sub> = 6.02 × 10²³</b> particles (the Avogadro constant). The number of particles N in n moles is</p>`+B.eq(`${v("N")} = ${v("n")}${v("N","A")}`,`${v("n")} = ${fr("mass","molar mass")}`)+`<p>For example, 32 g of oxygen gas (O₂, molar mass 32 g mol⁻¹) is 1.0 mol and contains 6.02 × 10²³ molecules.</p>`),
-  B.text("The gas laws",`<p>For a <b>fixed mass</b> of an ideal gas:</p>`+B.eq(`Boyle’s law: ${v("p")}${v("V")} = constant<small>at constant temperature</small>`,`pressure law: ${fr(v("p"),v("T"))} = constant<small>at constant volume</small>`,`Charles’s law: ${fr(v("V"),v("T"))} = constant<small>at constant pressure</small>`)+`<p>T must be in <b>kelvin</b>. A graph of p against V for Boyle’s law is a curve (p ∝ 1/V), so plot p against 1/V for a straight line through the origin.</p><p><b>Absolute zero</b>: if p (at constant V) or V (at constant p) is plotted against temperature in °C, the straight line extrapolates to zero at about −273 °C, whatever the gas. This is absolute zero, 0 K.</p><p>Try these in the A Level Practical Lab: <b>PAG 8.1 Estimating absolute zero</b>, <b>PAG 8.2 Boyle’s law</b> and <b>PAG 8.3 Charles’s law and absolute zero</b>.</p>`),
+  B.text("The gas laws",`<p>For a <b>fixed mass</b> of an ideal gas:</p>`+B.eq(`Boyle’s law: ${v("p")}${v("V")} = constant<small>at constant temperature</small>`,`pressure law: ${fr(v("p"),v("T"))} = constant<small>at constant volume</small>`,`Charles’s law: ${fr(v("V"),v("T"))} = constant<small>at constant pressure</small>`)+`<p>T must be in <b>kelvin</b>. A graph of p against V for Boyle’s law is a curve (p ∝ 1/V), so plot p against 1/V for a straight line through the origin.</p><p><b>Absolute zero</b>: if p (at constant V) or V (at constant p) is plotted against temperature in °C, the straight line extrapolates to zero at about −273 °C, whatever the gas. This is absolute zero, 0 K.</p><p>Try these in the A Level Practical Lab: <b>PAG 8.1 Estimating absolute zero</b>, <b>PAG 8.2 Boyle’s law</b> and <a href="#ch">Charles’s law and absolute zero (adapted investigation)</a>.</p>`),
   B.sim("t6-sim","Gas law investigations",stage,panel,`<span>${n} mol of an ideal gas</span>`),
   B.example("Heating a sealed can","A sealed can contains air at 100 kPa and 20 °C. It is heated to 150 °C. What is the new pressure, assuming the volume does not change?",[
    ["Use kelvin","",[`${v("T","1")} = 293 K, ${v("T","2")} = 423 K`]],
@@ -10799,7 +10807,7 @@ lesson({id:"t10",group:"r",num:10,lvl:"Review",name:"Thermal physics: review and
    {q:"The density of a gas is 0.18 kg m⁻³ at a pressure of 1.0 × 10⁵ Pa. What is the r.m.s. speed of its molecules?",a:1291,unit:"m s⁻¹",tol:0.01,why:"c<sub>rms</sub> = √(3p/ρ) = √(3 × 10⁵ / 0.18) = 1290 m s⁻¹."},
    {q:"Which quantity is the same for all ideal gases at the same temperature?",opts:["r.m.s. speed","Mean kinetic energy of a molecule","Density","Mean momentum of a molecule"],a:1,why:"½m⟨c²⟩ = 3/2 kT depends only on T."},
    {q:"During boiling, why does the temperature of water stay constant?",opts:["The energy is lost to the surroundings","The energy increases the potential energy of the molecules","The kinetic energy of the molecules decreases","Water has a high specific heat capacity"],a:1,why:"Energy breaks bonds (increasing potential energy), so mean kinetic energy, and temperature, stay constant."}],"Exam-style questions"),
-  B.text("Where next",`<p>Revisit any lesson where you missed a question. Related practicals in the <b>A Level Physics Practical Lab</b>: <b>PAG 8.1</b> (estimating absolute zero), <b>PAG 8.2</b> (Boyle’s law), <b>PAG 8.3</b> (Charles’s law) and <b>PAG 11.2</b> (specific latent heat of vaporisation).</p>`)
+  B.text("Where next",`<p>Revisit any lesson where you missed a question. Related practicals in the <b>A Level Physics Practical Lab</b>: <b>PAG 8.1</b> (estimating absolute zero), <b>PAG 8.2</b> (Boyle’s law), <a href="#ch">Charles’s law (adapted investigation)</a> and <a href="#lv">specific latent heat of vaporisation (adapted investigation)</a>.</p>`)
  ]});
 })();
 
@@ -14016,8 +14024,8 @@ EXAM.paper({id:"md10",num:10,mins:60,secA,secB,note:"Take e = 1.60 × 10⁻¹⁹
 LEARN.unit="papers";
 window.H556={
  topics:{
-  "1":{n:"1 Practical skills",go:"u-lab"},
-  "2":{n:"2 Foundations of physics"},
+  "1":{n:"1 Practical skills",go:"u-measurements"},
+  "2":{n:"2 Foundations of physics",go:"u-measurements"},
   "3.1":{n:"3.1 Motion",go:"u-motion"},
   "3.2":{n:"3.2 Forces in action",go:"u-forces"},
   "3.3":{n:"3.3 Work, energy and power",go:"u-emm"},
@@ -14559,6 +14567,7 @@ Object.assign(LAB.ICONS,{"u-papers":'<rect x="5" y="3" width="14" height="18" rx
 LEARN.unit=null;
 </script>
 
+<script src="measurements.js"></script>
 <script>
 LEARN.unit=null;
 Object.assign(LAB.ICONS,{
@@ -14578,6 +14587,10 @@ Object.assign(LAB.ICONS,{
 (()=>{
 const done=L=>L.filter(p=>LEARN.done.has(p.id)).length;
 const U=[
+ {key:"measurements",kind:"Modules 1–2 · Revision",title:"Measurements and uncertainties",sub:"Units, experimental skills and data analysis",icon:"u-measure",noun:"lessons",listLabel:"Measurements and uncertainties lessons",done,
+  desc:"SI units and prefixes; precision and accuracy; measurement and repeat uncertainties; combining uncertainties; graphs, gradients and worst acceptable lines; mixed exam practice.",
+  intro:"Build the measurement and mathematical skills used throughout the course. Complete each lesson’s check questions, then try the mixed exam practice.",
+  groups:[["measurements:f","Units and measurement"],["measurements:u","Uncertainties and graphs"],["measurements:r","Exam practice"]]},
  {key:"motion",kind:"Module 3.1 · Lessons",title:"Motion",sub:"Kinematics, linear motion, projectiles",icon:"u-motion",noun:"lessons",listLabel:"Motion lessons",done,
   desc:"Displacement, velocity and acceleration; graphs; the suvat equations; free fall and determining g; stopping distances; projectile motion.",
   intro:"Work through the lessons in order, or jump to any topic. A lesson is ticked off when you get every check question right.",
@@ -14642,6 +14655,7 @@ LAB.list.filter(p=>p.unit).forEach(p=>{ const sec=document.getElementById("lab-"
 })();
 
 </script>
+<script src="topic-search.js"></script>
 <script>
 /* Activity tracking (this device only) and the optional student progress report (PDF) */
 (()=>{
