@@ -3,6 +3,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
 <script src="revision-maths.js"></script>
+<script>window.ALP_SITE="alevel-physics";</script>
+<script src="lab-notebook.js"></script>
 <title>A Level Physics</title>
 <meta name="description" content="OCR A Level Physics A: interactive lessons, practicals, topic tests and full practice papers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -905,6 +907,7 @@ ${cfg.mid||""}
 ${cfg.work!==false?`<div class="card"><div class="card-h"><h3>${cfg.workTitle||"Worked calculation"}</h3><span class="muted" style="font-size:.85rem">${cfg.workSub||"Uses your own readings"}</span></div><div id="${cfg.id}-work"><p class="empty">${cfg.workEmpty||"Take some readings and the calculation will appear here."}</p></div></div>`:""}
 ${info(cfg.info)}`;
   $(".wrap").appendChild(s);
+  LabNotebook.attach(cfg,s);
   return s;
 }
 
@@ -1022,6 +1025,7 @@ return {ICONS,$,$$,css,store,fmt,fx,sci,RUNCOL,gauss,clamp,nid,linfit,worst,nice
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const G=9.81, K=400, TRAPY=470, DELAY=0.011+Math.random()*0.004;
 const st={h:0.60,y:0,falling:false,t:0,data:[]};
+LabNotebook.observe("g",st);
 const ballY0=()=>TRAPY-st.h*K-9;
 
 const stage=`<svg id="g-svg" viewBox="0 0 900 520" role="img" aria-label="Electromagnet holding a steel ball above a trapdoor switch, connected to an electronic timer">
@@ -1162,6 +1166,7 @@ register({id:"g",group:"ocr",num:11,pag:"1.1",name:"Acceleration due to gravity"
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const g=9.81, L0=3.000, E=1.25e11, SY=2.7e8, DT=0.193e-3+(Math.random()-.5)*0.004e-3, A=Math.PI*DT*DT/4;
 const st={m:0.1,mmax:0.1,dia:[],data:[],R0:120+Math.round(Math.random()*40)/2};
+LabNotebook.observe("ym",st);
 function extMM(m){ const s=m*g/A; let e=s/E; if(s>SY) e+=(s-SY)/E*9; const smax=st.mmax*g/A; const perm=smax>SY?(smax-SY)/E*9:0; if(s<smax&&smax>SY) e=s/E+perm; return e*L0*1000; }
 const BASE=0.1*g/A/E*L0*1000; const reading=()=>st.R0+extMM(st.m)-BASE;
 const FX=700, PXMM=0.8, magCx=760, magCy=110;
@@ -1293,6 +1298,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,svgPt,clamp}
 const WIRES={con:{name:"Constantan, SWG 28",rho:4.9e-7,d:0.376,col:"#c9b39a",acc:"4.9 × 10⁻⁷"},nic:{name:"Nichrome, SWG 30",rho:1.10e-6,d:0.315,col:"#a9aeb3",acc:"1.1 × 10⁻⁶"},man:{name:"Manganin, SWG 26",rho:4.8e-7,d:0.457,col:"#c7a77f",acc:"4.8 × 10⁻⁷"}};
 Object.values(WIRES).forEach(w=>{ w.dt=w.d*(1+(Math.random()-.5)*.02); });
 const st={w:"con",L:50,closed:false,dia:[],data:[],E:1.55,rint:0.35};
+LabNotebook.observe("rh",st);
 const X0=70, PX=7.6, WY=386, xOf=L=>X0+L*PX;
 const W_=()=>WIRES[st.w], Rw=()=>W_().rho*(st.L/100)/(Math.PI*(W_().dt/1000)**2/4);
 
@@ -1411,6 +1417,7 @@ const {$,C,W,fmt,fx,sci,gauss,plot,rows,build,register,clamp,setThermo,setPsu}=L
 const VIN=5.00, R25=10000*(1+(Math.random()-.5)*.04), B=3950;
 const RT=T=>R25*Math.exp(B*(1/(T+273.15)-1/298.15));
 const st={Rf:10000,T:4,Tth:4,heat:false,speed:4,data:[],view:"v"};
+LabNotebook.observe("ts",st);
 const magCx=110, magCy=118;
 
 const stage=`<svg id="ts-svg" viewBox="0 0 900 470" role="img" aria-label="A thermistor probe and thermometer in a beaker of water on a hot plate, connected in a potential divider with a fixed resistor and voltmeter">
@@ -1545,6 +1552,7 @@ const {$,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const LASERS={red:{name:"Red laser",nm:650,c:[255,40,30]},green:{name:"Green laser",nm:532,c:[60,255,90]},violet:{name:"Violet laser",nm:405,c:[150,80,255]}};
 Object.values(LASERS).forEach(l=>l.true=l.nm*(1+(Math.random()-.5)*.012));
 const st={laser:"red",N:300,D:1.20,cA:-30,cB:30,n:1,data:[]};
+LabNotebook.observe("dg",st);
 const VW=900, VH=520, SCR0=290, PXCM=3.6, SX=450;
 const angle=n=>{ const s=n*LASERS[st.laser].true*1e-9*st.N*1000; return Math.abs(s)<1?Math.asin(s):null; };
 
@@ -1681,6 +1689,7 @@ const LEDS={red:{name:"Red",nm:627,col:[255,40,30],dome:"#d42a22"},orange:{name:
 Object.values(LEDS).forEach(l=>{ l.V0=h*cl/(e*l.nm*1e-9)-0.13+gauss()*0.02; });
 const RP=330;
 const st={led:"red",Vs:1.2,data:[]};
+LabNotebook.observe("pl",st);
 const ledI=V=>{ const L=LEDS[st.led]; return 5e-5*(Math.exp((V-L.V0)/0.045)-1)+(V>0?V*1e-7:0); };
 function solve(){ const Vs=st.Vs; let lo=0, hi=Vs; for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(m+Math.max(0,ledI(m))*RP>Vs) hi=m; else lo=m; } const V=(lo+hi)/2; return {V,I:Math.max(0,ledI(V))}; }
 const glow=I=>clamp(Math.log10(Math.max(I,1e-9)/2e-5)/3.2,0,1);
@@ -1798,6 +1807,7 @@ const SRC={none:{name:"No source (background)"},am:{name:"Americium-241 (α)",co
 const ABS={none:{name:"None",t:[0]},paper:{name:"Paper",t:[0.1,0.2,0.3]},al:{name:"Aluminium",t:[0.5,1,1.5,2,3,4,5]},pb:{name:"Lead",t:[2,4,6,8,10,15,20,25]}};
 const BG=0.42;
 const st={src:"sr",abs:"none",t:0,d:3,period:60,counting:false,count:0,el:0,speed:10,data:[],ln:false};
+LabNotebook.observe("rd",st);
 function rate(){ let r=0; const d=st.d, t=st.t, a=st.abs, geo=Math.pow(3.5/(d+0.5),2);
   if(st.src==="am"){ const range=clamp((4.2-d)/2.2,0,1); r=70*range*geo*(a==="none"?1:0)+0.6*geo*(a==="pb"?Math.exp(-3*t):1); }
   if(st.src==="sr"){ const mu={none:0,paper:0.4,al:1.45,pb:5}[a]; r=95*geo*Math.exp(-mu*t)+(a!=="none"?0.08*geo:0); }
@@ -1935,6 +1945,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setThe
 const TR=293.15, VT=0.03+Math.random()*0.02, NR=101.3*(1+VT)/TR;   /* p(1/T + VT/TR) = NR, sealed at 20 °C, 101.3 kPa */
 const pOf=T=>NR/(1/(T+273.15)+VT/TR);
 const st={T:2,Tg:2,heat:false,speed:4,data:[]};
+LabNotebook.observe("az",st);
 const GX=740, GY=128, GR=78, magCx=110, magCy=110;
 
 const stage=`<svg id="az-svg" viewBox="0 0 900 470" role="img" aria-label="A flask of air in a water bath on a hotplate, connected by tubing to a Bourdon pressure gauge, with a thermometer">
@@ -2056,6 +2067,7 @@ const CAPS={1000:1000,2200:2200,4700:4700}, RES=[22000,47000,100000];
 const CT={}; Object.keys(CAPS).forEach(k=>CT[k]=k*1e-6*(1+(Math.random()-.35)*.25));
 const RV=10e6, E=6.00;
 const st={C:2200,R:47000,mode:"charge",V:0,t:0,run:false,interval:10,dur:180,speed:5,next:0,data:[],ln:true};
+LabNotebook.observe("cp",st);
 const tau=()=>{ const Rp=st.R*RV/(st.R+RV); return Rp*CT[st.C]; };
 
 const stage=`<svg id="cp-svg" viewBox="0 0 900 470" role="img" aria-label="A capacitor and resistor on a board with a two-way switch, a power supply, a voltmeter across the capacitor and a stopwatch">
@@ -2176,6 +2188,7 @@ register({id:"cp",group:"ocr",num:91,pag:"9.1",name:"Capacitor discharge",icon:"
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setStopwatch}=LAB;
 const K=25.4*(1+(Math.random()-.5)*.04), MS=0.030, G=9.81, PX=560, SX=360;
 const st={m:0.2,osc:false,t0:0,A:0,sw:false,swT0:0,swT:0,count:0,lastY:0,auto:false,data:[]};
+LabNotebook.observe("sh",st);
 const omega=()=>Math.sqrt(K/(st.m+MS/3)), Tn=()=>2*Math.PI/omega();
 const eqExt=()=>st.m*G/K;
 
@@ -2292,6 +2305,7 @@ register({id:"sh",group:"ocr",num:101,pag:"10.1",name:"Mass–spring oscillator"
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setPsu}=LAB;
 const B=0.065*(1+(Math.random()-.5)*.12), L=0.050, g=9.81, MAG=152.37+Math.random()*3;
 const st={I:0,on:false,rev:false,tare:0,tared:false,data:[]};
+LabNotebook.observe("bf",st);
 const dm=()=>(st.on?(st.rev?-1:1)*B*st.I*L/g*1000:0);   /* grams */
 
 const stage=`<svg id="bf-svg" viewBox="0 0 900 470" role="img" aria-label="A magnet cradle on a top-pan balance with a copper rod passing between the poles, connected to a power supply and ammeter">
@@ -2402,6 +2416,7 @@ register({id:"bf",group:"ocr",num:113,pag:"11.3",name:"Magnetic flux density",ic
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setStopwatch}=LAB;
 const TH=70.2, LAM=Math.log(2)/TH, BG=0.45, A0MAX=34+Math.random()*8;
 const st={phase:"idle",shake:0,sep:0,t:0,run:false,interval:10,dur:300,speed:2,data:[],bgData:[],bgRun:false,bgT:0,bgCount:0,cur:0,next:0,lastShake:-1e9,simClock:0,A0:0,ln:true};
+LabNotebook.observe("pa",st);
 const poisson=l=>{ if(l>30) return Math.max(0,Math.round(l+Math.sqrt(l)*gauss())); let L=Math.exp(-l),k=0,p=1; do{k++;p*=Math.random();}while(p>L); return k-1; };
 const rate=()=>(st.phase==="count"||st.phase==="separate"?st.A0*Math.exp(-LAM*st.t):0)+BG;
 
@@ -2547,6 +2562,7 @@ const CELLS={newc:{name:"New 1.5 V cell",E:1.58,r:0.42},old:{name:"Used 1.5 V ce
 Object.values(CELLS).forEach(c=>{ c.E*=1+(Math.random()-.5)*.01; c.r*=1+(Math.random()-.5)*.15; });
 const RMAX=22, RL=0.12;
 const st={cell:"newc",R:8,closed:false,drop:0,data:[],view:"vi"};
+LabNotebook.observe("em",st);
 const X0=384, X1=616, xOf=R=>X0+(R/RMAX)*(X1-X0);
 const AM=C.mmSock(420,140), VM=C.mmSock(650,140);
 
@@ -2668,6 +2684,7 @@ register({id:"em",group:"ocr",num:33,pag:"3.3",name:"E.m.f. and internal resista
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setStopwatch}=LAB;
 const G=9.81, PX=380, PXX=380, PY=52, N=20;
 const st={L:0.60,osc:false,t0:0,th0:0,sw:false,swT0:0,swT:0,count:0,auto:false,armed:false,data:[]};
+LabNotebook.observe("pd",st);
 const omega=()=>Math.sqrt(G/st.L), Tn=()=>2*Math.PI/omega()*(1+st.th0*st.th0/16);
 
 const stage=`<svg id="pd-svg" viewBox="0 0 900 520" role="img" aria-label="A simple pendulum hanging from a split cork in a clamp, with a protractor, a fiducial marker below the bob and a stopwatch">
@@ -2781,6 +2798,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const V=343.2, R=1.6, E=0.6*R;   /* cm */
 const FORKS=[256,288,320,341.3,384,426.7,480,512];
 const st={f:384,l:15,strike:-99,sound:true,data:[]};
+LabNotebook.observe("sn",st);
 const K=6, WY=330, TX=420;
 const lam=()=>V/st.f*100;
 function response(l){ let r=0; for(let n=1;n<=3;n++){ const L0=(2*n-1)*lam()/4-E, w=0.45+0.12*n; r+=1/(1+((l-L0)/w)**2); } return Math.min(1,r); }
@@ -2903,6 +2921,7 @@ const RS=7850, RF=1260, ETA=1.41*(1+(Math.random()-.5)*.06), g=9.81;
 const BALLS=[2.0,3.0,4.0,5.0,6.0];   /* diameters / mm */
 const BANDS=[20,30,40,50,60,70,80,90];  /* cm below surface */
 const st={d:4.0,run:null,speed:5,data:{},view:"dt"};
+LabNotebook.observe("tv",st);
 const SY=46, K=4.1, TX=420;
 const vt=dmm=>{ const r=dmm/2000; return 2*r*r*g*(RS-RF)/(9*ETA); };
 
@@ -3016,6 +3035,7 @@ register({id:"tv",group:"ocr",num:12,pag:"1.2",name:"Terminal velocity",icon:"g"
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const TR=293.15, K0=101*45.5*(1+(Math.random()-.5)*.02)/TR;   /* p(kPa)·V(cm³)/T */
 const st={p:101,T:TR,data:[],view:"inv",pumpAnim:0};
+LabNotebook.observe("bl",st);
 const V=()=>K0*st.T/st.p;
 const VY0=78, PXV=6.2, TX=432, GX=640, GY=150, GR=72, magCx=120, magCy=130;
 const yOfV=v=>VY0+v*PXV;
@@ -3136,6 +3156,7 @@ const LASERS={red:{name:"Red",nm:650,c:[255,40,30]},green:{name:"Green",nm:532,c
 Object.values(LASERS).forEach(l=>l.true=l.nm*(1+(Math.random()-.5)*.012));
 const SLITS=[0.20,0.25,0.50], B=0.05;
 const st={laser:"red",a:0.25,D:2.00,cA:-12,cB:12,data:[]};
+LabNotebook.observe("ys",st);
 const VW=900, VH=520, SCR0=270, PXMM=17, SX=450;
 
 const stage=`<canvas id="ys-canvas" aria-label="Laser, double slit and screen from above, with a front view of the interference fringes"></canvas>`;
@@ -3245,6 +3266,7 @@ register({id:"ys",group:"ocr",num:62,pag:"6.2",name:"Young's double slit",icon:"
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setPsu}=LAB;
 const VIN=6.00, RS=0.25, R1=100*(1+(Math.random()-.5)*.04);
 const st={dials:[0,1,5,0],on:true,data:[],view:"inv"};
+LabNotebook.observe("pv",st);
 const R2=()=>st.dials[0]*1000+st.dials[1]*100+st.dials[2]*10+st.dials[3];
 const vout=()=>{ const r=R2(); if(r<=0) return 0; return VIN*r/(R1+r+RS); };
 
@@ -3349,6 +3371,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const K1=25.0*(1+(Math.random()-.5)*.04), K2=K1*(1+(Math.random()-.5)*.03), G=9.8;
 const ARR={single:{name:"Single spring",k:K1,R0:10.0},series:{name:"Two in series",k:K1*K2/(K1+K2),R0:17.0},parallel:{name:"Two in parallel",k:K1+K2,R0:11.0}};
 const st={arr:"single",m:0,y:0,y0:0,target:0,t:9,data:[]};
+LabNotebook.observe("ss",st);
 const RY0=60, PX=5.6, RULEX=284, CX=380;
 const yOf=cm=>RY0+cm*PX;
 const reading=m=>ARR[st.arr].R0+(m/1000*G)/ARR[st.arr].k*100;
@@ -3451,6 +3474,7 @@ register({id:"ss",group:"ocr",num:22,pag:"2.2",name:"Springs in series and paral
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const E0=8.85e-12, SIDE=0.200, A=SIDE*SIDE, CS=24e-12*(1+(Math.random()-.5)*.2), T=1.00e-3, ER=2.3;
 const st={n:3,diel:"air",data:[]};
+LabNotebook.observe("pp",st);
 const d=()=>st.n*T;
 const cap=()=>E0*(st.diel==="air"?1:ER)*A/d()+CS;
 
@@ -3544,6 +3568,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setPsu
 const TURNS=[120,240,360,480,600,1200];
 const KC=0.93+Math.random()*.03, KO=0.48+Math.random()*.06;
 const st={Np:240,Ns:480,Vp:4,closed:true,on:true,data:[]};
+LabNotebook.observe("tf",st);
 const vs=()=>st.on?st.Vp*st.Ns/st.Np*(st.closed?KC:KO):0;
 
 const stage=`<svg id="tf-svg" viewBox="0 0 900 470" role="img" aria-label="Two coils on a laminated iron C-core connected to an a.c. supply, with a.c. voltmeters across the primary and secondary coils">
@@ -3648,6 +3673,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,plot,rows,build,register,clamp}=LAB;
 const M=0.200, K=19.6+Math.random()*0.8, W0=Math.sqrt(K/M), F0=W0/2/Math.PI, A0=3.0; /* driver amplitude mm */
 const DAMP={none:{g:0.9,lbl:"No card",col:0},small:{g:1.8,lbl:"Small card",col:1},large:{g:3.6,lbl:"Large card",col:2}};
 const st={f:1.00,damp:"none",x:0,v:0,t:0,phase:0,data:[],peak:[],env:0,envPrev:0,stable:0};
+LabNotebook.observe("fo",st);
 const PX=2.2, EQ=262, SX=372;   /* px per mm, equilibrium y of mass top, spring axis x */
 
 const springPath=(x,y1,y2,n=16,w=13)=>{ let d=`M${x} ${y1} v6`; const L=y2-y1-12, s=L/n; for(let i=0;i<n;i++) d+=` L${x+(i%2?-w:w)} ${(y1+6+s*(i+.5)).toFixed(1)}`; return d+` L${x} ${y2-6} V${y2}`; };
@@ -3781,6 +3807,7 @@ const ARR=[
  {id:"ppp",lbl:"All three in parallel",s:[["A","B","C"]]},{id:"AsBpC",lbl:"A in series with (B ∥ C)",s:[["A"],["B","C"]]},{id:"ApBsC",lbl:"(A ∥ B) in series with C",s:[["A","B"],["C"]]}];
 const comb=(s,val)=>1/s.reduce((t,stg)=>t+1/stg.reduce((u,k)=>u+val[k],0),0);
 const st={arr:ARR[0],read:null,t:0,data:[]};
+LabNotebook.observe("cc",st);
 const BX=40,BY=246,BW=580,BH=180;
 
 const stage=`<svg id="cc-svg" viewBox="0 0 900 470" role="img" aria-label="Three electrolytic capacitors on 4 mm carriers on a component board, connected by leads to a digital multimeter on its capacitance range">
@@ -3899,6 +3926,7 @@ register({id:"cc",group:"ocr",num:92,pag:"9.2",name:"Capacitors in series and pa
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const CAL=1+(Math.random()*2-1)*0.04, TB=[0.1,0.2,0.5,1,2,5,10], VD=[0.5,1,2,5];
 const st={fs:250,amp:0.45,tb:3,vd:2,data:[],ypos:0};
+LabNotebook.observe("os",st);
 const V0=()=>0.4+st.amp*7.6, F=()=>st.fs*CAL;
 const SX=368, SY=92, D=22;   /* screen origin and px per division */
 const fset=v=>{ const f=20*Math.pow(10,v/50); const p=Math.pow(10,Math.floor(Math.log10(f))-1); return Math.round(f/p)*p; };
@@ -4023,6 +4051,7 @@ register({id:"os",group:"ocr",num:53,pag:"5.3",name:"Oscilloscope: frequency and
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const I0=300+Math.random()*60, BG={on:7.5,off:0.6}, OFF0=(Math.random()*2-1)*3; /* small misalignment of polariser in degrees */
 const st={th:0,lights:"on",data:[],view:"cos"};
+LabNotebook.observe("ml",st);
 const lux=()=>I0*Math.cos((st.th-OFF0)*Math.PI/180)**2+BG[st.lights];
 const BY=246, PX=290, AX=480, LX=700;
 
@@ -4143,6 +4172,7 @@ register({id:"ml",group:"ocr",num:64,pag:"6.3",name:"Polarisation: Malus's law",
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register}=LAB;
 const TX=150, TY=96, TW=600, TH=300, CELL=24, COLS=Math.floor(TW/CELL), ROWS=Math.floor(TH/CELL);
 const st={sides:6,N0:100,dice:[],runs:[],run:null,busy:false,view:"ln"};
+LabNotebook.observe("dd",st);
 const DCOL={6:"#f3f1ea",10:"#2e7dd1",12:"#d8452e"};
 
 const stage=`<svg id="dd-svg" viewBox="0 0 900 470" role="img" aria-label="A wooden tray seen from above containing dice; dice showing a six are removed after each throw">
@@ -4253,6 +4283,7 @@ register({id:"dd",group:"ocr",num:71,pag:"7.1",name:"Decay modelled with dice",i
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setThermo}=LAB;
 const L0=8.6+Math.random()*0.8;            /* cm of air at 0 °C */
 const st={Tb:20,Ta:20,heat:false,data:[],stir:0};
+LabNotebook.observe("ch",st);
 const L=()=>L0*(st.Ta+273.15)/273.15;
 const Y0=384, PXC=16, RX=372, TUBE=405, WY=140, MAGX=150, MAGY=196, MZ=7;
 
@@ -4364,6 +4395,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,plot,rows,build,register,clamp,setPsu,setSt
 const LV=2.26e6, R=2.88+Math.random()*0.08, LOSS=5.5+Math.random()*1.5, BEAKER=104.62, CW=4180;
 const VOLTS=[8,10,12];
 const st={vi:2,on:false,T:88,mw:210+Math.random()*10,speed:10,sw:0,swOn:false,runs:[],run:null};
+LabNotebook.observe("lv",st);
 const P=()=>st.on?VOLTS[st.vi]**2/R:0, I=()=>st.on?VOLTS[st.vi]/R:0;
 const BX=340, BY=362, PANX=BX+90, PANY=BY+12;
 
@@ -4487,6 +4519,7 @@ register({id:"lv",group:"ocr",num:112,name:"Specific latent heat of vaporisation
 const {$,C,W,fmt,fx,sci,gauss,linfit,plot,rows,build,register,clamp}=LAB;
 const TX0=50, PXM=390, TY=330, CARD=0.100, TL=0.20, FR=0.025, E0=0.11;
 const st={mode:"stick",kA:0,kB:0,push:0.6,A:{x:0.15,v:0},B:{x:1.0,v:0},run:"ready",g1:null,g2:null,blk:{},stuck:false,data:[],t:0};
+LabNotebook.observe("mo",st);
 const mA=()=>0.50+st.kA*0.50, mB=()=>0.50+st.kB*0.50;
 const G=()=>st.mode==="stick"?[0.62,1.48]:[0.55,1.45];
 const X=m=>TX0+m*PXM;
@@ -4631,6 +4664,7 @@ register({id:"mo",group:"alevel",num:1,name:"Conservation of momentum",icon:"mom
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const LAM=2.80+Math.random()*0.10, PXC=14, RFX=830, DMAX=40, DMIN=2.0, TXD=45;
 const st={d:12.0,show:false,data:[]};
+LabNotebook.observe("mw",st);
 const X=d=>RFX-d*PXC;
 const sig=d=>{ const k=2*Math.PI/LAM, r=0.86*Math.exp(-d/90), a=1/(1+(TXD-d)/40); return 100*a*a*(1+r*r-2*r*Math.cos(2*k*d))/((1+r)**2)*1.35; };
 
@@ -4735,6 +4769,7 @@ register({id:"mw",group:"alevel",num:2,name:"Stationary microwaves",icon:"micro"
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const NT=5000, DIA=0.0120, AREA=Math.PI*(DIA/2)**2, B0=(1.40+(Math.random()*2-1)*0.08)*1e-3, PICK=0.0015;
 const st={mode:"ang",th:0,f:200,data:[]};
+LabNotebook.observe("sc",st);
 const Vrms=()=>NT*B0*AREA*2*Math.PI*st.f*Math.abs(Math.cos(st.th*Math.PI/180))/Math.SQRT2+PICK;
 const AXY=250, SX0=120, SX1=500, SR=56, CX=572;
 
@@ -4850,6 +4885,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const BG=0.42+Math.random()*0.12, K=2600+Math.random()*700, E=0.6+Math.random()*0.5; /* counts/s, cm², hidden offset cm */
 const PXC=13, X0=118, SY=286;          /* rule zero at the front of the source holder */
 const st={d:10.0,src:true,T:60,counting:false,shown:0,elapsed:0,N:null,bg:[],data:[]};
+LabNotebook.observe("iq",st);
 const rate=()=>(st.src?K/(st.d+E)**2:0)+BG;
 const X=d=>X0+d*PXC;
 function poisson(m){ if(m>500) return Math.max(0,Math.round(m+Math.sqrt(m)*gauss())); let L=Math.exp(-m),k=0,p=1; do{ k++; p*=Math.random(); }while(p>L); return k-1; }
@@ -4968,6 +5004,7 @@ const ED=2.04, RD=0.05, RW=4.20, KW=ED*RW/(RW+RD)/100;            /* V per cm al
 const ET=1.46+Math.random()*0.06, RT=0.6+Math.random()*1.2, ES=1.0186, RS=500, RG=40;
 const RVALS=[Infinity,20,10,5,3,2,1];
 const st={x:50.0,cell:"test",R:Infinity,prot:true,data:[],ig:0};
+LabNotebook.observe("po",st);
 const X0=90, X1=810, WY=318, PX=(X1-X0)/100;
 const X=l=>X0+l*PX;
 function thev(){ if(st.cell==="std") return {V:ES,R:RS}; const R=st.R; return R===Infinity?{V:ET,R:RT}:{V:ET*R/(R+RT),R:RT*R/(R+RT)}; }
@@ -5094,6 +5131,7 @@ const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp,setPsu
 const H=6.626e-34, EC=1.602e-19, CL=2.998e8, PHI=1.88+Math.random()*0.16, IA=0.0006;
 const LINES=[{nm:365,lbl:"365 nm (UV)",col:"#8b5cf6",rel:.9},{nm:405,lbl:"405 nm violet",col:"#8a2be2",rel:.75},{nm:436,lbl:"436 nm blue",col:"#3b5bff",rel:1},{nm:546,lbl:"546 nm green",col:"#2fbf55",rel:.85},{nm:577,lbl:"577 nm yellow",col:"#f2c418",rel:.6}];
 const st={li:2,ap:0.7,V:0,data:[],view:"vs"};
+LabNotebook.observe("pe",st);
 const fOf=nm=>CL/(nm*1e-9), Vs=nm=>H*fOf(nm)/EC-PHI;
 const I0=()=>40*LINES[st.li].rel*st.ap;
 function cur(V,li=st.li){ const vs=Vs(LINES[li].nm), i0=40*LINES[li].rel*st.ap; const main=V<vs?i0*(1-V/vs)**2:0; return main-IA*i0; }
@@ -5209,6 +5247,7 @@ register({id:"pe",group:"ocr",num:63,name:"Photoelectric effect",lvl:"Quantum ex
 const {$,C,W,fmt,fx,sci,gauss,linfit,worst,plot,rows,build,register,clamp}=LAB;
 const TC=19+Math.random()*3, VS=331.3*Math.sqrt(1+TC/273.15), PH0=0.25+Math.random()*0.3;
 const st={f:2000,x:20.0,xy:false,data:[]};
+LabNotebook.observe("ph",st);
 const lam=()=>VS/st.f*100;                         /* cm */
 const dphi=()=>2*Math.PI*st.x/lam()+PH0;
 const RX0=196, PXC=6, SX=592, SY=68, D=22;
@@ -5349,6 +5388,7 @@ const PJ=(()=>{
 
   const cv=$("#pj-canvas"), c=cv.getContext("2d");
   let W=900,H=500, hist=[], fl=null, view=null;
+  const recorded={runs:[]}; LabNotebook.observe("projectile",recorded); hist=recorded.runs.slice(-4).map(s=>({s}));
   // seeded random for stable scenery
   let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647; return (seed-1)/2147483646;};
   const BLADES=Array.from({length:260},()=>[rnd(),rnd()]);
@@ -5683,7 +5723,7 @@ const PJ=(()=>{
     const dt=Math.min(.05,(now-fl.last)/1000); fl.last=now; fl.real+=dt; fl.t+=dt*p.speed;
     if(fl.t>=fl.s.tF){ fl.t=fl.s.tF; fl.done=true; }
     readouts(fl.s,fl.t); draw();
-    if(fl.done){ $("#pj-fire").disabled=false; $("#pj-fire").textContent="Fire again"; $("#pj-status").textContent=`Landed after ${fmt(fl.s.tF)} s, ${fmt(fl.s.R)} m from the cliff edge.`.replace(" from the cliff edge",fl.s.mode==="ground"?" from the launch point":" from the cliff edge"); veil(); checkPred(fl.s); return; }
+    if(fl.done){ recorded.runs.push(fl.s); LabNotebook.flush(); $("#pj-fire").disabled=false; $("#pj-fire").textContent="Fire again"; $("#pj-status").textContent=`Landed after ${fmt(fl.s.tF)} s, ${fmt(fl.s.R)} m from the cliff edge.`.replace(" from the cliff edge",fl.s.mode==="ground"?" from the launch point":" from the cliff edge"); veil(); checkPred(fl.s); return; }
     requestAnimationFrame(tick);
   }
   function changed(){
@@ -5721,7 +5761,7 @@ const PJ=(()=>{
   $("#pj-keep").addEventListener("change",e=>{p.keep=e.target.checked;});
   $("#pj-predict").addEventListener("change",e=>{p.predict=e.target.checked; veil(); draw();});
   $("#pj-fire").addEventListener("click",fire);
-  $("#pj-clear").addEventListener("click",()=>{hist=[]; if(fl&&fl.done){fl=null; $("#pj-fire").textContent="Fire"; readouts(solve(),0);} computeView(); draw();});
+  $("#pj-clear").addEventListener("click",()=>{recorded.runs=[]; LabNotebook.flush(); hist=[]; if(fl&&fl.done){fl=null; $("#pj-fire").textContent="Fire"; readouts(solve(),0);} computeView(); draw();});
   $("#pj-presets").addEventListener("click",e=>{const b=e.target.closest(".preset"); if(!b) return; const v=PRESETS[+b.dataset.i].v; Object.assign(p,v); clampTheta(); syncUI(); changed(); cv.scrollIntoView({behavior:"smooth",block:"center"});});
   if(window.ResizeObserver) new ResizeObserver(()=>resize()).observe(cv.parentElement); else window.addEventListener("resize",resize);
 
@@ -14997,6 +15037,7 @@ function stats(d){ d=d||{}; const done=new Set((d["learn-motion-done"]||[]).filt
   Object.entries(cs).forEach(([k,v])=>{ const lid=k.split(":")[0]; const u=unitOf(lid); if(v==="ok"){ R.cok++; if(u) R.unit[u.key].cok++; } });
   Object.values(EXAM.PARTS).forEach(p=>{ const v=partScore(p,ex[p.id]); if(v==null) return; const lid=partLesson[p.id], u=unitOf(lid);
     if(PIDS.has(lid)){ const pp=R.paper[lid]=R.paper[lid]||{g:0,m:0}; pp.g+=v; pp.m+=p.m; } else { R.em+=v; R.emk+=p.m; if(u){ R.unit[u.key].em+=v; R.unit[u.key].emk+=p.m; } } });
+  R.labs=LabNotebook.summary(d);
   return R; }
 const pc=(a,b)=>b?Math.round(a/b*100):null;
 const pcell=(a,b)=>{ const p=pc(a,b); return p==null?`<span class="muted">–</span>`:`<span class="td-pc ${p<50?"lo":p<70?"mid":"hi"}">${p} %</span>`; };
@@ -15020,8 +15061,10 @@ function renderDash(){ const c=classes.find(x=>x.id===cur);
 function detail(id){ sel=id; const s=students.find(x=>x.id===id), p=prog[id]||{st:stats({})}, S=p.st;
   const ur=units.map(u=>{ const x=S.unit[u.key]; return `<tr><td>${esc(x.title)}</td><td class="num">${x.done} / ${x.n}</td><td class="num">${pcell(x.cok,x.cq)}</td><td class="num">${pcell(x.em,x.emk)}</td></tr>`; }).join("");
   const pr=PAPERS.map(x=>{ const q=S.paper[x.id]; return `<tr><td>${esc(x.set?x.set+" · ":"")}${esc(x.name)}</td><td class="num">${q?`${q.g} / ${q.m}`:"–"}</td><td class="num">${q?pcell(q.g,q.m):"<span class=\"muted\">not started</span>"}</td></tr>`; }).join("");
+  const labrows=LAB.list.filter(p=>!p.unit&&!p.group?.startsWith("papers:")).map(p=>{const q=S.labs.reviews.find(r=>r.id===p.id);return `<tr><td>${esc(p.name)}</td><td>${q?.complete?"Complete":q?"Started":"Not started"}</td><td>${q?.score==null?"–":q.score+" / 2"}</td><td>${esc(q?.reflection||"")}</td></tr>`;}).join("");
   const opts=classes.filter(c=>c.id!==cur).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
   $("#td-d").innerHTML=`<div class="lcard"><h3>${esc(s.display_name||s.username)} <span class="muted" style="font-weight:400;font-size:.95rem">${esc(s.username)} · ${S.days} day${S.days===1?"":"s"} active · ${hm(S.time)}</span></h3>
+   <h4>Practical reviews · ${S.labs.complete} complete</h4><div class="tbl-wrap"><table class="tbl-mini"><thead><tr><th>Practical</th><th>Review</th><th>Skills check</th><th>Conclusion and evaluation (student written)</th></tr></thead><tbody>${labrows}</tbody></table></div>
    <div class="td-two"><div class="tbl-wrap"><table class="tbl-mini"><tr><th>Unit</th><th>Lessons</th><th>Checks</th><th>Exam Qs</th></tr>${ur}</table></div><div class="tbl-wrap"><table class="tbl-mini"><tr><th>Full paper</th><th>Marks</th><th>Score</th></tr>${pr}</table></div></div>
    <div class="td-actions" style="margin-top:14px"><button class="btn" id="td-pw">Reset password</button>${opts?`<select id="td-mv" aria-label="Move to class"><option value="">Move to class…</option>${opts}</select>`:""}<button class="btn" id="td-out">Remove from class</button><button class="btn" id="td-rm">Delete account</button></div></div>`;
   $("#td-d").scrollIntoView({behavior:"smooth",block:"nearest"}); }
