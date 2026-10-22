@@ -1,6 +1,6 @@
 # Shared assignments and marking
 
-This is the maintained backend and client source for all ten Prodigy revision courses. The source lives in the ALevelPhysics repository; `scripts/integrate.py` builds and copies the three small browser assets into every course. Existing accounts, class memberships, progress and deterministic checkers remain in place.
+This is the maintained backend and client source for all eleven Prodigy revision courses. The source lives in the ALevelPhysics repository; `scripts/integrate.py` builds and copies the three small browser assets into every course. Existing accounts, class memberships, progress and deterministic checkers remain in place.
 
 ## Teacher and student workflow
 
@@ -43,7 +43,7 @@ The CLI equivalent, after authenticating to the intended project, is `supabase l
 - AI responses must validate against the mark total, criterion count, exact quoted answer evidence and level rubric. Point criteria cannot be counted twice; essays are marked holistically. Visual questions fall back to human marking. No AI result claims teacher verification.
 - Evidence quoting instructions require contiguous answer excerpts and zero-based criterion indexes. Differences in whitespace or straight/curly quotation marks are resolved back to the original answer excerpt before validation; changed words, added ellipses and mathematical operators are still rejected. Server diagnostics log only allowlisted provider error codes and validation categories, never API keys, raw provider responses or student answers.
 - Default AI caps are **40 requests per user per UTC day** and **1,000 per project per UTC day**, atomically reserved in Postgres. Configure `MARKING_DAILY_USER_LIMIT` and `MARKING_DAILY_GLOBAL_LIMIT` to change them. Cache hits reuse a previous assessment without another provider request. Failed requests count towards the daily allowance; there are no automatic paid retries. Configure the provider account's own spending limit as well.
-- Production CORS permits the ten existing subject domains and `prodigyai-app.github.io`. Optional `ALLOW_LOCAL_PREVIEW=true` also permits localhost previews. Authentication and authorisation are still required.
+- Production CORS permits the eleven existing subject domains and `prodigyai-app.github.io`. Optional `ALLOW_LOCAL_PREVIEW=true` also permits localhost previews. Authentication and authorisation are still required.
 - Submission/review updates use a revision token to reject concurrent overwrites. The first submission is kept separately from later work.
 
 ## Build and verify
@@ -62,3 +62,5 @@ python scripts/build-dashboard-function.py
 Run each course's existing tests before publishing. The platform suite tests client assignment/independent workflows, access enforcement, date boundaries, numeric checking, submission/reopening, both provider adapters, no-key/error fallback, schema privileges and concurrent AI quota reservations. Provider tests use mocked responses and no real key or student data. Complete a real provider smoke test with a synthetic answer after configuring a key.
 
 Official references: [Supabase function secrets](https://supabase.com/docs/guides/functions/secrets), [function authentication](https://supabase.com/docs/guides/functions/auth), [OpenAI structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs), [Claude Messages](https://platform.claude.com/docs/en/api/messages/create).
+
+Sociology (AQA 7192) adds 72 revision lessons, all sixteen two-option Paper 2 combinations and contextualised original papers. Option selections and essay topics are retained in assignment URLs. The Maths graph plotter is a dedicated toolkit lesson; it has no exam mark attached. Course menus are reconciled from the shared subject allowlist by course-links.js.

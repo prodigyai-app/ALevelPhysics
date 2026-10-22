@@ -1,11 +1,11 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import vm from 'node:vm';import {SITES} from '../client/assessment-core.js';
 const base=new URL('../../../',import.meta.url),read=(repo,file)=>readFileSync(new URL(repo+'/'+file,base),'utf8');
-test('all ten courses include the same browser assets and account/assessment bridges',()=>{
+test('all eleven courses include the same browser assets and account/assessment bridges',()=>{
  const hashes=new Map();for(const [,repo]of Object.values(SITES)){
   const html=read(repo,'index.html');assert.ok(html.includes('get profile(){ return profile; }'),repo);assert.ok(html.includes('prodigy-account-change'),repo);assert.ok(html.includes('data-platform-assignments'),repo);
   const tail=html.slice(html.lastIndexOf('</script>',html.lastIndexOf('<script src="assessment-core.js"'))+9);
   assert.match(tail,/<script src="assessment-core.js"><\/script>\s*<script src="assignments.js"><\/script>\s*<\/body>/,repo);
-  for(const file of ['assessment-core.js','assignments.js','assignments.css']){const text=read(repo,file);if(hashes.has(file))assert.equal(text,hashes.get(file),repo+' '+file);else hashes.set(file,text);if(file.endsWith('.js'))new vm.Script(text,{filename:repo+'/'+file});}
+  for(const file of ['assessment-core.js','assignments.js','assignments.css','course-links.js']){const text=read(repo,file);if(hashes.has(file))assert.equal(text,hashes.get(file),repo+' '+file);else hashes.set(file,text);if(file.endsWith('.js'))new vm.Script(text,{filename:repo+'/'+file});}
  }
 });
 test('published catalogues contain valid canonical questions and every course has papers',()=>{
@@ -17,3 +17,5 @@ test('all Psychology Paper 3 combinations and fixed Foundation papers retain the
  const c=JSON.parse(read('ALevelPsychology','assessment-catalog.json')),p3=Object.values(c.pages).filter(p=>p.selection);assert.equal(p3.length,27);for(const p of p3)assert.equal(p.questions.reduce((sum,q)=>sum+q.m,0),96);
  const maths=JSON.parse(read('GCSEmaths','assessment-catalog.json'));for(const p of Object.values(maths.pages).filter(p=>/Foundation/i.test(p.title)))assert.equal(p.tier,'f');
 });
+
+test('all sixteen Sociology Paper 2 combinations retain the two selected topics and 80 marks',()=>{const c=JSON.parse(read('ALevelSociology','assessment-catalog.json')),papers=Object.values(c.pages).filter(p=>p.selection);assert.equal(papers.length,16);for(const p of papers){assert.deepEqual(Object.keys(p.selection),['1','2']);assert.equal(p.questions.reduce((sum,q)=>sum+q.m,0),80);}for(const p of Object.values(c.pages).filter(p=>p.id.startsWith('education-')))assert.ok(p.questions.find(q=>q.kind==='written').prompt.includes('Fictional example:'));});

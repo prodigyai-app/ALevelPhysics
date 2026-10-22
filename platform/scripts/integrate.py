@@ -3,7 +3,7 @@ import re,shutil
 
 platform=Path(__file__).resolve().parents[1]
 reviews=platform.parents[1]
-repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelPsychology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
+repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelPsychology','ALevelSociology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
 
 core=(platform/'client'/'assessment-core.js').read_text(encoding='utf-8')
 names=re.findall(r'export (?:async )?(?:const|function) (\w+)',core)
@@ -33,9 +33,9 @@ def patch(text):
     assert old in text or new in text,'Sign-in hook missing'
     text=text.replace(old,new)
     if 'href="assignments.css"' not in text:text=text.replace('</head>','<link rel="stylesheet" href="assignments.css">\n</head>',1)
-    text=text.replace('<script type="module" src="assignments.js"></script>\n','').replace('<script src="assessment-core.js"></script>\n','').replace('<script src="assignments.js"></script>\n','')
+    text=text.replace('<script type="module" src="assignments.js"></script>\n','').replace('<script src="assessment-core.js"></script>\n','').replace('<script src="assignments.js"></script>\n','').replace('<script src="course-links.js"></script>\n','')
     before,after=text.rsplit('</body>',1)
-    text=before+'<script src="assessment-core.js"></script>\n<script src="assignments.js"></script>\n</body>'+after
+    text=before+'<script src="course-links.js"></script>\n<script src="assessment-core.js"></script>\n<script src="assignments.js"></script>\n</body>'+after
     return text
 
 for repo in repos:
@@ -47,5 +47,6 @@ for repo in repos:
         (target/'assessment-core.js').write_text(browser_core,encoding='utf-8')
         (target/'assignments.js').write_text(browser_client,encoding='utf-8')
         shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
+        shutil.copyfile(platform/'client'/'course-links.js',target/'course-links.js')
     print(repo,flush=True)
 shutil.copyfile(platform/'client'/'assessment-core.js',platform/'supabase'/'functions'/'_shared'/'assessment-core.js')

@@ -2,7 +2,7 @@
 const {JSDOM,ResourceLoader,VirtualConsole}=require('jsdom');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const base=path.resolve(__dirname,'../../..');
-const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelPsychology:'alevel-psychology',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
+const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelPsychology:'alevel-psychology',ALevelSociology:'alevel-sociology',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
 const fakeContext=()=>new Proxy({measureText:s=>({width:String(s).length*7}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}}),getImageData:()=>({data:new Uint8ClampedArray(4)})},{get:(o,k)=>k in o?o[k]:()=>{}});
 async function load(repo,{hash=''}={}){
  const dir=path.join(base,repo),errors=[];
@@ -48,6 +48,14 @@ async function build(repo){
   if(repo==='ALevelPsychology'){
    for(const a of w.PSY_OPTION_GROUPS[1])for(const b of w.PSY_OPTION_GROUPS[2])for(const c of w.PSY_OPTION_GROUPS[3]){
     const selection={1:a,2:b,3:c},p=w.PsychTools.paper3(w.PSY_BANK,selection);if(pages[p.id]){pages[p.id].selection=selection;continue;}
+    const section=d.createElement('section');section.id='lab-'+p.id;section.innerHTML='<div class="lab-head"><h2></h2></div>';section.querySelector('h2').textContent=p.title;
+    section.append(w.EXAM.build('xm-'+p.id,{title:p.title,qs:p.questions.map(q=>({stem:`<h4>${q.title}</h4>${q.stem||''}`,parts:q.parts.map(w.PSY_HELPERS.part)}))}));d.body.append(section);
+    pages[p.id]={...extract(w,d,{id:p.id,name:p.title,group:'papers:aqa'}),selection};
+   }
+  }
+  if(repo==='ALevelSociology'){
+   for(const a of w.SociologyTools.groups[1])for(const b of w.SociologyTools.groups[2]){
+    const selection={1:a,2:b},p=w.SociologyTools.paper2(w.SOC_BANK,selection);if(pages[p.id]){pages[p.id].selection=selection;continue;}
     const section=d.createElement('section');section.id='lab-'+p.id;section.innerHTML='<div class="lab-head"><h2></h2></div>';section.querySelector('h2').textContent=p.title;
     section.append(w.EXAM.build('xm-'+p.id,{title:p.title,qs:p.questions.map(q=>({stem:`<h4>${q.title}</h4>${q.stem||''}`,parts:q.parts.map(w.PSY_HELPERS.part)}))}));d.body.append(section);
     pages[p.id]={...extract(w,d,{id:p.id,name:p.title,group:'papers:aqa'}),selection};
