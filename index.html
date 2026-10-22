@@ -2,6 +2,9 @@
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
+<link rel="stylesheet" href="maths-keyboard.css?v=20261022-keyboard">
+<script src="math-notation.js?v=20261022-keyboard"></script>
+<script src="numeric-tools.js?v=20261022-keyboard"></script>
 <script src="revision-maths.js"></script>
 <script>window.ALP_SITE="alevel-physics";</script>
 <script src="lab-notebook.js"></script>
@@ -5803,9 +5806,7 @@ let restored=false;
 function restore(){ restored=true; document.querySelectorAll("section.lab .qi[data-q]").forEach(el=>{ const qid=el.dataset.q, k=qkey(qid); if(k&&CSAVED[k]) STATE[qid]=CSAVED[k]; }); Object.keys(QZ).forEach(id=>{ if(document.getElementById(id)&&QZ[id].some((_,i)=>STATE[`${id}-${i}`])) score(id); }); }
 
 /* parse a typed number: accepts 1.2e3, 1.2×10^3, 1.2 x 10^-3, commas */
-function num(s){ if(s==null) return NaN; s=String(s).trim().replace(/,/g,"").replace(/−/g,"-").replace(/\s+/g,"");
-  let m=s.match(/^([-+]?\d*\.?\d+)(?:[x×*]10\^?([-+]?\d+))$/i); if(m) return +m[1]*Math.pow(10,+m[2]);
-  return s===""?NaN:Number(s); }
+function num(s){ return NumericTools.parseNumber(s); }
 function grade(qid){ const [id,i]=qid.split(/-(?=\d+$)/), q=QZ[id][+i], fb=$(`#${qid}-fb`); let ok=false, ans;
   if(q.opts){ const sel=$(`input[name="${qid}"]:checked`); if(!sel){ fb.hidden=false; fb.className="qfb nok"; fb.innerHTML="Choose an answer first."; return; } ans=+sel.value; ok=ans===q.a;
     $$(`[data-q="${qid}"] .qo label`).forEach((l,j)=>{ l.classList.toggle("right",ok&&j===q.a); l.classList.toggle("wrong",!ok&&j===ans); }); }
@@ -15093,6 +15094,7 @@ window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; },get profile(){ re
 })();
 </script>
 
+<script src="maths-keyboard.js?v=20261022-keyboard"></script>
 <script src="course-links.js"></script>
 <script src="assessment-core.js"></script>
 <script src="assignments.js"></script>

@@ -6,7 +6,7 @@ function notebook(site='gcse-biology',saved={}){
 }
 test('All linked local lab scripts parse, including newly added modules',()=>{
  for(const m of html.matchAll(/<script(?:[^>]*src="([^"]+)")?[^>]*>([\s\S]*?)<\/script>/g)){
-  if(m[1]&&!/^https?:/.test(m[1]))new vm.Script(fs.readFileSync(path.join(root,m[1]),'utf8'),{filename:m[1]});else if(!m[1])new vm.Script(m[2]);
+  if(m[1]&&!/^https?:/.test(m[1]))new vm.Script(fs.readFileSync(path.join(root,m[1].split('?')[0]),'utf8'),{filename:m[1]});else if(!m[1])new vm.Script(m[2]);
  }
 });
 test('Readings survive a reload; animation state does not resume accidentally',()=>{

@@ -33,9 +33,14 @@ def patch(text):
     assert old in text or new in text,'Sign-in hook missing'
     text=text.replace(old,new)
     if 'href="assignments.css"' not in text:text=text.replace('</head>','<link rel="stylesheet" href="assignments.css">\n</head>',1)
+    if 'src="math-notation.js' not in text:text=text.replace('<meta charset="utf-8">','<meta charset="utf-8">\n<script src="math-notation.js?v=20261022-keyboard"></script>',1)
+    if 'src="numeric-tools.js' not in text:text=text.replace('<script src="revision-maths.js">','<script src="numeric-tools.js?v=20261022-keyboard"></script>\n<script src="revision-maths.js">',1)
+    text=re.sub(r'<script src="numeric-tools.js(?:\?[^\"]*)?">','<script src="numeric-tools.js?v=20261022-keyboard">',text)
+    if 'href="maths-keyboard.css' not in text:text=text.replace('<meta charset="utf-8">','<meta charset="utf-8">\n<link rel="stylesheet" href="maths-keyboard.css?v=20261022-keyboard">',1)
+    text=re.sub(r'<script src="maths-keyboard.js[^\"]*"></script>\n','',text)
     text=text.replace('<script type="module" src="assignments.js"></script>\n','').replace('<script src="assessment-core.js"></script>\n','').replace('<script src="assignments.js"></script>\n','').replace('<script src="course-links.js"></script>\n','')
     before,after=text.rsplit('</body>',1)
-    text=before+'<script src="course-links.js"></script>\n<script src="assessment-core.js"></script>\n<script src="assignments.js"></script>\n</body>'+after
+    text=before+'<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js"></script>\n<script src="assignments.js"></script>\n</body>'+after
     return text
 
 for repo in repos:
@@ -48,5 +53,6 @@ for repo in repos:
         (target/'assignments.js').write_text(browser_client,encoding='utf-8')
         shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
         shutil.copyfile(platform/'client'/'course-links.js',target/'course-links.js')
+        for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js']:shutil.copyfile(platform/'client'/asset,target/asset)
     print(repo,flush=True)
 shutil.copyfile(platform/'client'/'assessment-core.js',platform/'supabase'/'functions'/'_shared'/'assessment-core.js')
