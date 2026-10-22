@@ -1,0 +1,51 @@
+from pathlib import Path
+import re,shutil
+
+platform=Path(__file__).resolve().parents[1]
+reviews=platform.parents[1]
+repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelPsychology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
+
+core=(platform/'client'/'assessment-core.js').read_text(encoding='utf-8')
+names=re.findall(r'export (?:async )?(?:const|function) (\w+)',core)
+browser_core='(()=>{\n"use strict";\n'+re.sub(r'\bexport\s+','',core)+'\nwindow.ProdigyAssessment={'+','.join(names)+'};\n})();\n'
+client=(platform/'client'/'assignments.js').read_text(encoding='utf-8')
+client=re.sub(r"import (\{[^\n]+\}) from './assessment-core.js';",r'const \1=window.ProdigyAssessment;',client, count=1)
+browser_client='(()=>{\n"use strict";\n'+client+'\n})();\n'
+
+def patch(text):
+    marker='return {graph,attach,build,refresh,allParts,pscore,PARTS,CARDS'
+    match=re.search(re.escape(marker)+r'[^}]*\};',text)
+    assert match,'EXAM export missing'
+    line=match[0]
+    for name in ['saved','save','rerender']:
+        if not re.search(r'\b'+name+r'\b',line):line=line[:-2]+','+name+'};'
+    text=text[:match.start()]+line+text[match.end():]
+    old='window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; }};'
+    new='window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; },get profile(){ return profile; },openSignIn:()=>openAuth("in")};'
+    assert old in text or new in text,'Accounts bridge missing'
+    text=text.replace(old,new)
+    if 'data-platform-assignments' not in text:
+        needle='<button class="btn" id="td-ref">Refresh</button>'
+        assert needle in text,'Teacher dashboard action bar missing'
+        text=text.replace(needle,'<button class="btn" data-platform-assignments>Assignments</button>'+needle,1)
+    old='await loadProfile(); renderMenu(); const changed=await pull();'
+    new='await loadProfile(); renderMenu(); window.dispatchEvent(new Event("prodigy-account-change")); const changed=await pull();'
+    assert old in text or new in text,'Sign-in hook missing'
+    text=text.replace(old,new)
+    if 'href="assignments.css"' not in text:text=text.replace('</head>','<link rel="stylesheet" href="assignments.css">\n</head>',1)
+    text=text.replace('<script type="module" src="assignments.js"></script>\n','').replace('<script src="assessment-core.js"></script>\n','').replace('<script src="assignments.js"></script>\n','')
+    before,after=text.rsplit('</body>',1)
+    text=before+'<script src="assessment-core.js"></script>\n<script src="assignments.js"></script>\n</body>'+after
+    return text
+
+for repo in repos:
+    source=reviews/repo
+    for target in [source,reviews.parent/repo]:
+        index=target/'index.html'
+        if not index.exists():continue
+        index.write_text(patch(index.read_text(encoding='utf-8')),encoding='utf-8')
+        (target/'assessment-core.js').write_text(browser_core,encoding='utf-8')
+        (target/'assignments.js').write_text(browser_client,encoding='utf-8')
+        shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
+    print(repo,flush=True)
+shutil.copyfile(platform/'client'/'assessment-core.js',platform/'supabase'/'functions'/'_shared'/'assessment-core.js')
