@@ -20,7 +20,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
 results=[]
 for repo in repos:
     p=base/repo
-    files=['index.html','assessment-core.js','assignments.js','assignments.css','course-links.js','assessment-catalog.json']
+    files=['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','index.html','assessment-core.js','assignments.js','assignments.css','course-links.js','assessment-catalog.json']
     if repo=='ALevelPhysics':files.append('platform')
     run(['git','add','--',*files],p)
     staged=run(['git','diff','--cached','--name-only'],p).splitlines()
