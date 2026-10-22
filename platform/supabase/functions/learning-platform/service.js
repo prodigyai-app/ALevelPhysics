@@ -6,7 +6,7 @@ class ApiError extends Error {constructor(status,message){super(message);this.st
 const need=(condition,status,message)=>{if(!condition)throw new ApiError(status,message);};
 const uuid=id=>{need(UUID.test(id||''),400,'Invalid assignment identifier');return id;};
 const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
-export function createHandler({env,fetch:request=globalThis.fetch,now=()=>new Date(),catalog:providedCatalog,db:providedDb,authenticate:providedAuth,background=task=>globalThis.EdgeRuntime?.waitUntil(task)}={}) {
+export function createHandler({env,fetch:request=globalThis.fetch,now=()=>new Date(),catalog:providedCatalog,db:providedDb,authenticate:providedAuth,background=task=>globalThis.EdgeRuntime?.waitUntil(task),diagnostic=event=>console.warn(JSON.stringify(event))}={}) {
  const cache=new Map();
  const base=env('SUPABASE_URL'),keys=JSON.parse(env('SUPABASE_SECRET_KEYS')||'{}'),admin=env('SUPABASE_SERVICE_ROLE_KEY')||keys.default;
  async function db(table,{method='GET',query='',body}={}){
@@ -53,17 +53,20 @@ export function createHandler({env,fetch:request=globalThis.fetch,now=()=>new Da
   let url,body,headers={'Content-Type':'application/json'};
   if(config.provider==='openai'){
    url='https://api.openai.com/v1/responses';headers.Authorization='Bearer '+config.key;
-   body={model:config.model,store:false,instructions:MARK_INSTRUCTIONS,input:JSON.stringify(data),max_output_tokens:2400,text:{format:{type:'json_schema',name:'assessment',strict:true,schema:MARK_SCHEMA}}};
+   body={model:config.model,store:false,instructions:MARK_INSTRUCTIONS+' '+EVIDENCE_INSTRUCTIONS,input:JSON.stringify(data),max_output_tokens:2400,text:{format:{type:'json_schema',name:'assessment',strict:true,schema:MARK_SCHEMA}}};
   }else{
    url='https://api.anthropic.com/v1/messages';headers['x-api-key']=config.key;headers['anthropic-version']='2023-06-01';
-   body={model:config.model,max_tokens:2400,system:MARK_INSTRUCTIONS,messages:[{role:'user',content:JSON.stringify(data)}],tools:[{name:'assess_response',description:'Return the provisional assessment.',input_schema:MARK_SCHEMA}],tool_choice:{type:'tool',name:'assess_response'}};
+   body={model:config.model,max_tokens:2400,system:MARK_INSTRUCTIONS+' '+EVIDENCE_INSTRUCTIONS,messages:[{role:'user',content:JSON.stringify(data)}],tools:[{name:'assess_response',description:'Return the provisional assessment.',input_schema:MARK_SCHEMA}],tool_choice:{type:'tool',name:'assess_response'}};
   }
-  const r=await request(url,{method:'POST',headers,body:JSON.stringify(body),signal:AbortSignal.timeout(35000)});if(!r.ok)throw Error('Provider unavailable');const response=await r.json();
+  const r=await request(url,{method:'POST',headers,body:JSON.stringify(body),signal:AbortSignal.timeout(35000)});
+  if(!r.ok){const error=await r.json().catch(()=>null),allowed=new Set(['insufficient_quota','model_not_found','invalid_api_key','unsupported_parameter','invalid_json_schema','rate_limit_exceeded','permission_denied','invalid_value','invalid_request_error','billing_hard_limit_reached']);diagnostic({event:'marking_provider_rejected',provider:config.provider,status:r.status,code:allowed.has(error?.error?.code)?error.error.code:'unknown'});throw Error('Provider unavailable');}
+  const response=await r.json();
   let result;if(config.provider==='openai'){
-   if(response.status!=='completed')throw Error('Incomplete marking response');
+   if(response.status!=='completed'){diagnostic({event:'marking_response_incomplete',provider:config.provider,reason:['max_output_tokens','content_filter'].includes(response.incomplete_details?.reason)?response.incomplete_details.reason:'unknown'});throw Error('Incomplete marking response');}
    const output=(response.output||[]).flatMap(o=>o.content||[]).filter(c=>c.type==='output_text').map(c=>c.text).join('');result=JSON.parse(output);
   }else{if(response.stop_reason!=='tool_use')throw Error('Incomplete marking response');result=response.content?.find(c=>c.type==='tool_use'&&c.name==='assess_response')?.input;}
-  return validateMark(result,q,text);
+  if(Array.isArray(result?.criteria))result.criteria=result.criteria.map(c=>c?.awarded&&typeof c.evidence==='string'?{...c,evidence:groundEvidence(text,c.evidence)??c.evidence}:c);
+  try{return validateMark(result,q,text);}catch(e){const reasons=new Set(['Invalid marking result','Invalid feedback','Incomplete criterion assessment','Invalid criterion','Unsupported marking evidence','Criterion total mismatch','Essays must be assessed holistically']);diagnostic({event:'marking_validation_failed',provider:config.provider,reason:reasons.has(e.message)?e.message:'unknown'});throw e;}
  }
  async function markQuestion(q,text,userId,site,assignmentId,config){
   if(q.visual)return {fallback:true,reason:'This question needs a diagram or graph to be checked. Use the self-mark scheme or ask your teacher.'};
@@ -147,6 +150,13 @@ export function createHandler({env,fetch:request=globalThis.fetch,now=()=>new Da
   try{const text=await req.text();need(text.length<=2100000,413,'This submission is too large');const body=JSON.parse(text);need(object(body),400,'Invalid request');const user=await auth(req),profile=await one('profiles','id=eq.'+user.id+'&select=id,role');need(profile,403,'Your learning profile is not ready');return reply(await handle(body,user,profile));}
   catch(e){return reply({error:e instanceof ApiError?e.message:'The learning service is unavailable. Your local answers and self-marking are still available.'},e instanceof ApiError?e.status:503);}
  };
+}
+const EVIDENCE_INSTRUCTIONS='For a point scheme, return exactly one criterion for every mark_scheme entry, using zero-based indexes. Set score to the number of awarded criteria. Every awarded evidence value must be copied as one contiguous exact substring of student_answer, preserving its words and punctuation. Do not add quotation marks, ellipses, labels or explanations to evidence. For unawarded criteria use an empty evidence string. For level-of-response answers return an empty criteria array.';
+export function groundEvidence(text,evidence){
+ if(text.includes(evidence))return evidence;
+ if(!evidence.trim()||evidence.length>500)return null;
+ const pattern=evidence.trim().split(/(\s+|['\u2018\u2019]|["\u201c\u201d])/u).map(part=>/^\s+$/u.test(part)?'\\s+':/^['\u2018\u2019]$/u.test(part)?"['\u2018\u2019]":/^["\u201c\u201d]$/u.test(part)?'["\u201c\u201d]':part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('');
+ return text.match(new RegExp(pattern,'u'))?.[0]??null;
 }
 function bounded(s,fallback,max){const n=Number(s);return Number.isInteger(n)&&n>0?Math.min(n,max):fallback;}
 export async function digest(text){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)))].map(b=>b.toString(16).padStart(2,'0')).join('');}

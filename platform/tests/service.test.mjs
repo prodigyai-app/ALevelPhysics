@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {createHandler} from '../supabase/functions/learning-platform/service.js';
+import {createHandler,groundEvidence} from '../supabase/functions/learning-platform/service.js';
 const ids={teacher:'11111111-1111-4111-8111-111111111111',other:'22222222-2222-4222-8222-222222222222',student:'33333333-3333-4333-8333-333333333333',outsider:'44444444-4444-4444-8444-444444444444',class:'55555555-5555-4555-8555-555555555555'};
 const question={id:'essay',kind:'written',m:2,prompt:'Explain point A and point B.',scheme:['point A','point B'],levels:[],numeric:null};
 function fixture(config={},fetch=async()=>{throw Error('Unexpected external call');}){
@@ -12,12 +12,30 @@ function fixture(config={},fetch=async()=>{throw Error('Unexpected external call
   if(method==='POST'){const row={id:crypto.randomUUID(),created_at:new Date().toISOString(),archived:false,...copy(body)};list.push(row);return [copy(row)];}
   const found=list.filter(r=>matches(r,query));if(method==='PATCH')found.forEach(r=>Object.assign(r,copy(body)));return copy(found);
  }
- const jobs=[];
- const handler=createHandler({env:k=>config[k],db,fetch,background:task=>jobs.push(task),catalog:async site=>({site,pages:{lesson:{title:'Lesson',questions:[question],type:'lesson'}}}),authenticate:async req=>({id:ids[req.headers.get('Authorization').slice(7)]}),now:()=>new Date('2026-10-22T12:00:00Z')});
+ const jobs=[],diagnostics=[];
+ const handler=createHandler({env:k=>config[k],db,fetch,diagnostic:event=>diagnostics.push(event),background:task=>jobs.push(task),catalog:async site=>({site,pages:{lesson:{title:'Lesson',questions:[question],type:'lesson'}}}),authenticate:async req=>({id:ids[req.headers.get('Authorization').slice(7)]}),now:()=>new Date('2026-10-22T12:00:00Z')});
  async function call(actor,action,payload={},origin='https://prodigyai-app.github.io'){const r=await handler(new Request('https://service.test',{method:'POST',headers:{Authorization:'Bearer '+actor,Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({action,...payload})}));return {status:r.status,body:await r.json()};}
  const create=async()=>{const r=await call('teacher','create',{site:'alevel-psychology',page_id:'lesson',class_id:ids.class,recipient_ids:null,due_date:'2026-10-30',instructions:'Test',context:{},marking_mode:'review'});assert.equal(r.status,200,JSON.stringify(r.body));return r.body.assignment.id;};
- return {data,handler,call,create,jobs};
+ return {data,handler,call,create,jobs,diagnostics};
 }
+
+test('evidence tolerates typography only and returns the actual answer excerpt',()=>{
+ assert.equal(groundEvidence('The student’s\n  belief stays the same.',"student's belief"),'student’s\n  belief');
+ assert.equal(groundEvidence('The student changed their belief.','The student kept their belief.'),null);
+ assert.equal(groundEvidence('Point A is correct.','Point A ... correct.'),null);
+ assert.equal(groundEvidence('A + B = C.','A + B = C.'),'A + B = C.');
+ assert.equal(groundEvidence('A - B = C.','A + B = C.'),null);
+ assert.equal(groundEvidence('Only point A is given.',''), '');
+});
+
+test('provider diagnostics report safe error codes without credentials or answer content',async()=>{
+ const f=fixture({OPENAI_API_KEY:'secret-key'},async()=>Response.json({error:{code:'insufficient_quota',message:'secret-key and private answer'}},{status:429}));
+ const r=await f.call('student','mark',{site:'alevel-psychology',question_id:'essay',answer:'private answer'});
+ assert.equal(r.body.fallback,true);assert.deepEqual(f.diagnostics,[{event:'marking_provider_rejected',provider:'openai',status:429,code:'insufficient_quota'}]);
+ assert.ok(!JSON.stringify([f.diagnostics,r.body]).includes('secret-key'));assert.ok(!JSON.stringify(f.diagnostics).includes('private answer'));
+ const invalid=fixture({OPENAI_API_KEY:'secret-key'},async()=>Response.json({error:{code:'secret-key'}},{status:400}));await invalid.call('student','mark',{site:'alevel-psychology',question_id:'essay',answer:'private answer'});assert.equal(invalid.diagnostics[0].code,'unknown');
+ const incomplete=fixture({OPENAI_API_KEY:'secret-key'},async()=>Response.json({status:'incomplete',incomplete_details:{reason:'max_output_tokens'},output:[]}));await incomplete.call('student','mark',{site:'alevel-psychology',question_id:'essay',answer:'private answer'});assert.deepEqual(incomplete.diagnostics,[{event:'marking_response_incomplete',provider:'openai',reason:'max_output_tokens'}]);
+});
 test('only the owning teacher can assign to current class members',async()=>{
  const f=fixture();assert.equal((await f.call('student','create')).status,403);assert.equal((await f.call('other','roster',{class_id:ids.class})).status,403);
  const bad=await f.call('teacher','create',{site:'alevel-psychology',page_id:'lesson',class_id:ids.class,recipient_ids:[ids.outsider],due_date:'2026-10-30',instructions:'',context:{}});assert.equal(bad.status,400);assert.equal(f.data.learning_assignments.length,0);
