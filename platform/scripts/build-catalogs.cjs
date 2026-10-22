@@ -4,13 +4,13 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const base=path.resolve(__dirname,'../../..');
 const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelPsychology:'alevel-psychology',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
 const fakeContext=()=>new Proxy({measureText:s=>({width:String(s).length*7}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}}),getImageData:()=>({data:new Uint8ClampedArray(4)})},{get:(o,k)=>k in o?o[k]:()=>{}});
-async function load(repo){
+async function load(repo,{hash=''}={}){
  const dir=path.join(base,repo),errors=[];
  class Local extends ResourceLoader{fetch(url){const u=new URL(url);if(u.origin!=='https://test.prodigyai.uk')return null;const file=path.join(dir,decodeURIComponent(u.pathname).replace(/^\//,''));return fs.existsSync(file)?Promise.resolve(fs.readFileSync(file)):null;}}
  const vc=new VirtualConsole();vc.on('jsdomError',e=>{if(!/CSS stylesheet|navigation/.test(e.message))errors.push(e.message+' '+(e.detail?.stack||''));});
  let scriptIndex=0;
  const html=fs.readFileSync(path.join(dir,'index.html'),'utf8').replace(/<style[^>]*>[\s\S]*?<\/style>/g,'').replace('function refresh(cid){','function refresh(cid){if(window.__CATALOG)return;').replace(/<script([^>]*)>([\s\S]*?)<\/script>/g,(all,attrs,source)=>{const number=scriptIndex++;return /src=/.test(attrs)?all:`<script${attrs}>${source}\n//# sourceURL=${repo}-inline-${number}.js\n</script>`;});
- const dom=new JSDOM(html,{url:'https://test.prodigyai.uk/',runScripts:'dangerously',resources:new Local(),pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
+ const dom=new JSDOM(html,{url:'https://test.prodigyai.uk/'+hash,runScripts:'dangerously',resources:new Local(),pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
   w.__CATALOG=true;
   const originalQuery=w.Document.prototype.querySelector;
   // JSDOM's selector engine needs quoted radio names containing hyphens.
