@@ -5,6 +5,7 @@ const SITES = {
  'alevel-biology':['A Level Biology','ALevelBiology'], 'alevel-maths':['A Level Maths','ALevelMaths'], 'alevel-further-maths':['A Level Further Maths','ALevelFurtherMaths'],
  'alevel-psychology':['A Level Psychology','ALevelPsychology'], 'alevel-sociology':['A Level Sociology','ALevelSociology'], 'alevel-pe':['A Level PE','ALevelPE'], 'gcse-physics':['GCSE Physics','GCSEPhysics'],
  'gcse-chemistry':['GCSE Chemistry','GCSEChemistry'], 'gcse-biology':['GCSE Biology','GCSEBiology'],
+ 'ks3-science':['KS3 Science','KS3Science'], 'ks3-maths':['KS3 Maths','KS3Maths'],
  'gcse-maths':['GCSE Maths','GCSEmaths'], 'gcse-combined':['Combined Science','GCSECombinedScience']
 };
 const clone = x => JSON.parse(JSON.stringify(x));
@@ -109,7 +110,7 @@ function validateMark(result,q,text) {
 
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const originList=new Set(['https://prodigyai-app.github.io',...['physicsalevel','chemistryalevel','biologyalevel','mathsalevel','furthermathsalevel','psychologyalevel','sociologyalevel','pealevel','physicsgcse','chemistrygcse','biologygcse','mathsgcse','combinedsciencegcse'].map(s=>'https://'+s+'.prodigyai.uk')]);
+const originList=new Set(['https://prodigyai-app.github.io',...['physicsalevel','chemistryalevel','biologyalevel','mathsalevel','furthermathsalevel','psychologyalevel','sociologyalevel','pealevel','physicsgcse','chemistrygcse','biologygcse','mathsgcse','combinedsciencegcse','scienceks3','mathsks3'].map(s=>'https://'+s+'.prodigyai.uk')]);
 class ApiError extends Error {constructor(status,message){super(message);this.status=status;}}
 const need=(condition,status,message)=>{if(!condition)throw new ApiError(status,message);};
 const uuid=id=>{need(UUID.test(id||''),400,'Invalid assignment identifier');return id;};

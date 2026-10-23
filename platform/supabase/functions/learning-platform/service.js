@@ -1,7 +1,7 @@
 import { SITES, validDate, contextForPage, requiredQuestions, sanitiseAnswers, answered, answerText, deterministicMark, providerConfig, MARK_SCHEMA, MARK_INSTRUCTIONS, validateMark } from '../_shared/assessment-core.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const originList=new Set(['https://prodigyai-app.github.io',...['physicsalevel','chemistryalevel','biologyalevel','mathsalevel','furthermathsalevel','psychologyalevel','sociologyalevel','pealevel','physicsgcse','chemistrygcse','biologygcse','mathsgcse','combinedsciencegcse'].map(s=>'https://'+s+'.prodigyai.uk')]);
+const originList=new Set(['https://prodigyai-app.github.io',...['physicsalevel','chemistryalevel','biologyalevel','mathsalevel','furthermathsalevel','psychologyalevel','sociologyalevel','pealevel','physicsgcse','chemistrygcse','biologygcse','mathsgcse','combinedsciencegcse','scienceks3','mathsks3'].map(s=>'https://'+s+'.prodigyai.uk')]);
 class ApiError extends Error {constructor(status,message){super(message);this.status=status;}}
 const need=(condition,status,message)=>{if(!condition)throw new ApiError(status,message);};
 const uuid=id=>{need(UUID.test(id||''),400,'Invalid assignment identifier');return id;};

@@ -3,7 +3,7 @@ import re,shutil
 
 platform=Path(__file__).resolve().parents[1]
 reviews=platform.parents[1]
-repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelFurtherMaths','ALevelPsychology','ALevelSociology','ALevelPE','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
+repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelFurtherMaths','ALevelPsychology','ALevelSociology','ALevelPE','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience','KS3Science','KS3Maths']
 
 core=(platform/'client'/'assessment-core.js').read_text(encoding='utf-8')
 names=re.findall(r'export (?:async )?(?:const|function) (\w+)',core)
@@ -43,7 +43,7 @@ def patch(text):
     text=re.sub(r'<script src="assignments.js(?:\?[^\"]*)?"></script>\n','',text)
     text=re.sub(r'<script src="subject-icons.js[^"]*"></script>\n','',text)
     before,after=text.rsplit('</body>',1)
-    text=before+'<script src="subject-icons.js?v=20261023-pe"></script>\n<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js?v=20261023-pe"></script>\n<script src="assignments.js?v=20261023-pe"></script>\n</body>'+after
+    text=before+'<script src="subject-icons.js?v=20261023-ks3"></script>\n<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js?v=20261023-ks3"></script>\n<script src="assignments.js?v=20261023-ks3"></script>\n</body>'+after
     return text
 
 for repo in repos:

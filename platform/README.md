@@ -1,6 +1,6 @@
 # Shared assignments and marking
 
-This is the maintained backend and client source for all twelve Prodigy revision courses. The source lives in the ALevelPhysics repository; `scripts/integrate.py` builds and copies the shared browser assets into every course. Existing accounts, class memberships, progress and deterministic checkers remain in place.
+This is the maintained backend and client source for all fifteen Prodigy revision courses. The source lives in the ALevelPhysics repository; `scripts/integrate.py` builds and copies the shared browser assets into every course. Existing accounts, class memberships, progress and deterministic checkers remain in place.
 
 ## Teacher and student workflow
 
@@ -43,7 +43,7 @@ The CLI equivalent, after authenticating to the intended project, is `supabase l
 - AI responses must validate against the mark total, criterion count, exact quoted answer evidence and level rubric. Point criteria cannot be counted twice; essays are marked holistically. Visual questions fall back to human marking. No AI result claims teacher verification.
 - Evidence quoting instructions require contiguous answer excerpts and zero-based criterion indexes. Differences in whitespace or straight/curly quotation marks are resolved back to the original answer excerpt before validation; changed words, added ellipses and mathematical operators are still rejected. Server diagnostics log only allowlisted provider error codes and validation categories, never API keys, raw provider responses or student answers.
 - Default AI caps are **40 requests per user per UTC day** and **1,000 per project per UTC day**, atomically reserved in Postgres. Configure `MARKING_DAILY_USER_LIMIT` and `MARKING_DAILY_GLOBAL_LIMIT` to change them. Cache hits reuse a previous assessment without another provider request. Failed requests count towards the daily allowance; there are no automatic paid retries. Configure the provider account's own spending limit as well.
-- Production CORS permits the thirteen subject domains and `prodigyai-app.github.io`. Optional `ALLOW_LOCAL_PREVIEW=true` also permits localhost previews. Authentication and authorisation are still required.
+- Production CORS permits the subject domains and `prodigyai-app.github.io`. Optional `ALLOW_LOCAL_PREVIEW=true` also permits localhost previews. Authentication and authorisation are still required.
 - Submission/review updates use a revision token to reject concurrent overwrites. The first submission is kept separately from later work.
 
 ## Build and verify
@@ -72,3 +72,5 @@ Further Maths (Edexcel 9FM0) adds 74 lessons across Core Pure and all eight opti
 Step-by-step Maths working is canonicalised into newline-separated answer text for submission and AI feedback. An empty line array takes precedence over stale legacy text. Editing any working line invalidates an accepted provisional AI mark; assignment line inputs lock after submission and independent working is restored on exit.
 
 AQA A-level PE (`alevel-pe`, ALevelPE) adds the thirteenth course. Its original 105-mark papers and 66 lessons use the same roles, marking fallback and assignment service. The PE allowlist migration preserves all existing course IDs. Shared subject-icons.js updates decorative brand, unit and lesson navigation illustrations without touching teaching diagrams.
+
+KS3 Science and KS3 Maths add Years 7–9 from the supplied department plans: 40 Science topics with 123 revision lessons and 49 Maths units with 142 lessons. Each course has six original 30-mark papers, a model lab, year filtering and separate saved answers. Related teaching periods are consolidated into focused revision lessons. The Maths course includes the shared graph plotter and optional notation keyboard. The KS3 allowlist migration adds only two course IDs and retains the existing database access rules.
