@@ -58,7 +58,7 @@ export function parseNumber(input) {
  function expr(){let a=term();while(tokens[i]==='+'||tokens[i]==='-'){const t=tokens[i++],b=term();a=t==='+'?a+b:a-b;}return a;}
  try{const v=expr();return i===tokens.length&&Number.isFinite(v)?v:NaN;}catch{return NaN;}
 }
-export const answerText=a=>[a?.w||'',a?.f?`Final answer: ${a.f}`:''].filter(Boolean).join('\n').trim();
+export const answerText=a=>[Array.isArray(a?.lines)?a.lines.map(x=>String(x??'')).join('\n'):a?.w||'',a?.f?`Final answer: ${a.f}`:''].filter(Boolean).join('\n').trim();
 export function answered(q,a) { return q.kind==='choice' ? Number.isInteger(a?.c)&&a.c>=0&&a.c<q.options.length : !!answerText(a); }
 export function sanitiseAnswers(questions,input={}) {
  const out={};for(const q of questions){const a=input[q.id]||{};

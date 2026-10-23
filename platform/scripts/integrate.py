@@ -40,8 +40,9 @@ def patch(text):
     text=re.sub(r'<script src="maths-keyboard.js[^\"]*"></script>\n','',text)
     text=text.replace('<script type="module" src="assignments.js"></script>\n','').replace('<script src="assessment-core.js"></script>\n','').replace('<script src="assignments.js"></script>\n','').replace('<script src="course-links.js"></script>\n','')
     text=re.sub(r'<script src="assessment-core.js(?:\?[^\"]*)?"></script>\n','',text)
+    text=re.sub(r'<script src="assignments.js(?:\?[^\"]*)?"></script>\n','',text)
     before,after=text.rsplit('</body>',1)
-    text=before+'<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js?v=20261023-courses"></script>\n<script src="assignments.js"></script>\n</body>'+after
+    text=before+'<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js?v=20261023-working"></script>\n<script src="assignments.js?v=20261023-working"></script>\n</body>'+after
     return text
 
 for repo in repos:

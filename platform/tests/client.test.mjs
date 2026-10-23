@@ -2,10 +2,10 @@ import test from 'node:test';import assert from 'node:assert/strict';import {JSD
 const tick=()=>new Promise(r=>setTimeout(r,15));
 const id='66666666-6666-4666-8666-666666666666',studentId='33333333-3333-4333-8333-333333333333';
 const q={id:'part',kind:'written',m:2,prompt:'Explain point A and B',scheme:['point A','point B'],levels:[],numeric:null};
-async function setup({role='student',assignment=false,ai=false,failure=false,tierRedirect=false,choice=false}={}){
+async function setup({role='student',assignment=false,ai=false,failure=false,tierRedirect=false,choice=false,steps=false}={}){
  const question=choice?{...q,kind:'choice',options:['A','B'],correct:1}:q;
  const w=new JSDOM('<!doctype html><header class="top"><div class="top-actions"></div></header><section class="lab" id="lab-lesson"><div class="lab-head"><h2>Lesson</h2></div><div id="card" class="lcard exam"></div></section>',{url:'https://prodigyai-app.github.io/ALevelPsychology/'+(assignment?'?assignment='+id:'')+'#lesson',runScripts:'outside-only'}).window,d=w.document,calls=[];
- const saved={part:{w:'Independent answer',done:false}},storage={};w.CSS={escape:s=>String(s)};w.structuredClone=structuredClone;w.__core=core;w.fetch=async(url,init)=>{
+ const saved={part:steps?{lines:['Independent line 1','Independent line 2'],done:false}:{w:'Independent answer',done:false}},storage={};w.CSS={escape:s=>String(s)};w.structuredClone=structuredClone;w.__core=core;w.fetch=async(url,init)=>{
   if(String(url).includes('assessment-catalog'))return Response.json({site:'alevel-psychology',pages:{lesson:{id:'lesson',title:'Lesson',questions:[question],type:'lesson'}}});
   const b=JSON.parse(init.body);calls.push(b);let result;
   if(b.action==='status')result={available:true,ai_available:ai};
@@ -21,11 +21,11 @@ async function setup({role='student',assignment=false,ai=false,failure=false,tie
  w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};
  w.ALP_SITE='alevel-psychology';w.ALP_CONFIG={url:'https://test.supabase.co',key:'public'};w.ALP_ACCOUNTS={user:{id:studentId},profile:{role},sb:{auth:{getSession:async()=>({data:{session:{access_token:'fake-test-token'}}})}},openSignIn:()=>{}};
  w.LAB={list:[{id:'lesson'}],store:{get:k=>storage[k],set:(k,v)=>{storage[k]=v;}}};
- const render=()=>{d.getElementById('card').innerHTML=`<div class="xp" data-p="part"><div class="xbody">${choice?'<label><input type="radio" name="part" value="0">A</label><label><input type="radio" name="part" value="1">B</label>':`<textarea data-xw="part">${core.esc(saved.part.w||'')}</textarea>`}<button data-xms="part">Mark it: show mark scheme</button></div></div>`;};render();
+ const render=()=>{d.getElementById('card').innerHTML=`<div class="xp" data-p="part"><div class="xbody">${choice?'<label><input type="radio" name="part" value="0">A</label><label><input type="radio" name="part" value="1">B</label>':steps?(saved.part.lines||(saved.part.w?saved.part.w.split('\n'):[''])).map(s=>`<input data-wl="part" value="${core.esc(s)}">`).join(''):`<textarea data-xw="part">${core.esc(saved.part.w||'')}</textarea>`}<button data-xms="part">Mark it: show mark scheme</button></div></div>`;};render();
  w.EXAM={saved,PARTS:{part:{...question,...(choice?{opts:question.options}:{}),ms:[['1','point A'],['2','point B']],card:'card'}},save(){},refresh(){},rerender:render,pscore:p=>(saved[p.id].t||[]).filter(Boolean).length};
  if(tierRedirect){w.TIER='h';w.location.hash='u-papers';const switcher=d.createElement('div');switcher.className='tier-switch';switcher.innerHTML='<button data-tier="f">Foundation</button>';switcher.querySelector('button').onclick=()=>w.TIER='f';d.querySelector('header').append(switcher);}
  // The real framework saves before the shared client handles this input.
- d.addEventListener('input',e=>{if(e.target.dataset.xw)saved[e.target.dataset.xw].w=e.target.value;});
+ d.addEventListener('input',e=>{if(e.target.dataset.xw)saved[e.target.dataset.xw].w=e.target.value;if(e.target.dataset.wl){saved[e.target.dataset.wl].lines=[...d.querySelectorAll('[data-wl]')].map(i=>i.value);delete saved[e.target.dataset.wl].w;}});
  const source=readFileSync(new URL('../client/assignments.js',import.meta.url),'utf8').replace(/^import[^\n]+\n/,'const {SITES,clone,esc,londonDate,statusOf,pageURL,contextForPage,requiredQuestions,answered,answerText,summaryOf}=window.__core;\n');w.eval(source);await tick();await tick();
  return {w,d,calls,saved,storage,close:()=>w.close()};
 }
@@ -65,4 +65,18 @@ test('selected MCQ responses are submitted even before the existing Check button
 });
 test('leaving an assignment flushes the latest draft before restoring independent answers',async()=>{
  const f=await setup({assignment:true});try{const field=f.d.querySelector('[data-xw]');field.value='Draft before moving away';field.dispatchEvent(new f.w.Event('input',{bubbles:true}));f.w.location.hash='other';await tick();await tick();assert.equal(f.calls.filter(c=>c.action==='save').at(-1).answers.part.w,'Draft before moving away');assert.equal(f.saved.part.w,'Independent answer');}finally{f.close();}
+});
+
+
+test('stepwise Maths work is submitted in full, locked and kept separate from independent answers',async()=>{
+ const f=await setup({assignment:true,steps:true});try{
+  const first=f.d.querySelector('[data-wl]');first.value='point A';const second=f.d.createElement('input');second.dataset.wl='part';second.value='point B';first.after(second);second.dispatchEvent(new f.w.Event('input',{bubbles:true}));f.d.querySelector('[data-read-confirmed]').checked=true;f.d.querySelector('[data-submit-assignment]').click();await tick();await tick();
+  assert.equal(f.calls.find(c=>c.action==='submit').answers.part.w,'point A\npoint B');assert.ok([...f.d.querySelectorAll('[data-wl]')].every(i=>i.disabled));f.w.location.hash='other';await tick();assert.deepEqual(f.saved.part.lines,['Independent line 1','Independent line 2']);
+ }finally{f.close();}
+});
+
+test('AI feedback reads every Maths working line and editing a line invalidates an accepted mark',async()=>{
+ const f=await setup({ai:true,steps:true});try{
+  const fields=f.d.querySelectorAll('[data-wl]');fields[0].value='point A';fields[1].value='point B';fields[1].dispatchEvent(new f.w.Event('input',{bubbles:true}));f.d.querySelector('[data-ai-mark]').click();await tick();assert.equal(f.calls.find(c=>c.action==='mark').answer,'point A\npoint B');f.d.querySelector('[data-use-ai]').click();await tick();assert.equal(f.saved.part.source,'ai-suggested');const changed=f.d.querySelectorAll('[data-wl]')[1];changed.value='Different reasoning';changed.dispatchEvent(new f.w.Event('input',{bubbles:true}));assert.equal(f.saved.part.done,false);assert.equal(f.saved.part.source,undefined);
+ }finally{f.close();}
 });

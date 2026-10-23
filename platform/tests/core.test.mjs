@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {londonDate,statusOf,validDate,pageURL,parseNumber,deterministicMark,validateMark,providerConfig,requiredQuestions,sanitiseAnswers,summaryOf} from '../client/assessment-core.js';
+import {londonDate,statusOf,validDate,pageURL,parseNumber,deterministicMark,validateMark,providerConfig,requiredQuestions,sanitiseAnswers,summaryOf,answerText} from '../client/assessment-core.js';
 
 test('date-only deadlines cover the whole UK calendar day, including DST',()=>{
  assert.equal(londonDate(new Date('2026-06-01T23:15:00Z')),'2026-06-02');
@@ -40,3 +40,5 @@ test('teacher review supersedes suggested scores and source counts remain distin
  const qs=[{id:'a',m:4},{id:'b',m:2},{id:'c',m:1}],s=summaryOf(qs,{b:{self_score:1}},{a:{score:2,source:'ai'},c:{score:1,source:'automatic'}},{a:{score:3,source:'teacher'}});
  assert.equal(s.score,5);assert.equal(s.reviewed,1);assert.equal(s.ai,0);assert.equal(s.self,1);assert.equal(s.automatic,1);
 });
+
+ test('stepwise Maths working takes precedence over legacy text, preserves line breaks and supports clearing',()=>{assert.equal(answerText({lines:['x²−4=0','x=±2'],w:'old answer',f:'2'}),'x²−4=0\nx=±2\nFinal answer: 2');assert.equal(answerText({lines:[],w:'stale answer'}),'');assert.equal(answerText({w:'A paragraph'}),'A paragraph');});
