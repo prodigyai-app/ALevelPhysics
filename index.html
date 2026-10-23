@@ -2,6 +2,7 @@
 <html lang="en">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=20261023-pe">
 <link rel="stylesheet" href="maths-keyboard.css?v=20261022-keyboard">
 <script src="math-notation.js?v=20261022-keyboard"></script>
 <script src="numeric-tools.js?v=20261022-keyboard"></script>
@@ -441,7 +442,7 @@ body.rp-on{overflow:hidden}
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true"><rect width="46" height="46" rx="10" fill="var(--ink)"/><path d="M17 9h12M19 9v10l-8 15a3 3 0 0 0 2.7 4.4h18.6A3 3 0 0 0 35 34l-8-15V9" fill="none" stroke="var(--bg)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M14.5 30h17l2.4 4.6a1.6 1.6 0 0 1-1.4 2.4H13.5a1.6 1.6 0 0 1-1.4-2.4z" fill="var(--accent)"/></svg>
+      <svg width="46" height="46" viewBox="0 0 24 24" aria-hidden="true" data-subject-icon="atom"><rect x=".5" y=".5" width="23" height="23" rx="5" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width=".5"/><g transform="translate(3 3) scale(.75)" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2" fill="currentColor" fill-opacity=".18"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/><circle cx="21" cy="10" r="1.2" fill="currentColor"/><circle cx="7" cy="4.5" r="1.2" fill="currentColor"/></g></svg>
       <div>
         <h1>A Level Physics</h1>
         <p>OCR A Level Physics A. Learn each unit step by step, then run the practicals.</p>
@@ -14913,7 +14914,7 @@ if(!CFG.url||!CFG.key||/PASTE|YOUR/i.test(CFG.url+CFG.key)||!window.supabase) re
 const {$,$$,store}=LAB;
 const sb=window.supabase.createClient(CFG.url,CFG.key,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"alp-auth"}});
 const DOMAIN=CFG.emailDomain||"accounts.physicsalevel.prodigyai.uk";
-const SITES={"alevel-physics":["A Level Physics","physicsalevel.prodigyai.uk"],"gcse-physics":["GCSE Physics","physicsgcse.prodigyai.uk"],"gcse-maths":["GCSE Maths","mathsgcse.prodigyai.uk"],"gcse-chemistry":["GCSE Chemistry","chemistrygcse.prodigyai.uk"],"alevel-chemistry":["A Level Chemistry","chemistryalevel.prodigyai.uk"],"alevel-maths":["A Level Maths","mathsalevel.prodigyai.uk"],"alevel-further-maths":["A Level Further Maths","prodigyai-app.github.io/ALevelFurtherMaths/"],"gcse-biology":["GCSE Biology","biologygcse.prodigyai.uk"],"alevel-biology":["A Level Biology","biologyalevel.prodigyai.uk"],"gcse-combined":["Combined Science","combinedsciencegcse.prodigyai.uk"],"alevel-psychology":["A Level Psychology","psychologyalevel.prodigyai.uk"],"alevel-sociology":["A Level Sociology","sociologyalevel.prodigyai.uk"]};
+const SITES={"alevel-physics":["A Level Physics","physicsalevel.prodigyai.uk"],"gcse-physics":["GCSE Physics","physicsgcse.prodigyai.uk"],"gcse-maths":["GCSE Maths","mathsgcse.prodigyai.uk"],"gcse-chemistry":["GCSE Chemistry","chemistrygcse.prodigyai.uk"],"alevel-chemistry":["A Level Chemistry","chemistryalevel.prodigyai.uk"],"alevel-maths":["A Level Maths","mathsalevel.prodigyai.uk"],"alevel-further-maths":["A Level Further Maths","prodigyai-app.github.io/ALevelFurtherMaths/"],"gcse-biology":["GCSE Biology","biologygcse.prodigyai.uk"],"alevel-biology":["A Level Biology","biologyalevel.prodigyai.uk"],"gcse-combined":["Combined Science","combinedsciencegcse.prodigyai.uk"],"alevel-psychology":["A Level Psychology","psychologyalevel.prodigyai.uk"],"alevel-sociology":["A Level Sociology","sociologyalevel.prodigyai.uk"],"alevel-pe":["A Level PE","prodigyai-app.github.io/ALevelPE/"]};
 const SITE=window.ALP_SITE&&SITES[window.ALP_SITE]?window.ALP_SITE:"alevel-physics", SITENAME=SITES[SITE][0];
 const isSync=k=>/^learn-/.test(k)||/^maths-/.test(k)||/^pl-.*-runs$/.test(k)||k==="alp-activity";
 const SPECIAL=new Set(["learn-motion-done","learn-check-state","learn-motion-exam","alp-activity"]);
@@ -15094,8 +15095,9 @@ window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; },get profile(){ re
 })();
 </script>
 
+<script src="subject-icons.js?v=20261023-pe"></script>
 <script src="maths-keyboard.js?v=20261022-keyboard"></script>
 <script src="course-links.js"></script>
-<script src="assessment-core.js?v=20261023-working"></script>
-<script src="assignments.js?v=20261023-working"></script>
+<script src="assessment-core.js?v=20261023-pe"></script>
+<script src="assignments.js?v=20261023-pe"></script>
 </body></html>

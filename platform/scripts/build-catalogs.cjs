@@ -2,7 +2,7 @@
 const {JSDOM,ResourceLoader,VirtualConsole}=require('jsdom');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const base=path.resolve(__dirname,'../../..');
-const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelFurtherMaths:'alevel-further-maths',ALevelPsychology:'alevel-psychology',ALevelSociology:'alevel-sociology',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
+const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelFurtherMaths:'alevel-further-maths',ALevelPsychology:'alevel-psychology',ALevelSociology:'alevel-sociology',ALevelPE:'alevel-pe',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
 const fakeContext=()=>new Proxy({measureText:s=>({width:String(s).length*7}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}}),getImageData:()=>({data:new Uint8ClampedArray(4)})},{get:(o,k)=>k in o?o[k]:()=>{}});
 async function load(repo,{hash=''}={}){
  const dir=path.join(base,repo),errors=[];

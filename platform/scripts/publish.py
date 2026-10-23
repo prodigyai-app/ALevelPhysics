@@ -1,7 +1,7 @@
 from pathlib import Path
 import json,subprocess,concurrent.futures,shutil
 root=Path(__file__).resolve().parents[1];base=root.parents[1]
-repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelFurtherMaths','ALevelPsychology','ALevelSociology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
+repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelFurtherMaths','ALevelPsychology','ALevelSociology','ALevelPE','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
 def run(args,cwd):
     r=subprocess.run(args,cwd=cwd,capture_output=True,text=True)
     assert r.returncode==0,' '.join(args)+'\n'+r.stdout[-7000:]+r.stderr[-2000:]
@@ -20,7 +20,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
 results=[]
 for repo in repos:
     p=base/repo
-    files=['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','index.html','assessment-core.js','assignments.js','assignments.css','course-links.js','assessment-catalog.json']
+    files=['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js','favicon.svg','index.html','assessment-core.js','assignments.js','assignments.css','course-links.js','assessment-catalog.json']
     if repo=='ALevelPhysics':files.append('platform')
     run(['git','add','--',*files],p)
     staged=run(['git','diff','--cached','--name-only'],p).splitlines()
