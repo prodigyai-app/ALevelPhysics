@@ -7,6 +7,7 @@ test('database rejects direct client reads/writes and reserves AI budget atomica
  const db=new PGlite();try{
   await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key);create table public.classes(id uuid primary key);grant usage on schema public,auth to service_role,anon,authenticated;grant select on auth.users to service_role;`);
   for(const file of readdirSync(migrations).filter(f=>f.endsWith('.sql')))await db.exec(readFileSync(new URL(file,migrations),'utf8'));
+  const sites=await db.query("select public.valid_site('alevel-further-maths') as further, public.valid_site('gcse-maths') as gcse, public.valid_site('alevel-sociology') as sociology, public.valid_site('not-a-course') as unknown");assert.deepEqual(sites.rows[0],{further:true,gcse:true,sociology:true,unknown:false});
   await db.exec(`insert into auth.users values('11111111-1111-4111-8111-111111111111');insert into public.classes values('22222222-2222-4222-8222-222222222222');set role authenticated;`);
   for(const table of ['learning_assignments','learning_submissions','learning_marking_attempts']){
    await assert.rejects(db.query('select * from public.'+table),/permission denied/);

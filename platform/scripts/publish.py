@@ -1,7 +1,7 @@
 from pathlib import Path
 import json,subprocess,concurrent.futures,shutil
 root=Path(__file__).resolve().parents[1];base=root.parents[1]
-repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelPsychology','ALevelSociology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
+repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelFurtherMaths','ALevelPsychology','ALevelSociology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
 def run(args,cwd):
     r=subprocess.run(args,cwd=cwd,capture_output=True,text=True)
     assert r.returncode==0,' '.join(args)+'\n'+r.stdout[-7000:]+r.stderr[-2000:]

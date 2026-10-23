@@ -2,7 +2,7 @@
 /* Pure assessment rules shared by the browser and the authenticated service. */
 const SITES = {
  'alevel-physics':['A Level Physics','ALevelPhysics'], 'alevel-chemistry':['A Level Chemistry','ALevelChemistry'],
- 'alevel-biology':['A Level Biology','ALevelBiology'], 'alevel-maths':['A Level Maths','ALevelMaths'],
+ 'alevel-biology':['A Level Biology','ALevelBiology'], 'alevel-maths':['A Level Maths','ALevelMaths'], 'alevel-further-maths':['A Level Further Maths','ALevelFurtherMaths'],
  'alevel-psychology':['A Level Psychology','ALevelPsychology'], 'alevel-sociology':['A Level Sociology','ALevelSociology'], 'gcse-physics':['GCSE Physics','GCSEPhysics'],
  'gcse-chemistry':['GCSE Chemistry','GCSEChemistry'], 'gcse-biology':['GCSE Biology','GCSEBiology'],
  'gcse-maths':['GCSE Maths','GCSEmaths'], 'gcse-combined':['Combined Science','GCSECombinedScience']
@@ -109,7 +109,7 @@ function validateMark(result,q,text) {
 
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const originList=new Set(['https://prodigyai-app.github.io',...['physicsalevel','chemistryalevel','biologyalevel','mathsalevel','psychologyalevel','sociologyalevel','physicsgcse','chemistrygcse','biologygcse','mathsgcse','combinedsciencegcse'].map(s=>'https://'+s+'.prodigyai.uk')]);
+const originList=new Set(['https://prodigyai-app.github.io',...['physicsalevel','chemistryalevel','biologyalevel','mathsalevel','furthermathsalevel','psychologyalevel','sociologyalevel','physicsgcse','chemistrygcse','biologygcse','mathsgcse','combinedsciencegcse'].map(s=>'https://'+s+'.prodigyai.uk')]);
 class ApiError extends Error {constructor(status,message){super(message);this.status=status;}}
 const need=(condition,status,message)=>{if(!condition)throw new ApiError(status,message);};
 const uuid=id=>{need(UUID.test(id||''),400,'Invalid assignment identifier');return id;};

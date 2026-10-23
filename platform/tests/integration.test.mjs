@@ -1,10 +1,10 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import vm from 'node:vm';import {SITES} from '../client/assessment-core.js';
 const base=new URL('../../../',import.meta.url),read=(repo,file)=>readFileSync(new URL(repo+'/'+file,base),'utf8');
-test('all eleven courses include the same browser assets and account/assessment bridges',()=>{
+test('all twelve courses include the same browser assets and account/assessment bridges',()=>{
  const hashes=new Map();for(const [,repo]of Object.values(SITES)){
   const html=read(repo,'index.html');assert.ok(html.includes('get profile(){ return profile; }'),repo);assert.ok(html.includes('prodigy-account-change'),repo);assert.ok(html.includes('data-platform-assignments'),repo);
-  const tail=html.slice(html.lastIndexOf('</script>',html.lastIndexOf('<script src="assessment-core.js"'))+9);
-  assert.match(tail,/<script src="assessment-core.js"><\/script>\s*<script src="assignments.js"><\/script>\s*<\/body>/,repo);
+  const tail=html.slice(html.lastIndexOf('<script src="assessment-core.js'));
+  assert.match(tail,/<script src="assessment-core\.js(?:\?[^\"]*)?"><\/script>\s*<script src="assignments.js"><\/script>\s*<\/body>/,repo);
   for(const file of ['assessment-core.js','assignments.js','assignments.css','course-links.js']){const text=read(repo,file);if(hashes.has(file))assert.equal(text,hashes.get(file),repo+' '+file);else hashes.set(file,text);if(file.endsWith('.js'))new vm.Script(text,{filename:repo+'/'+file});}
  }
 });

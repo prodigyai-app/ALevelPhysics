@@ -2,7 +2,7 @@
 const {JSDOM,ResourceLoader,VirtualConsole}=require('jsdom');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const base=path.resolve(__dirname,'../../..');
-const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelPsychology:'alevel-psychology',ALevelSociology:'alevel-sociology',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
+const repos={ALevelPhysics:'alevel-physics',ALevelChemistry:'alevel-chemistry',ALevelBiology:'alevel-biology',ALevelMaths:'alevel-maths',ALevelFurtherMaths:'alevel-further-maths',ALevelPsychology:'alevel-psychology',ALevelSociology:'alevel-sociology',GCSEPhysics:'gcse-physics',GCSEChemistry:'gcse-chemistry',GCSEBiology:'gcse-biology',GCSEmaths:'gcse-maths',GCSECombinedScience:'gcse-combined'};
 const fakeContext=()=>new Proxy({measureText:s=>({width:String(s).length*7}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}}),getImageData:()=>({data:new Uint8ClampedArray(4)})},{get:(o,k)=>k in o?o[k]:()=>{}});
 async function load(repo,{hash=''}={}){
  const dir=path.join(base,repo),errors=[];
@@ -14,7 +14,7 @@ async function load(repo,{hash=''}={}){
   w.__CATALOG=true;
   const originalQuery=w.Document.prototype.querySelector;
   // JSDOM's selector engine needs quoted radio names containing hyphens.
-  w.Document.prototype.querySelector=function(selector){selector=String(selector).replace(/\[name=([\w-]+)\]/g,'[name="$1"]');const match=selector.match(/^#([\w-]+)(?:\s+(.+))?$/);if(match){const el=this.getElementById(match[1]);return match[2]?el?.querySelector(match[2])||null:el;}return originalQuery.call(this,selector);};
+  w.Document.prototype.querySelector=function(selector){selector=String(selector).replace(/\[name=([\w-]+)\]/g,'[name="$1"]');const question=selector.match(/^\[data-q="([^"]+)"\]$/);if(question){const feedback=this.getElementById(question[1]+'-fb');if(feedback)return feedback.closest('.qi');}const match=selector.match(/^#([\w-]+)(?:\s+(.+))?$/);if(match){const el=this.getElementById(match[1]);return match[2]?el?.querySelector(match[2])||null:el;}return originalQuery.call(this,selector);};
   w.MutationObserver=class{observe(){}disconnect(){}};
   w.matchMedia=()=>({matches:false,addEventListener(){},addListener(){}});w.scrollTo=()=>{};w.HTMLElement.prototype.scrollIntoView=()=>{};w.HTMLCanvasElement.prototype.getContext=fakeContext;w.requestAnimationFrame=()=>1;w.cancelAnimationFrame=()=>{};w.setInterval=()=>1;w.confirm=()=>true;
   w.HTMLElement.prototype.getBoundingClientRect=()=>({width:900,height:470,top:0,left:0,right:900,bottom:470});

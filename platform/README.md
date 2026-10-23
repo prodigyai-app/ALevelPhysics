@@ -1,6 +1,6 @@
 # Shared assignments and marking
 
-This is the maintained backend and client source for all eleven Prodigy revision courses. The source lives in the ALevelPhysics repository; `scripts/integrate.py` builds and copies the three small browser assets into every course. Existing accounts, class memberships, progress and deterministic checkers remain in place.
+This is the maintained backend and client source for all twelve Prodigy revision courses. The source lives in the ALevelPhysics repository; `scripts/integrate.py` builds and copies the shared browser assets into every course. Existing accounts, class memberships, progress and deterministic checkers remain in place.
 
 ## Teacher and student workflow
 
@@ -43,7 +43,7 @@ The CLI equivalent, after authenticating to the intended project, is `supabase l
 - AI responses must validate against the mark total, criterion count, exact quoted answer evidence and level rubric. Point criteria cannot be counted twice; essays are marked holistically. Visual questions fall back to human marking. No AI result claims teacher verification.
 - Evidence quoting instructions require contiguous answer excerpts and zero-based criterion indexes. Differences in whitespace or straight/curly quotation marks are resolved back to the original answer excerpt before validation; changed words, added ellipses and mathematical operators are still rejected. Server diagnostics log only allowlisted provider error codes and validation categories, never API keys, raw provider responses or student answers.
 - Default AI caps are **40 requests per user per UTC day** and **1,000 per project per UTC day**, atomically reserved in Postgres. Configure `MARKING_DAILY_USER_LIMIT` and `MARKING_DAILY_GLOBAL_LIMIT` to change them. Cache hits reuse a previous assessment without another provider request. Failed requests count towards the daily allowance; there are no automatic paid retries. Configure the provider account's own spending limit as well.
-- Production CORS permits the eleven existing subject domains and `prodigyai-app.github.io`. Optional `ALLOW_LOCAL_PREVIEW=true` also permits localhost previews. Authentication and authorisation are still required.
+- Production CORS permits the twelve existing subject domains and `prodigyai-app.github.io`. Optional `ALLOW_LOCAL_PREVIEW=true` also permits localhost previews. Authentication and authorisation are still required.
 - Submission/review updates use a revision token to reject concurrent overwrites. The first submission is kept separately from later work.
 
 ## Build and verify
@@ -66,3 +66,5 @@ Official references: [Supabase function secrets](https://supabase.com/docs/guide
 Sociology (AQA 7192) adds 72 revision lessons, all sixteen two-option Paper 2 combinations and contextualised original papers. Option selections and essay topics are retained in assignment URLs. The Maths graph plotter is a dedicated toolkit lesson; it has no exam mark attached. Course menus are reconciled from the shared subject allowlist by course-links.js.
 
 Every answer field offers an optional local calculator-style Maths keyboard, including dynamically added working steps. Its Unicode powers, roots and fractions remain in saved answers. The same bounded notation converter is included in numerical self-checks, graph expressions and server-side marking. Maintain math-notation.js and its identical normaliseMath export in assessment-core.js together; the keyboard tests assert parity. Ordinary typing remains available. Credentials, class management and teacher feedback fields do not receive a keyboard.
+
+Further Maths (Edexcel 9FM0) adds 74 lessons across Core Pure and all eight optional modules. Route controls validate the ten standard two-option pairs; all modules remain available. Two 75-mark Core Pure revision assessments reuse the lesson bank and eight shorter optional-module assessments explicitly state their actual marks. No unseen-mock claim is made. GCSE Maths adds 20 depth lessons, a 97-statement navigation map and tier-dependent completion recalculation while preserving answers.
