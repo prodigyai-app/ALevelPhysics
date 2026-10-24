@@ -9,9 +9,10 @@ test('all Maths lessons retain original answers and IDs while adding diagrams, s
   assert.equal(w.KS3MathsDiagrams.keys.length,144);assert.equal(w.LAB.list.length,316);
   for(const l of w.KS_COURSE.lessons){
    const s=d.getElementById('lab-'+l.id),slides=[...s.querySelectorAll('[data-slide]')];
-   assert.ok(slides.length>=5,l.id);assert.equal(slides.filter(s=>!s.hidden).length,1,l.id);
-   assert.ok(s.querySelector('.ks-maths-diagram'),l.id);assert.ok(s.querySelector('.ks-worked'),l.id);
-   assert.ok(slides.every(slide=>slide.querySelectorAll('.ks-points>li,.ks-worked>li').length<=3),l.id);
+   assert.ok(slides.length>=4,l.id);assert.equal(slides.filter(s=>!s.hidden).length,1,l.id);
+   assert.ok(s.querySelector('.ks-maths-diagram'),l.id);assert.ok(slides[0].querySelector('.ks-working'),l.id);
+   assert.ok(slides.every(slide=>slide.querySelectorAll(':scope > .ks-points>li').length<=3),l.id);
+   assert.ok(l.worked_rows.length<=4,l.id);assert.equal(slides[0].querySelector('.ks-method-help').open,false);assert.equal(slides[0].querySelectorAll('.ks-working>li').length,l.worked_rows.length);
    assert.equal(s.querySelector('[data-panel=practice]').hidden,true);assert.ok(l.cards.length>=2);
    const page=extract(w,d,w.LAB.list.find(p=>p.id===l.id));assert.equal(page.questions.length,4,l.id);
    const original=page.questions.find(q=>q.id==='xm-'+l.id+'q0a');assert.ok(original,l.id);
