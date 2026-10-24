@@ -5,8 +5,8 @@ const require=createRequire(import.meta.url),{load,extract}=require('../scripts/
 
 test('all Maths lessons retain original answers and IDs while adding diagrams, short worked steps and retrieval',async()=>{
  const {w,d,errors}=await load('KS3Maths');try{
-  assert.deepEqual(errors,[]);assert.equal(w.KS_COURSE.lessons.length,142);assert.equal(w.KS_COURSE.units.length,49);
-  assert.equal(w.KS3MathsDiagrams.keys.length,74);assert.equal(w.LAB.list.length,199);
+  assert.deepEqual(errors,[]);assert.equal(w.KS_COURSE.lessons.length,245);assert.equal(w.KS_COURSE.units.length,60);
+  assert.equal(w.KS3MathsDiagrams.keys.length,144);assert.equal(w.LAB.list.length,316);
   for(const l of w.KS_COURSE.lessons){
    const s=d.getElementById('lab-'+l.id),slides=[...s.querySelectorAll('[data-slide]')];
    assert.ok(slides.length>=5,l.id);assert.equal(slides.filter(s=>!s.hidden).length,1,l.id);
