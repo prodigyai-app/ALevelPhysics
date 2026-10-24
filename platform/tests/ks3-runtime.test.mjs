@@ -10,7 +10,7 @@ for(const [repo,site,counts] of [['KS3Science','ks3-science',[14,14,12]],['KS3Ma
    assert.deepEqual([7,8,9].map(y=>w.KS_COURSE.units.filter(u=>u.year===y).length),counts);
    assert.equal(d.querySelector('[aria-label="Choose a course"]').options.length,15);
    assert.equal(w.KS_PAPERS.length,6);assert.equal(new Set(w.LAB.list.map(p=>p.id)).size,w.LAB.list.length);
-   for(const l of w.KS_COURSE.lessons){assert.ok(l.notes.join(' ').length>240,l.id);assert.ok(l.worked.length>25,l.id);const parts=w.EXAM.allParts('xm-'+l.id);assert.equal(parts.length,1,l.id);assert.equal(parts[0].m,l.scheme.length);assert.ok(l.mistake);assert.ok(d.getElementById('lab-'+l.id));}
+   for(const l of w.KS_COURSE.lessons){assert.equal(l.notes.length,2,l.id);assert.ok(l.notes.every(n=>typeof n==='string'&&n.trim().length>0),l.id);assert.ok(w.KSDecks.slides(l).length>=4,l.id);assert.ok(l.worked.length>25,l.id);const parts=w.EXAM.allParts('xm-'+l.id);assert.equal(parts.length,1,l.id);assert.equal(parts[0].m,l.scheme.length);assert.ok(l.mistake);assert.ok(d.getElementById('lab-'+l.id));}
    for(const p of w.KS_PAPERS){assert.equal(p.questions.length,10);assert.equal(p.questions.reduce((n,q)=>n+q.parts.reduce((n,a)=>n+a.m,0),0),30);assert.equal(w.EXAM.allParts('xm-'+p.id).length,10);}
    assert.ok(d.querySelectorAll('#lab-interactive-lab .ks-model').length>=9);
    assert.ok([...d.querySelectorAll('[data-motion=play]')].every(b=>b.textContent==='Play'));
