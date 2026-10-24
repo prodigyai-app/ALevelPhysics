@@ -1,4 +1,4 @@
-/* A-level Physics pilot: compact choices keep learning near the top. */
+/* Shared subject layout: compact choices keep learning near the top. */
 body{padding-block:16px 32px}
 .wrap{gap:16px}
 #hub-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px}
@@ -50,3 +50,20 @@ a.btn{display:inline-flex;align-items:center;text-decoration:none;color:var(--in
 .lab-head{max-width:none}
 .lab>.assignment-actions{display:none}
 .lesson-objectives>p{margin-top:12px;max-width:70ch}
+
+.simple-secondary,.hub-intro{display:none!important}
+.simple-options{padding:0;background:none;border:0}
+.simple-options>summary{min-height:44px;padding:10px;font-weight:600}
+.simple-options .psych-options,.simple-options .fm-options{padding:8px;border:0;margin:0;max-width:100%;min-width:0;background:none}
+.simple-options h2,.simple-options .psych-options>p:not([role=status]),.simple-options .fm-options>p:not([role=status]){display:none}
+.simple-options label,.simple-options select{max-width:100%;min-width:0}
+.simple-options .bio-controls,.simple-options .fm-controls{display:flex;flex-direction:column;align-items:stretch}
+.simple-options .bio-controls label{flex:none}
+.simple-study-tier{padding:8px 12px;margin:0;width:fit-content}
+.simple-tier{align-self:flex-start}
+.ks-year-tools{padding:0;border:0;background:none;margin:0!important;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ks-year-tools>div:first-child,.ks-year-tools>p{display:none}
+.ks-year-tools .ks-extra-toggle{font-size:.88rem}
+.ks-modes .btn{min-height:44px}
+.ks-learning{margin-top:0}
+.simple-tools-panel{max-height:calc(100vh - 140px);overflow-y:auto}

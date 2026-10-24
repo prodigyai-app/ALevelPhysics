@@ -14,7 +14,7 @@ Biology investigations use simplified teaching models with units, controls, safe
 repeats and uncertainty analysis. They do not replace real practical assessment or certify
 the OCR Practical Endorsement. PAG 12 research activities are outside this update.
 
-## Simplified Physics layout pilot (24 October 2026)
+## Simplified subject layouts (24 October 2026)
 
 The home screen shows unit names, followed by lesson names. Search, the course
 selector and the downloadable progress report have been removed. Activity and
@@ -27,8 +27,10 @@ without replacing inputs or changing assessment IDs. Lab appears only when the
 lesson has a simulation or practical block. Timed papers remain uninterrupted.
 Keyboard users can change tabs with arrows/Home/End. Lesson goals and the original
 introduction are available at the end of Learn. `simple-layout.css` supplies the
-compact, responsive presentation. Other subject layouts have not been changed.
+compact, responsive presentation. The same presentation assets are deployed across all 15 subjects. Maths uses Explore rather than Lab, while KS3 retains its existing slides, definition cards and practice views. Optional subject choices are in Tools; year and tier selectors remain visible.
 
 Validation: `node --test platform/tests/physics-simple-layout.test.mjs` verifies
 all published assessment contracts, answer persistence, tab navigation and lab
 placement. The shared platform suite also covers existing marking and assignments.
+
+Run `node platform/scripts/audit-simple-layout.cjs` to compare every live lesson and assessment against the existing question catalogue across all subjects.

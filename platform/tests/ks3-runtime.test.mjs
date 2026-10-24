@@ -8,7 +8,7 @@ for(const [repo,site,counts] of [['KS3Science','ks3-science',[14,14,12]],['KS3Ma
   const {w,d,errors}=await load(repo);try{
    assert.deepEqual(errors,[]);assert.equal(w.ALP_SITE,site);assert.equal(w.KS_COURSE.units.length,counts.reduce((a,b)=>a+b));
    assert.deepEqual([7,8,9].map(y=>w.KS_COURSE.units.filter(u=>u.year===y).length),counts);
-   assert.equal(d.querySelector('[aria-label="Choose a course"]').options.length,15);
+   assert.equal(d.querySelector('[aria-label="Choose a course"]'),null);assert.ok(d.querySelector('.simple-tools'));
    assert.equal(w.KS_PAPERS.length,repo==='KS3Maths'?9:6);assert.equal(new Set(w.LAB.list.map(p=>p.id)).size,w.LAB.list.length);
    for(const l of w.KS_COURSE.lessons){assert.equal(l.notes.length,2,l.id);assert.ok(l.notes.every(n=>typeof n==='string'&&n.trim().length>0),l.id);assert.ok(w.KSDecks.slides(l).length>=4,l.id);assert.ok(l.worked.length>25,l.id);const parts=w.EXAM.allParts('xm-'+l.id);assert.equal(parts.length,1,l.id);assert.equal(parts[0].m,l.scheme.length);assert.ok(l.mistake);assert.ok(d.getElementById('lab-'+l.id));}
    for(const p of w.KS_PAPERS){assert.equal(p.questions.length,10);assert.equal(p.questions.reduce((n,q)=>n+q.parts.reduce((n,a)=>n+a.m,0),0),30);assert.equal(w.EXAM.allParts('xm-'+p.id).length,10);}
@@ -18,14 +18,14 @@ for(const [repo,site,counts] of [['KS3Science','ks3-science',[14,14,12]],['KS3Ma
    assert.ok(!/AQA|Physical Education|sport psychology/.test(d.querySelector('header').textContent));
   }finally{w.close();}
  });
- test(repo+' year filter preserves cross-year routes, search and saved working',async()=>{
+ test(repo+' year filter preserves cross-year routes, tools and saved working',async()=>{
   const {w,d,errors}=await load(repo);try{
    assert.deepEqual(errors,[]);d.querySelector('[data-year="9"]').click();assert.equal(d.querySelector('[data-year="9"]').getAttribute('aria-pressed'),'true');
    const cards=[...d.querySelectorAll('#hub button.unit[data-go]')];assert.equal(cards.filter(b=>!b.hidden&&/u-y7-/.test(b.dataset.go)).length,0);assert.equal(cards.filter(b=>!b.hidden&&/u-y9-/.test(b.dataset.go)).length,repo==='KS3Maths'?19:counts[2]);
    const l=w.KS_COURSE.lessons.find(l=>l.year===7);w.location.hash=l.id;w.dispatchEvent(new w.HashChangeEvent('hashchange'));await new Promise(r=>setTimeout(r,0));assert.equal(d.getElementById('lab-'+l.id).hidden,false);
    const answer=d.querySelector('#lab-'+l.id+' [data-wl]');assert.ok(answer);assert.equal(answer.tagName,'TEXTAREA');answer.value='First step\n\nExplanation with units.';answer.dispatchEvent(new w.Event('input',{bubbles:true}));assert.match(w.localStorage.getItem('learn-'+site+'-motion-exam'),/Explanation with units/);assert.equal(w.localStorage.getItem('learn-alevel-pe-motion-exam'),null);
    assert.equal(w.EXAM.pscore(w.EXAM.allParts('xm-'+l.id)[0]),null);
-   const input=d.querySelector('#topic-query');input.value=repo==='KS3Science'?'Darwin':'surds';input.dispatchEvent(new w.Event('input',{bubbles:true}));await new Promise(r=>setTimeout(r,200));assert.ok(d.querySelectorAll('#topic-results button').length>0);assert.equal(d.querySelector('#topic-results').hidden,false);
+   assert.equal(d.querySelector('#topic-query'),null);assert.ok(d.querySelector('.simple-tools-panel a[href="#u-models"]'));
    const p=w.KS_PAPERS[0],timer=d.querySelector('#ks-timer-'+p.id);timer.querySelector('[data-timer=toggle]').click();assert.match(timer.textContent,/running/);timer.querySelector('[data-timer=toggle]').click();assert.match(timer.textContent,/paused/);timer.querySelector('[data-timer=reset]').click();assert.equal(timer.querySelector('output').textContent,'35:00');
   }finally{w.close();}
  });

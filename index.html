@@ -988,13 +988,13 @@ function route(){ const h=(location.hash||"").slice(1); const on=!!h&&list.some(
   if(heading){ heading.tabIndex=-1; heading.focus({preventScroll:true}); }
   window.scrollTo(0,0); }
 function renderHub(){ $("#hub-cards").innerHTML=UNITS.map(u=>
-  `<button class="unit u-${u.key}" data-go="u-${u.key}"><span class="u-ico" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">${ICONS[u.icon]||""}</svg></span><span class="u-t">${u.title}</span></button>`).join(""); }
+  `<button class="unit u-${u.key}" data-go="u-${u.key}"><span class="u-ico" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">${ICONS[u.icon]||""}</svg></span><span class="u-t">${u.title}${/^Year/.test(u.kind||"")&&/Optional/.test(u.kind||"")?" (optional)":""}</span></button>`).join(""); }
 
 function go(id){ try{ history.pushState(null,"",id?"#"+id:location.pathname+location.search); }catch(_){ try{ location.hash=id||""; }catch(__){} } route(); }
 function boot(opts={}){
   const GROUPS=opts.groups||[["gcse","AQA GCSE Physics · required practicals"],["ocr","OCR A Level Physics A · practical activity groups"],["alevel","A level Physics · extension practicals"]];
   const GO={}; GROUPS.forEach(([g],i)=>GO[g]=i); list.sort((a,b)=>(GO[a.group]-GO[b.group])||((a.num||0)-(b.num||0)));
-  const grp=(g,title)=>!list.some(p=>p.group===g)?"":`<div class="navgroup" data-g="${g}"><span class="eyebrow">${title}</span><div class="switcher" role="tablist">${list.filter(p=>p.group===g).map(p=>`<button class="prac" role="tab" id="tab-${p.id}" aria-controls="lab-${p.id}" data-id="${p.id}"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">${ICONS[p.icon]||""}</svg></span><span class="nm">${p.name}</span></button>`).join("")}</div></div>`;
+  const grp=(g,title)=>!list.some(p=>p.group===g)?"":`<div class="navgroup" data-g="${g}"><span class="eyebrow">${title}</span><div class="switcher" role="tablist">${list.filter(p=>p.group===g).map(p=>`<button class="prac" role="tab" id="tab-${p.id}" aria-controls="lab-${p.id}" data-id="${p.id}"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">${ICONS[p.icon]||""}</svg></span><span class="nm">${p.name}${/higher/i.test(p.tag||"")?" · Higher":""}</span></button>`).join("")}</div></div>`;
   const nav=$("#switcher");
   nav.innerHTML=GROUPS.map(([g,t])=>grp(g,t)).join("");
   if(opts.list){ LISTMODE=true; opts_onroute=opts.onRoute||null; if(opts.listLabel) LISTLBL=opts.listLabel; document.body.classList.add("listmode");
@@ -14993,6 +14993,6 @@ window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; },get profile(){ re
 
 <script src="assessment-core.js?v=20261023-ks3"></script>
 <script src="assignments.js?v=20261023-ks3"></script>
-<link rel="stylesheet" href="simple-layout.css?v=20261024">
-<script src="simple-layout.js?v=20261024"></script>
+<link rel="stylesheet" href="simple-layout.css?v=20261024-all">
+<script src="simple-layout.js?v=20261024-all"></script>
 </body></html>
