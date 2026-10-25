@@ -11614,7 +11614,14 @@ function draw(){ const s=$("#a3"); if(!s) return;
   const tr=(P,c,lab)=>`<polyline points="${P.map(([T,L])=>`${X(T).toFixed(1)},${Y(L).toFixed(1)}`).join(" ")}" fill="none" stroke="${c}" stroke-width="2.5" stroke-dasharray="7 4"/><circle cx="${X(P[0][0])}" cy="${Y(P[0][1])}" r="5" fill="none" stroke="${c}" stroke-width="2"/>`;
   if(st.sun) g+=tr(TR.sun,"#6fe0a8");
   if(st.big) g+=tr(TR.big,"#ff6fae")+`<text x="${X(3600)+8}" y="${Y(1e5)-10}" font-size="12" style="fill:#ff6fae">→ supernova</text>`;
-  g+=NAMED.map(([n,T,L],i)=>`<g data-i="${i}" style="cursor:pointer"><circle cx="${X(T).toFixed(1)}" cy="${Y(L).toFixed(1)}" r="${i===st.sel?9:6}" fill="${col(T)}" stroke="${i===st.sel?"#fff":"none"}" stroke-width="2.5"/><text x="${(X(T)+10).toFixed(1)}" y="${(Y(L)-8).toFixed(1)}" font-size="11" style="fill:#fff">${n}</text></g>`).join("");
+  /* star names: try four positions round each star, keeping clear of names already placed */
+  const VB=(s.getAttribute("viewBox")||"0 0 900 520").split(/\s+/).map(Number), placed=[];
+  const spot=(x,y,t)=>{ const w=t.length*6.3, C=[[x+10,y-8,"start"],[x-10,y-8,"end"],[x+10,y+16,"start"],[x-10,y+16,"end"],[x,y-14,"middle"],[x,y+22,"middle"]];
+    const box=([a,b,an])=>{ const l=an==="end"?a-w:an==="middle"?a-w/2:a; return [l,b-10,l+w,b+3]; };
+    const ok=c=>{ const B=box(c); return B[0]>=VB[0]+2&&B[2]<=VB[0]+VB[2]-2&&B[1]>=VB[1]+2&&B[3]<=VB[1]+VB[3]-2&&!placed.some(P=>B[0]<P[2]&&B[2]>P[0]&&B[1]<P[3]&&B[3]>P[1]); };
+    const c=C.find(ok)||C[0]; placed.push(box(c)); return c; };
+  NAMED.forEach(([n,T,L])=>placed.push([X(T)-7,Y(L)-7,X(T)+7,Y(L)+7]));
+  g+=NAMED.map(([n,T,L],i)=>{ const [lx,ly,la]=spot(X(T),Y(L),n); return `<g data-i="${i}" style="cursor:pointer"><circle cx="${X(T).toFixed(1)}" cy="${Y(L).toFixed(1)}" r="${i===st.sel?9:6}" fill="${col(T)}" stroke="${i===st.sel?"#fff":"none"}" stroke-width="2.5"/><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${la}" font-size="11" style="fill:#fff">${n}</text></g>`; }).join("");
   s.innerHTML=g;
   const [n,T,L,ty]=NAMED[st.sel]; $("#a3-n").textContent=n; $("#a3-ty").textContent=ty; $("#a3-T").textContent=`${T} K`;
   $("#a3-L").textContent=L>=1000?`${fx(L/1000,0)} × 10³ L☉`:L<0.01?`${fx(L*1e4,1)} × 10⁻⁴ L☉`:`${fx(L,L<1?3:0)} L☉`; const r=radius(T,L); $("#a3-R").textContent=r>=10?`${fx(r,0)} R☉`:`${fx(r,r<0.1?3:2)} R☉`; }
@@ -11667,14 +11674,17 @@ lesson({id:"a4",group:"e",num:4,lvl:"5.5.2 · Lesson 4",name:"Energy levels and 
 const YL=n=>50+300*Math.sqrt(-E(n)/13.6);
 function draw(){ const s=$("#a4"); if(!s) return;
   let g=`<text x="40" y="24" font-size="13" font-weight="700">energy / eV</text><text x="40" y="400" font-size="11" class="tmut">spacing of the levels is not to scale</text>`;
-  for(let n=1;n<=6;n++){ const y=YL(n), on=n===st.hi||n===st.lo||n===st.pick; g+=`<g data-n="${n}" style="cursor:pointer"><rect x="60" y="${y-9}" width="380" height="18" fill="transparent"/><path d="M110 ${y} H420" class="${on?"acc":"ink"}" stroke-width="${on?4:2}"/><text x="104" y="${y+4}" text-anchor="end" font-size="12" class="tm">${fx(E(n),2)}</text><text x="426" y="${y+4}" font-size="12" class="tmut">n = ${n}</text></g>`; }
-  g+=`<path d="M110 ${YL(1e9)} H420" class="mut" stroke-dasharray="5 4" stroke-width="1.5"/><text x="104" y="${YL(1e9)+4}" text-anchor="end" font-size="12" class="tm">0</text><text x="426" y="${YL(1e9)+4}" font-size="12" class="tmut">free electron</text>`;
+  /* labels for the closely spaced upper levels are spread out (with a leader line) so they never overlap */
+  const LY=[]; for(let n=1;n<=7;n++){ const y=(n<7?YL(n):YL(1e9))+4; LY[n]=n===1?y:Math.min(y,LY[n-1]-14); }
+  const lead=(n,y)=>Math.abs(LY[n]-4-y)>1.5?`<path d="M420 ${y} L423 ${LY[n]-4}" class="mut" stroke-width="1"/>`:"";
+  for(let n=1;n<=6;n++){ const y=YL(n), on=n===st.hi||n===st.lo||n===st.pick; g+=`<g data-n="${n}" style="cursor:pointer"><rect x="60" y="${y-9}" width="380" height="18" fill="transparent"/><path d="M110 ${y} H420" class="${on?"acc":"ink"}" stroke-width="${on?4:2}"/><text x="104" y="${LY[n]}" text-anchor="end" font-size="12" class="tm">${fx(E(n),2)}</text>${lead(n,y)}<text x="426" y="${LY[n]}" font-size="12" class="tmut">n = ${n}</text></g>`; }
+  g+=`<path d="M110 ${YL(1e9)} H420" class="mut" stroke-dasharray="5 4" stroke-width="1.5"/><text x="104" y="${LY[7]}" text-anchor="end" font-size="12" class="tm">0</text><text x="426" y="${LY[7]}" font-size="12" class="tmut">free electron</text>`;
   if(st.hi&&st.lo&&st.hi!==st.lo){ const a=Math.max(st.hi,st.lo), b=Math.min(st.hi,st.lo), y1=YL(a), y2=YL(b), L=lam(a,b), cc=wl2rgb(L)||"#999";
     g+=st.mode==="emission"?arr(265,y1,265,y2,"bd","",3.5):arr(265,y2,265,y1,"bd","",3.5);
     const ym=(y1+y2)/2; let wv=""; for(let i=0;i<=40;i++){ const x=280+i*2.5; wv+=`${i?"L":"M"}${x} ${ym+6*Math.sin(i/2)}`; } g+=`<path d="${wv}" stroke="${cc}" stroke-width="3" fill="none"/>`+(st.mode==="emission"?arr(380,ym,400,ym,"ink","",2):arr(300,ym,282,ym,"ink","",2)); }
   /* spectrum strip */
   const sx=470, sw=410, X=L=>sx+(L*1e9-380)/(750-380)*sw;
-  g+=`<text x="${sx}" y="60" font-size="13" font-weight="700">visible spectrum of hydrogen (${st.mode})</text>`;
+  g+=`<text x="${sx+44}" y="62" font-size="13" font-weight="700">visible spectrum of hydrogen (${st.mode})</text>`;
   if(st.mode==="emission") g+=`<rect x="${sx}" y="72" width="${sw}" height="70" fill="#000"/>`; else { for(let w=380;w<750;w+=2){ g+=`<rect x="${X(w*1e-9).toFixed(1)}" y="72" width="${(sw/185+.6).toFixed(2)}" height="70" fill="${wl2rgb(w*1e-9)}"/>`; } }
   VIS.forEach(L=>g+=`<rect x="${(X(L)-2).toFixed(1)}" y="72" width="4" height="70" fill="${st.mode==="emission"?wl2rgb(L):"#000"}"/><text x="${X(L).toFixed(1)}" y="158" text-anchor="middle" font-size="11" class="tmut">${fx(L*1e9,0)}</text>`);
   g+=`<text x="${sx}" y="176" font-size="11" class="tmut">wavelength / nm</text>`;
@@ -11738,7 +11748,7 @@ function draw(){ const s=$("#a5"); if(!s) return; const L=SRC[st.src][1], D=d(),
   const w=L[st.sel], sn=st.ord*w*1e-9/D;
   if(sn<1){ const th=Math.asin(sn); g+=`<path d="M${gx+60} ${gy} A 60 60 0 0 1 ${gx+60*Math.cos(th)} ${gy+60*Math.sin(th)}" stroke="#ffd36b" fill="none" stroke-width="2"/><text x="${gx+70}" y="${gy+24}" font-size="13" style="fill:#ffd36b">θ</text>`; }
   /* spectrum strip for the chosen order */
-  g+=`<text x="580" y="40" font-size="13" style="fill:#fff" font-weight="700">${SRC[st.src][0]} lines (nm)</text>`; L.forEach((ww,i)=>g+=`<rect x="${580+(ww-380)/(750-380)*290}" y="52" width="4" height="40" fill="${wl2rgb(ww)}" stroke="${i===st.sel?"#fff":"none"}"/><text x="${582+(ww-380)/(750-380)*290}" y="108" text-anchor="middle" font-size="10" style="fill:#ccc">${ww}</text>`);
+  g+=`<text x="580" y="40" font-size="13" style="fill:#fff" font-weight="700">${SRC[st.src][0]} lines (nm)</text>`; const rowEnd=[-1e9,-1e9]; [...L].map((ww,i)=>[ww,i]).sort((a,b)=>a[0]-b[0]).forEach(([ww,i])=>{ const x=582+(ww-380)/(750-380)*290, hw=String(ww).length*3; const r=x-hw>rowEnd[0]+3?0:1; rowEnd[r]=x+hw; g+=`<rect x="${580+(ww-380)/(750-380)*290}" y="52" width="4" height="40" fill="${wl2rgb(ww)}" stroke="${i===st.sel?"#fff":"none"}"/>${r?`<path d="M${x} 96 V${108+r*13-9}" stroke="#666" stroke-width="1"/>`:""}<text x="${x}" y="${108+r*13}" text-anchor="middle" font-size="10" style="fill:#ccc">${ww}</text>`; });
   s.innerHTML=g;
   $("#a5-Nl").textContent=`${st.N} lines per mm`; $("#a5-ll").textContent=`${w} nm`; $("#a5-d").textContent=`${fx(D*1e6,3)} × 10⁻⁶ m`;
   if(sn<1){ const th=Math.asin(sn)*180/Math.PI; $("#a5-th").textContent=`${fx(th,1)}°`; $("#a5-lam").textContent=`${fx(D*Math.sin(th*Math.PI/180)/st.ord*1e9,1)} nm`; } else { $("#a5-th").textContent="not formed"; $("#a5-lam").textContent="n λ > d"; }
@@ -11906,7 +11916,7 @@ function draw(){ const s=$("#a8"); if(!s) return; const v=H0*st.D, z=v/C, sx=60,
   let g=`<text x="${sx}" y="22" font-size="13" font-weight="700">Laboratory (at rest)</text>`;
   const strip=(y,zz)=>{ let q=""; for(let w=370;w<720;w+=2) q+=`<rect x="${X(w).toFixed(1)}" y="${y}" width="${(sw/175+.6).toFixed(2)}" height="46" fill="${wl2rgb(w)}"/>`; LINES.forEach(([w])=>{ const wo=w*(1+zz); if(wo<720) q+=`<rect x="${(X(wo)-2).toFixed(1)}" y="${y}" width="4" height="46" fill="#000"/>`; }); return q; };
   g+=strip(30,0)+`<text x="${sx}" y="112" font-size="13" font-weight="700">Galaxy ${st.D} Mpc away</text>`+strip(120,z);
-  LINES.forEach(([w,n])=>{ const wo=w*(1+z); g+=`<text x="${X(w)}" y="94" text-anchor="middle" font-size="11" class="tmut">${n}</text>`; if(wo<720) g+=`<path d="M${X(w)} 76 L${X(wo)} 120" class="mut" stroke-dasharray="3 3" stroke-width="1.2"/>`; });
+  LINES.forEach(([w,n],i)=>{ const wo=w*(1+z), an=i===0?"end":i===1?"start":"middle", dx=i===0?-3:i===1?3:0; g+=`<text x="${X(w)+dx}" y="94" text-anchor="${an}" font-size="11" class="tmut">${n}</text>`; if(wo<720) g+=`<path d="M${X(w)} 76 L${X(wo)} 120" class="mut" stroke-dasharray="3 3" stroke-width="1.2"/>`; });
   for(let w=400;w<=700;w+=50) g+=`<text x="${X(w)}" y="184" text-anchor="middle" font-size="11" class="tmut">${w}</text>`;
   g+=`<text x="${sx+sw/2}" y="204" text-anchor="middle" font-size="12" class="tm">wavelength / nm</text>`;
   s.innerHTML=g;
@@ -14994,5 +15004,7 @@ window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; },get profile(){ re
 <script src="assessment-core.js?v=20261023-ks3"></script>
 <script src="assignments.js?v=20261023-ks3"></script>
 <link rel="stylesheet" href="simple-layout.css?v=20261024-desktop">
+<link rel="stylesheet" href="diagram-fit.css?v=20261025-diagrams">
 <script src="simple-layout.js?v=20261024-all"></script>
+<script src="diagram-fit.js?v=20261025-diagrams"></script>
 </body></html>

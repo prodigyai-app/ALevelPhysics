@@ -42,8 +42,10 @@ def patch(text):
     text=re.sub(r'<script src="assessment-core.js(?:\?[^\"]*)?"></script>\n','',text)
     text=re.sub(r'<script src="assignments.js(?:\?[^\"]*)?"></script>\n','',text)
     text=re.sub(r'<script src="subject-icons.js[^"]*"></script>\n','',text)
+    if 'href="diagram-fit.css' not in text:text=re.sub(r'(<link rel="stylesheet" href="simple-layout\.css[^"]*">)',r'\1\n<link rel="stylesheet" href="diagram-fit.css?v=20261025-diagrams">',text,count=1)
+    text=re.sub(r'<script src="diagram-fit.js[^"]*"></script>\n','',text)
     before,after=text.rsplit('</body>',1)
-    text=before+'<script src="subject-icons.js?v=20261023-ks3"></script>\n<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js?v=20261023-ks3"></script>\n<script src="assignments.js?v=20261023-ks3"></script>\n</body>'+after
+    text=before+'<script src="subject-icons.js?v=20261023-ks3"></script>\n<script src="maths-keyboard.js?v=20261022-keyboard"></script>\n<script src="course-links.js"></script>\n<script src="assessment-core.js?v=20261023-ks3"></script>\n<script src="assignments.js?v=20261023-ks3"></script>\n<script src="diagram-fit.js?v=20261025-diagrams"></script>\n</body>'+after
     return text
 
 for repo in repos:
@@ -56,6 +58,6 @@ for repo in repos:
         (target/'assignments.js').write_text(browser_client,encoding='utf-8')
         shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
         shutil.copyfile(platform/'client'/'course-links.js',target/'course-links.js')
-        for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js']:shutil.copyfile(platform/'client'/asset,target/asset)
+        for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js','diagram-fit.js','diagram-fit.css']:shutil.copyfile(platform/'client'/asset,target/asset)
     print(repo,flush=True)
 shutil.copyfile(platform/'client'/'assessment-core.js',platform/'supabase'/'functions'/'_shared'/'assessment-core.js')
