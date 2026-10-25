@@ -6,19 +6,19 @@ import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),{load,extract}=require('../scripts/build-catalogs.cjs');
 const course=JSON.parse(readFileSync(new URL('../../../KS3Maths/course.json',import.meta.url),'utf8'));
 
-test('the main route follows the 2026 Version 3 Year 7–9 block order, with optional and extra work identified',()=>{
- assert.equal(course.alignment.document_year,2026);assert.match(course.alignment.scheme,/Version 3/);
+test('department folders order Years 7 and 8; the combined GCSE scheme orders Year 9',()=>{
  const main=course.units.filter(u=>!u.extra);
- assert.deepEqual([7,8,9].map(y=>main.filter(u=>u.year===y).length),[16,17,19]);
- assert.deepEqual(main.filter(u=>u.year===8&&u.term==='Spring').map(u=>u.title),['Area, volume and density','Equations and inequalities','Percentages','Indices','Standard form','Interpret and represent data']);
- assert.deepEqual(main.filter(u=>u.year===9).map(u=>u.title),['Properties of number','Percentages','Area and volume','Equations, inequalities and formulae','Fractions','Rates','Standard form','Maths and money','Straight line graphs','Ratio and proportion','Constructions and congruence','Similarity','Algebraic manipulation','Pythagoras’ theorem','Non-linear graphs','Sets and probability','Transformations','Simultaneous equations','Trigonometry']);
- assert.deepEqual(main.filter(u=>u.optional).map(u=>u.title),['Simultaneous equations','Trigonometry']);
- assert.equal(course.units.filter(u=>u.extra).length,8);
+ assert.match(course.alignment.scheme,/Department teaching order/);
+ assert.deepEqual([7,8,9].map(y=>main.filter(u=>u.year===y).length),[16,14,19]);
+ for(const year of [7,8,9])assert.deepEqual(main.filter(u=>u.year===year).map(u=>u.id),Array.from({length:year===7?16:year===8?14:19},(_,i)=>`y${year}-unit-${String(i+1).padStart(2,'0')}`));
+ assert.deepEqual(main.filter(u=>u.year===9).map(u=>u.term),[...Array(4).fill('GCSE Unit 1'),...Array(4).fill('GCSE Unit 2'),...Array(3).fill('GCSE Unit 3'),...Array(2).fill('GCSE Unit 4'),...Array(3).fill('GCSE Unit 5'),...Array(3).fill('GCSE Unit 6')]);
+ assert.equal(course.units.filter(u=>u.extra).length,11);
+ assert.ok(course.units.filter(u=>u.id.includes('-wr-')).every(u=>u.extra));
+ assert.deepEqual(course.units.find(u=>u.id==='y8-unit-03').skills,['notation','like','substitute','factorise','expand','double']);
+ assert.deepEqual(course.units.find(u=>u.id==='y7-unit-16').skills,['angles','parallel','measure','shapes']);
+ for(const u of course.units)assert.deepEqual([...u.assessment_skills].sort(),[...u.skills].sort());
  assert.ok(course.lessons.find(l=>l.id==='y7-unit-01-nth').extension);
- assert.ok(course.lessons.find(l=>l.id==='y7-unit-08-coordinates').extension);
- assert.ok(!course.lessons.find(l=>l.id==='y7-unit-08-first-quadrant').extension);
- assert.ok(!course.lessons.find(l=>l.id==='y8-wr-sequences-nth').extension);
- for(const u of main){assert.ok(u.skills.length>=2,u.id);assert.ok(u.source_page>=74&&u.source_page<=125);}
+ assert.ok(!course.lessons.find(l=>l.id==='y9-unit-13-trig').extension);
 });
 
 test('new yearly reviews sample the revised route without replacing the previous papers',()=>{
