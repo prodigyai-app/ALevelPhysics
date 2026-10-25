@@ -1464,7 +1464,7 @@ const panel=`
 <path d="M40 20 H150 V40 M150 80 V100 M150 140 V150 H40 V100 M40 70 V20"/><path d="M28 70 H52 M32 80 H48" /><path d="M28 70 H52" /><path d="M32 82 H48" stroke-width="4"/>
 <rect x="138" y="40" width="24" height="40" fill="var(--sunk)"/><path d="M130 86 L172 34 M172 34 h-10" stroke-width="1.5"/><rect x="138" y="100" width="24" height="40" fill="var(--sunk)"/>
 <path d="M150 90 H230 V105 M150 150 H230 V135"/><circle cx="230" cy="120" r="14" fill="var(--sunk)"/><circle cx="150" cy="90" r="2.5" fill="currentColor"/><circle cx="150" cy="150" r="2.5" fill="currentColor"/></g>
-<text x="230" y="125" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">V</text><text x="176" y="64" font-family="Arial" font-size="11">thermistor</text><text x="172" y="124" font-family="Arial" font-size="11">R</text><text x="4" y="64" font-family="Arial" font-size="11">5.00 V</text><text x="246" y="104" font-family="Arial" font-size="11">V</text><text x="254" y="108" font-family="Arial" font-size="8">out</text></svg></div>`;
+<text x="230" y="125" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">V</text><text x="176" y="64" font-family="Arial" font-size="12.5">thermistor</text><text x="172" y="124" font-family="Arial" font-size="12.5">R</text><text x="4" y="64" font-family="Arial" font-size="12.5">5.00 V</text><text x="246" y="104" font-family="Arial" font-size="12.5">V<tspan dy="4" font-size="9">out</tspan></text></svg></div>`;
 
 build({id:"ts",eyebrow:"OCR A Level Physics A · PAG 4.3 · Investigating electrical circuits",title:"Thermistor as a temperature sensor",
  intro:"An NTC thermistor and a fixed resistor form a potential divider across a 5.00 V supply. As the water warms, the thermistor's resistance falls and the output voltage across the fixed resistor rises. Compare fixed resistors to find which gives the most sensitive sensor over a chosen range.",
@@ -3299,7 +3299,7 @@ const panel=`
 <div class="readout"><div><span>V<sub>out</sub> (across R₂)</span><b id="pv-r-V">—</b></div><div><span>Supply</span><b>6.00 V</b></div></div>
 <button class="btn primary" id="pv-rec">Record reading</button>
 <div class="field"><div class="lbl">Graph</div><div class="seg c2" id="pv-view"><label class="opt"><input type="radio" name="pv-view" value="inv" checked><span>1/V<sub>out</sub> against 1/R₂</span></label><label class="opt"><input type="radio" name="pv-view" value="v"><span>V<sub>out</sub> against R₂</span></label></div></div>
-<div class="schem"><svg viewBox="0 0 300 150" aria-label="Potential divider circuit"><g fill="none" stroke-width="2"><path d="M40 20 H150 V35 M150 75 V90 M150 130 V140 H40 V80 M40 70 V20"/><path d="M28 70 H52"/><path d="M32 80 H48" stroke-width="4"/><rect x="138" y="35" width="24" height="40" fill="var(--sunk)"/><rect x="138" y="90" width="24" height="40" fill="var(--sunk)"/><path d="M128 128 L172 92 M172 92 h-9" stroke-width="1.5"/><path d="M150 82 H230 V96 M150 140 H230 V124"/><circle cx="230" cy="110" r="14" fill="var(--sunk)"/></g><text x="230" y="115" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">V</text><text x="170" y="60" font-family="Arial" font-size="11">R₁</text><text x="176" y="114" font-family="Arial" font-size="11">R₂</text><text x="4" y="64" font-family="Arial" font-size="11">6.00 V</text></svg></div>`;
+<div class="schem"><svg viewBox="0 0 300 150" aria-label="Potential divider circuit"><g fill="none" stroke-width="2"><path d="M40 20 H150 V35 M150 75 V90 M150 130 V140 H40 V80 M40 70 V20"/><path d="M28 70 H52"/><path d="M32 80 H48" stroke-width="4"/><rect x="138" y="35" width="24" height="40" fill="var(--sunk)"/><rect x="138" y="90" width="24" height="40" fill="var(--sunk)"/><path d="M128 128 L172 92 M172 92 h-9" stroke-width="1.5"/><path d="M150 82 H230 V96 M150 140 H230 V124"/><circle cx="230" cy="110" r="14" fill="var(--sunk)"/></g><text x="230" y="115" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold">V</text><text x="170" y="60" font-family="Arial" font-size="12.5">R₁</text><text x="176" y="114" font-family="Arial" font-size="12.5">R₂</text><text x="4" y="64" font-family="Arial" font-size="12.5">6.00 V</text></svg></div>`;
 
 build({id:"pv",eyebrow:"OCR A Level Physics A · PAG 4.3 · Potential divider circuits",title:"Potential divider",
  intro:"A fixed resistor R₁ and a resistance box R₂ share the supply p.d. Measure the output V_out across R₂ for many settings. Rearranging V_out = V_in R₂/(R₁ + R₂) gives 1/V_out = 1/V_in + (R₁/V_in)(1/R₂), so a graph of 1/V_out against 1/R₂ gives both V_in and R₁.",
@@ -6059,7 +6059,7 @@ const fig1=B.fig(`<svg viewBox="0 0 420 230" role="img" aria-label="A curved rou
 <path d="M40 190 C 80 60, 170 40, 220 120 S 330 210, 380 60" fill="none" class="mut" stroke-width="3" stroke-dasharray="7 6"/>
 <path d="M40 190 L 372 66" class="dat" stroke-width="3.5"/><path d="M372 66 l-16 0 l8 13z" class="fdat" transform="rotate(-20 372 66)"/>
 <circle cx="40" cy="190" r="7" class="fink"/><circle cx="380" cy="60" r="7" class="fink"/><text x="28" y="215" font-size="16" font-weight="700">A</text><text x="388" y="56" font-size="16" font-weight="700">B</text>
-<text x="100" y="40" font-size="14" class="tmut">distance along the path (scalar)</text><text x="150" y="168" font-size="14" class="tdat" transform="rotate(-20 150 168)">displacement (vector)</text></svg>`,"Distance follows the path actually taken. Displacement is measured in a straight line from start to finish, with a direction.");
+<text x="100" y="40" font-size="14" class="tmut">distance along the path (scalar)</text><text x="78" y="204" font-size="13" class="tdat" transform="rotate(-20 78 204)">displacement (vector)</text></svg>`,"Distance follows the path actually taken. Displacement is measured in a straight line from start to finish, with a direction.");
 
 const stage=`<svg id="d1-svg" viewBox="0 0 900 470" role="img" aria-label="A map with a walker following a route; the travelled path and the displacement arrow from the start are shown"><g id="d1-grid"></g><g id="d1-route"></g><g id="d1-live"></g></svg>`;
 const panel=`<div class="field"><div class="lbl">Route</div><div class="seg c1" id="d1-r">${Object.entries(ROUTES).map(([k,r],i)=>`<label class="opt"><input type="radio" name="d1-r" value="${k}" ${i?"":"checked"}><span>${r.lbl}</span></label>`).join("")}</div></div>
@@ -6262,7 +6262,7 @@ function areas(sc,t){ const S=SC[sc]; let net=0,dist=0; const n=600, h=t/n; for(
 
 const fig=B.fig(`<svg viewBox="0 0 420 250" role="img" aria-label="A velocity–time graph: the gradient is the acceleration and the shaded area is the displacement">
 <path d="M40 20 V210 H400" class="ink" stroke-width="1.6" fill="none"/><text x="18" y="24" font-size="12">v</text><text x="396" y="230" font-size="12">t</text>
-<path d="M40 190 L130 80 L280 80 L350 210 Z" class="facc" opacity=".18"/><path d="M40 190 L130 80 L280 80 L350 210" class="acc" stroke-width="3" fill="none"/>
+<path d="M40 190 L130 80 L280 80 L350 210 L40 210 Z" class="facc" opacity=".18"/><path d="M40 190 L130 80 L280 80 L350 210" class="acc" stroke-width="3" fill="none"/>
 <path d="M60 166 L110 166 L110 105" class="dat" stroke-width="1.8" stroke-dasharray="4 3" fill="none"/><text x="74" y="182" font-size="11" class="tdat">Δt</text><text x="114" y="140" font-size="11" class="tdat">Δv</text>
 <text x="150" y="70" font-size="12" class="tdat">gradient = acceleration</text><text x="160" y="155" font-size="13" class="tacc" font-weight="700">area = displacement</text><text x="40" y="232" font-size="11" class="tmut">0</text></svg>`,"On a v–t graph the gradient is the acceleration and the area between the line and the time axis is the displacement.");
 
@@ -8828,7 +8828,7 @@ const cur=()=>{ const Ib=st.R.map(r=>st.V/r); return {Ib,I:Ib.reduce((a,b)=>a+b,
 
 const fig=B.fig(`<svg viewBox="0 0 420 220" role="img" aria-label="A junction with currents of 5 A and 3 A in and 6 A and 2 A out">
 ${S.wire([[30,70],[200,110]])}${S.wire([[30,160],[200,110]])}${S.wire([[200,110],[390,60]])}${S.wire([[200,110],[390,170]])}${S.dot(200,110)}
-${arr(80,82,130,94,"dat","5 A",3.5,-30,-12)}${arr(80,148,130,134,"dat","3 A",3.5,-30,26)}${arr(270,92,330,76,"acc","6 A",3.5,6,-6)}${arr(270,128,330,146,"acc","2 A",3.5,6,14)}
+${arr(80,82,130,94,"dat","5 A",3.5,-30,-12)}${arr(80,148,130,134,"dat","3 A",3.5,-30,26)}${arr(270,92,330,76,"acc","6 A",3.5,-40,-14)}${arr(270,128,330,146,"acc","2 A",3.5,-26,28)}
 <text x="210" y="208" text-anchor="middle" font-size="13">in: 5 + 3 = 8 A · out: 6 + 2 = 8 A</text></svg>`,"The total current into a junction equals the total current out of it.");
 
 const stage=`<svg id="e2" viewBox="0 0 900 400" role="img" aria-label="A supply connected to three resistors in parallel, with ammeters in each branch"></svg>`;
@@ -9368,7 +9368,7 @@ function draw(){ const s=$("#e11"); if(!s) return; const C=calc(); const X=360;
   else { g+=`<rect x="${X-10}" y="70" width="20" height="200" class="fsunk ink" stroke-width="2"/>`; const yc=270-st.pos*200; g+=arr(X+40,yc,X+12,yc,"acc","",3)+`<text x="${X-20}" y="${yc+4}" text-anchor="end" font-size="12">slider</text>`; }
   const yo=st.mode==="fixed"?170:270-st.pos*200; g+=S.wire(st.mode==="fixed"?[[X,170],[560,170]]:[[X+40,yo],[560,yo],[560,170]])+S.dot(st.mode==="fixed"?X:X+40,yo)+S.wire([[X,300],[700,300]]);
   g+=S.wire([[560,170],[700,170]])+S.dot(560,170)+S.meter(560,235,"V")+S.wire([[560,185],[560,220]])+S.wire([[560,250],[560,300]]);
-  g+=`<text x="560" y="330" text-anchor="middle" font-size="14" class="tm tacc">V_out = ${fx(C.V,2)} V</text>`;
+  g+=`<text x="560" y="330" text-anchor="middle" font-size="14" class="tm tacc">V<tspan dy="4" font-size="10">out</tspan><tspan dy="-4"> = ${fx(C.V,2)} V</tspan></text>`;
   if(st.load){ g+=S.wire([[700,170],[700,300]])+S.res(700,235,true,"")+`<text x="726" y="239" font-size="13" font-weight="700">load ${kO(st.RL)}</text>`; }
   s.innerHTML=g;
   $("#e11-Vl").textContent=`${st.Vin} V`; $("#e11-1l").textContent=kO(st.R1); $("#e11-2l").textContent=kO(st.R2); $("#e11-pl").textContent=`${Math.round(st.pos*100)}% from the bottom`; $("#e11-RLl").textContent=kO(st.RL);
@@ -10006,7 +10006,7 @@ function draw(){ const s=$("#wv7"); if(!s) return; const L=val("wv7-l"), k=2*Mat
   if(comp) g+=`<path d="${path(f1)}" fill="none" class="acc" stroke-width="1.8" opacity=".55"/><path d="${path(f2)}" fill="none" class="dat" stroke-width="1.8" opacity=".55"/>`;
   g+=`<path d="${path(x=>f1(x)+f2(x))}" fill="none" class="ink" stroke-width="3.2"/>`;
   for(let x=0;x<=30.01;x+=L/2){ g+=`<circle cx="${X0+x*SX}" cy="${Y0}" r="6" class="fbd"/>`; } for(let x=L/4;x<=30.01;x+=L/2) g+=`<text x="${X0+x*SX}" y="${Y0-2*A-12}" text-anchor="middle" font-size="11" class="tmut">A</text>`;
-  g+=`<text x="${X0}" y="285" font-size="12"><tspan class="tbd">●</tspan> node   A antinode</text>`;
+  g+=`<text x="${X0}" y="285" font-size="12"><tspan style="fill:var(--bad)">●</tspan> node<tspan dx="18">A = antinode</tspan></text>`;
   s.innerHTML=g; set("wv7-l-l",`${fx(L,1)} cm`); set("wv7-s-l",fx(val("wv7-s"),2)); set("wv7-n",`λ/2 = ${fx(L/2,2)} cm`); set("wv7-a",`λ/4 = ${fx(L/4,2)} cm`); }
 loop("wv7",dt=>{ st.t+=dt*val("wv7-s"); draw(); }); on(["wv7-l","wv7-s"],draw); $("#wv7-c").addEventListener("change",draw);
 EXAM.attach("wv7",{title:"Exam-style questions",intro:"Write your answer, then open the mark scheme and tick the marks you earned.",qs:[
@@ -12921,10 +12921,10 @@ const KNOWN={"d,u,u":["proton, p","baryon"],"d,d,u":["neutron, n","baryon"],"d,s
 const st={q:[]};
 
 const beta=B.fig(`<svg viewBox="0 0 620 200" role="img" aria-label="Quark diagram of beta-minus decay: a down quark becomes an up quark, emitting an electron and an electron antineutrino">
-<circle cx="110" cy="100" r="70" class="fsunk ink" stroke-width="2"/><text x="110" y="34" text-anchor="middle" font-size="13" font-weight="700">neutron (udd)</text>
+<circle cx="110" cy="100" r="70" class="fsunk ink" stroke-width="2"/><text x="110" y="20" text-anchor="middle" font-size="13" font-weight="700">neutron (udd)</text>
 <circle cx="85" cy="85" r="16" class="fdat"/><text x="85" y="90" text-anchor="middle" font-size="13" font-weight="700" style="fill:#fff">u</text><circle cx="135" cy="85" r="16" class="facc"/><text x="135" y="90" text-anchor="middle" font-size="13" font-weight="700" style="fill:#fff">d</text><circle cx="110" cy="125" r="16" class="facc"/><text x="110" y="130" text-anchor="middle" font-size="13" font-weight="700" style="fill:#fff">d</text>
 <path d="M200 100 H300" class="ink" stroke-width="2.5"/><path d="M300 100 l-12 -6 v12z" class="fink"/><text x="250" y="90" text-anchor="middle" font-size="12" class="tmut">weak interaction</text>
-<circle cx="390" cy="100" r="70" class="fsunk ink" stroke-width="2"/><text x="390" y="34" text-anchor="middle" font-size="13" font-weight="700">proton (uud)</text>
+<circle cx="390" cy="100" r="70" class="fsunk ink" stroke-width="2"/><text x="390" y="20" text-anchor="middle" font-size="13" font-weight="700">proton (uud)</text>
 <circle cx="365" cy="85" r="16" class="fdat"/><text x="365" y="90" text-anchor="middle" font-size="13" font-weight="700" style="fill:#fff">u</text><circle cx="415" cy="85" r="16" class="fdat"/><text x="415" y="90" text-anchor="middle" font-size="13" font-weight="700" style="fill:#fff">u</text><circle cx="390" cy="125" r="16" class="facc"/><text x="390" y="130" text-anchor="middle" font-size="13" font-weight="700" style="fill:#fff">d</text>
 <text x="500" y="80" font-size="14" font-weight="700">+ e⁻</text><text x="500" y="110" font-size="14" font-weight="700">+ ν̄ₑ</text>
 <text x="310" y="190" text-anchor="middle" font-size="13" class="tacc">d → u + e⁻ + ν̄ₑ</text></svg>`,"In β⁻ decay a down quark changes into an up quark, emitting an electron and an electron antineutrino.");
@@ -13671,9 +13671,9 @@ lesson({id:"md4",group:"d",num:4,lvl:"6.5.2 · Lesson 4",name:"Medical tracers a
 function draw(){ const s=$("#md4"); if(!s) return;
   const X=x=>100+x*700; let g=`<rect x="80" y="220" width="740" height="100" rx="40" fill="#e9b7a0" opacity=".55"/><ellipse cx="${X(0.47)}" cy="${255}" rx="230" ry="38" fill="#c77" opacity=".45"/><text x="830" y="300" font-size="11" class="tm" text-anchor="end">patient</text>`;
   SRC.forEach(([x,y,a])=>g+=`<circle cx="${X(x)}" cy="${220+y*60}" r="${10+a*6}" fill="#ff5a3a" opacity="${(0.3+0.4*act()).toFixed(2)}"/>`);
-  if(st.col) for(let i=0;i<=35;i++) g+=`<rect x="${100+i*20-3}" y="150" width="6" height="50" fill="#5d6470"/>`; g+=`<text x="40" y="180" font-size="11" class="tm">${st.col?"collimator":"(no collimator)"}</text>`;
-  g+=`<rect x="100" y="126" width="700" height="22" fill="#cfe0ff" opacity=".8"/><text x="40" y="141" font-size="11" class="tm">scintillator</text>`;
-  for(let i=0;i<7;i++) g+=`<rect x="${110+i*100}" y="60" width="80" height="60" rx="8" class="fsunk ink" stroke-width="1.5"/>`; g+=`<text x="40" y="94" font-size="11" class="tm">PMTs</text><text x="450" y="40" text-anchor="middle" font-size="12" class="tm">→ computer → image</text>`;
+  if(st.col) for(let i=0;i<=35;i++) g+=`<rect x="${100+i*20-3}" y="150" width="6" height="50" fill="#5d6470"/>`; g+=`<text x="94" y="180" font-size="10" text-anchor="end" class="tm">${st.col?"collimator":"(no collimator)"}</text>`;
+  g+=`<rect x="100" y="126" width="700" height="22" fill="#cfe0ff" opacity=".8"/><text x="94" y="141" font-size="10" text-anchor="end" class="tm">scintillator</text>`;
+  for(let i=0;i<7;i++) g+=`<rect x="${110+i*100}" y="60" width="80" height="60" rx="8" class="fsunk ink" stroke-width="1.5"/>`; g+=`<text x="94" y="94" font-size="10" text-anchor="end" class="tm">PMTs</text><text x="450" y="40" text-anchor="middle" font-size="12" class="tm">→ computer → image</text>`;
   st.rays.forEach(r=>g+=`<path d="M${r[0]} ${r[1]} L${r[2]} ${r[3]}" stroke="${r[4]?"#7a4cff":"#999"}" stroke-width="1.5" opacity="${r[4]?.9:.5}"/>${r[4]?`<circle cx="${r[2]}" cy="137" r="7" fill="#fff59a" opacity=".9"/>`:""}`);
   s.innerHTML=g;
   const pts=st.hist.map((n,i)=>[i/60+1/120,n]);

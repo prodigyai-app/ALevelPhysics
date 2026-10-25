@@ -76,3 +76,14 @@ AQA A-level PE (`alevel-pe`, ALevelPE) adds the thirteenth course. Its original 
 KS3 Science and KS3 Maths add Years 7–9 from the supplied department plans: 40 Science topics with 123 revision lessons and 49 Maths units with 142 lessons. Each course has six original 30-mark papers, a model lab, year filtering and separate saved answers. Related teaching periods are consolidated into focused revision lessons. The Maths course includes the shared graph plotter and optional notation keyboard. The KS3 allowlist migration adds only two course IDs and retains the existing database access rules.
 
 Live activation was completed on 24 October 2026 after the Supabase connector was restored to prodigy-learning. The `permit_ks3_courses` migration and learning-platform version 11 admit both KS3 courses; Verify JWT remains enabled. The deployed function differs from version 10 only by the two course IDs and their custom-domain origins. Live checks loaded 193 Science and 150 Maths activities in the assignment form, and a synthetic independent Science answer received provisional AI feedback of 3/3. The synthetic answer was cleared; no class assignment was sent during verification.
+
+## Readable diagrams (25 October 2026)
+
+`client/diagram-fit.js` and `client/diagram-fit.css` are copied to every course by `scripts/integrate.py` and loaded after `simple-layout.js`. They change presentation only; question IDs, answers and mark schemes are untouched.
+
+- Labels that run past a diagram's edge are brought into view by enlarging the viewBox (by at most a quarter per side). Deliberate crops using clip paths or masks are kept.
+- When a diagram's labels would appear smaller than 11 px, the diagram grows: within the column where there is room, otherwise (on columns narrower than 700 px, i.e. phones and small tablets) up to 1.6 times the column inside a sideways-scrolling frame. Wide desktop columns never scroll sideways. Fine print far smaller than the typical label, such as markings printed on apparatus, is ignored when sizing.
+- If labels are still small, an **Enlarge diagram** button opens a full-screen copy at about 14 px labels. The copy sits next to the original so it keeps the same styles.
+- Tables wider than the lesson column scroll inside their own frame. Drop-downs, fieldsets and exam answer columns can no longer push a page sideways on phones.
+
+Add `class="dg-ignore"` to an SVG or table to opt out.
