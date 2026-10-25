@@ -1,0 +1,47 @@
+/* Shared flow diagrams (see flow-diagrams.js). */
+.fd{margin:1rem 0 1.4rem;padding:1rem;border:1px solid var(--line,#33405e);border-radius:14px;background:var(--panel,#121a33);container-type:inline-size}
+.fd-title{font-weight:700;font-size:1rem;margin:0 0 .8rem;color:var(--ink,#e8ecf5)}
+.fd-note{margin:.8rem 0 0;font-size:.85rem;color:var(--muted,#8a93a8)}
+.fd-box{position:relative;min-width:0;padding:.7rem .8rem;border-radius:10px;border:1.5px solid var(--accent,#f7931e);background:var(--accent-soft,rgba(247,147,30,.12));line-height:1.35}
+.fd-box[data-n]::before{content:attr(data-n);position:absolute;top:-.7rem;left:-.5rem;width:1.5rem;height:1.5rem;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:700;background:var(--accent,#f7931e);color:var(--on-accent,#111)}
+.fd-t{display:block;font-size:.95rem;color:var(--ink,#e8ecf5)}
+.fd-d{display:block;margin-top:.2rem;font-size:.86rem;color:var(--ink,#e8ecf5);opacity:.85}
+.fd-good{border-color:var(--good,#3ecf8e);background:color-mix(in srgb,var(--good,#3ecf8e) 12%,transparent)}
+.fd-bad{border-color:var(--bad,#ff6b6b);background:color-mix(in srgb,var(--bad,#ff6b6b) 12%,transparent)}
+.fd-neutral{border-color:var(--data,#7fb2ff);background:color-mix(in srgb,var(--data,#7fb2ff) 12%,transparent)}
+.fd-arrow{flex:none;align-self:center;width:28px;height:16px;position:relative}
+.fd-arrow::before{content:"";position:absolute;left:2px;right:8px;top:7px;height:2px;background:var(--data,#7fb2ff)}
+.fd-arrow::after{content:"";position:absolute;right:0;top:2px;border:6px solid transparent;border-left:9px solid var(--data,#7fb2ff);border-right:0}
+.fd-arrow.fd-d{width:16px;height:22px;align-self:center}
+.fd-arrow.fd-d::before{left:7px;right:auto;top:0;bottom:8px;width:2px;height:auto}
+.fd-arrow.fd-d::after{left:2px;right:auto;top:auto;bottom:0;border:6px solid transparent;border-top:9px solid var(--data,#7fb2ff);border-bottom:0}
+.fd-steps,.fd-cycle{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:.9rem .2rem}
+.fd-steps>.fd-box,.fd-cycle>.fd-box{flex:0 1 calc((100% - var(--per,5) * 34px) / var(--per,5) - 1px);min-width:120px}
+.fd-chain{display:flex;flex-direction:column;align-items:stretch;gap:.25rem;max-width:560px;margin:0 auto}
+.fd-return{margin-top:.6rem;display:flex;justify-content:center}
+.fd-return span{font-size:.8rem;color:var(--data,#7fb2ff);border:1.5px dashed var(--data,#7fb2ff);border-top:0;border-radius:0 0 14px 14px;padding:.15rem 2.5rem .3rem}
+.fd-return span::before{content:"↺ "}
+.fd-compare{display:grid;grid-template-columns:repeat(var(--c,2),minmax(0,1fr));gap:.8rem}
+.fd-col{border:1.5px solid var(--data,#7fb2ff);border-radius:10px;padding:.7rem .8rem;background:color-mix(in srgb,var(--data,#7fb2ff) 8%,transparent)}
+.fd-col:nth-child(2){border-color:var(--accent,#f7931e);background:var(--accent-soft,rgba(247,147,30,.12))}
+.fd-col.fd-good{border-color:var(--good,#3ecf8e)}.fd-col.fd-bad{border-color:var(--bad,#ff6b6b)}
+.fd-ch{display:block;margin-bottom:.35rem;color:var(--ink,#e8ecf5)}
+.fd-col ul{margin:0;padding-left:1.1rem;font-size:.88rem;line-height:1.4}
+.fd-col li+li{margin-top:.25rem}
+.fd-branch{display:flex;flex-direction:column;align-items:center}
+.fd-root{max-width:520px;text-align:center}
+.fd-stem{width:2px;height:16px;background:var(--data,#7fb2ff)}
+.fd-kids{display:grid;grid-template-columns:repeat(min(var(--k,3),3),minmax(0,1fr));gap:.8rem;width:100%;padding-top:14px;border-top:2px solid var(--data,#7fb2ff);position:relative}
+.fd-kid::after{content:"";position:absolute;left:50%;top:-16px;width:2px;height:14px;background:var(--data,#7fb2ff)}
+@container (max-width:560px){
+  .fd-steps,.fd-cycle{flex-direction:column}
+  .fd-steps>.fd-box,.fd-cycle>.fd-box{flex:none}
+  .fd-steps>.fd-arrow,.fd-cycle>.fd-arrow{transform:rotate(90deg);margin:.1rem auto}
+  .fd-compare{grid-template-columns:1fr}
+  .fd-kids{grid-template-columns:1fr;border-top:0;border-left:2px solid var(--data,#7fb2ff);padding:0 0 0 14px;margin-left:8px}
+  .fd-kid::after{left:-16px;top:50%;width:14px;height:2px}
+}
+@media print{.fd{break-inside:avoid;background:none}}
+.sf{display:block;width:100%;height:auto}
+.sf-pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.4rem}
+.lv-card .fig{margin:0}
