@@ -5,12 +5,65 @@
 (function () {
   'use strict';
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  function render(v) {
+  const TOOL = '<div class="lv-tools"><button type="button" class="btn lv-test" aria-pressed="false">Test yourself</button><span class="lv-status" role="status"></span></div>';
+  function body(v) {
     if (v.figs && window.SciFig) return `<figure class="fig sf-fig"><div class="sf-pair">${v.figs.map(f => window.SciFig.svg(f[0], f[1] || {})).join('')}</div>${v.caption ? `<figcaption>${v.caption}</figcaption>` : ''}</figure>`;
     if (v.fig && window.SciFig) return `<figure class="fig sf-fig">${window.SciFig.svg(v.fig[0], v.fig[1] || {})}${v.caption ? `<figcaption>${v.caption}</figcaption>` : ''}</figure>`;
     if (v.flow && window.FlowDiagram) return window.FlowDiagram.html(v.flow);
     return v.html || '';
   }
+  function render(v) {
+    const html = body(v);
+    if (!html) return '';
+    const testable = html.includes('sf-lbl') || (v.flow && html.includes('fd-'));
+    return `<div class="lv-wrap">${html}${testable ? TOOL : ''}</div>`;
+  }
+  /* "Test yourself": hide labels (figures) or box headings and list points (flow diagrams);
+     tap or press Enter on a blank to reveal it. */
+  function targets(wrap) {
+    const labs = [...wrap.querySelectorAll('.sf-lbl')];
+    if (labs.length) return labs;
+    const fd = wrap.querySelector('.fd');
+    if (!fd) return [];
+    if (fd.classList.contains('fd-type-compare')) return [...fd.querySelectorAll('.fd-col li')];
+    let boxes = [...fd.querySelectorAll('.fd-box:not(.fd-root)')];
+    if (!fd.classList.contains('fd-type-branch') && boxes.length > 2) boxes = boxes.slice(1);
+    return boxes.map(b => b.querySelector('.fd-t') || b);
+  }
+  function status(wrap) {
+    const all = wrap.querySelectorAll('.lv-hidden, .lv-shown').length, left = wrap.querySelectorAll('.lv-hidden').length;
+    const st = wrap.querySelector('.lv-status');
+    if (st) st.textContent = wrap.classList.contains('lv-testing') ? (left ? `${all - left} of ${all} revealed` : `All ${all} revealed`) : '';
+  }
+  function setTest(wrap, on) {
+    const btn = wrap.querySelector('.lv-test');
+    wrap.classList.toggle('lv-testing', on);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.textContent = on ? 'Show all' : 'Test yourself';
+    for (const el of targets(wrap)) {
+      el.classList.toggle('lv-hidden', on); el.classList.remove('lv-shown');
+      if (on) { el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', 'Hidden answer: select to reveal'); }
+      else { el.removeAttribute('tabindex'); el.removeAttribute('role'); el.removeAttribute('aria-label'); }
+    }
+    status(wrap);
+  }
+  function reveal(el) {
+    const wrap = el.closest('.lv-wrap');
+    el.classList.remove('lv-hidden'); el.classList.add('lv-shown');
+    el.removeAttribute('aria-label'); el.removeAttribute('role'); el.removeAttribute('tabindex');
+    if (wrap) status(wrap);
+  }
+  document.addEventListener('click', e => {
+    const btn = e.target.closest && e.target.closest('.lv-test');
+    if (btn) { const w = btn.closest('.lv-wrap'); setTest(w, !w.classList.contains('lv-testing')); return; }
+    const h = e.target.closest && e.target.closest('.lv-hidden');
+    if (h) { e.preventDefault(); e.stopPropagation(); reveal(h); }
+  }, true);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const h = e.target.closest && e.target.closest('.lv-hidden');
+    if (h) { e.preventDefault(); reveal(h); }
+  });
   function apply() {
     const all = window.LESSON_VISUALS || {};
     for (const id of Object.keys(all)) {

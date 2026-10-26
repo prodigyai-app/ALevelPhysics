@@ -32,8 +32,8 @@
       arr.forEach((l, i) => {
         const y = ys[i], ex = side === 'l' ? tx + 6 : tx - 6;
         g += `<path d="M${f(ex)} ${f(y)}L${f(side === 'l' ? ex + 14 : ex - 14)} ${f(y)}L${f(l.x)} ${f(l.y)}" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".75"/><circle cx="${f(l.x)}" cy="${f(l.y)}" r="2.6" fill="currentColor"/>`;
-        const y0 = y - l._h / 2 + size * 0.34;
-        g += `<text x="${f(tx)}" y="${f(y0)}" text-anchor="${side === 'l' ? 'end' : 'start'}" class="sf-lab" font-size="${size}">${l._lines.map((t, k) => `<tspan x="${f(tx)}" dy="${k ? f(lh) : 0}">${esc(t)}</tspan>`).join('')}</text>`;
+        const y0 = y - l._h / 2 + size * 0.34, bw = Math.max(...l._lines.map(t => t.length)) * cw + 10, bh = l._lines.length * lh + 6;
+        g += `<g class="sf-lbl"><rect class="sf-blank" x="${f(side === 'l' ? tx - bw + 4 : tx - 6)}" y="${f(y - l._h / 2 - lh / 2 - 3)}" width="${f(bw)}" height="${f(bh)}" rx="5"/><text x="${f(tx)}" y="${f(y0)}" text-anchor="${side === 'l' ? 'end' : 'start'}" class="sf-lab" font-size="${size}">${l._lines.map((t, k) => `<tspan x="${f(tx)}" dy="${k ? f(lh) : 0}">${esc(t)}</tspan>`).join('')}</text></g>`;
       });
     };
     run(L, 'l'); run(R, 'r');
