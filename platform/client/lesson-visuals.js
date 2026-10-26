@@ -15,13 +15,13 @@
   function render(v) {
     const html = body(v);
     if (!html) return '';
-    const testable = html.includes('sf-lbl') || (v.flow && html.includes('fd-'));
+    const testable = html.includes('sf-lbl') || html.includes('sf-q') || (v.flow && html.includes('fd-'));
     return `<div class="lv-wrap">${html}${testable ? TOOL : ''}</div>`;
   }
-  /* "Test yourself": hide labels (figures) or box headings and list points (flow diagrams);
+  /* "Test yourself": hide labels and electrons (figures) or box headings and list points (flow diagrams);
      tap or press Enter on a blank to reveal it. */
   function targets(wrap) {
-    const labs = [...wrap.querySelectorAll('.sf-lbl')];
+    const labs = [...wrap.querySelectorAll('.sf-lbl, .sf-q')];
     if (labs.length) return labs;
     const fd = wrap.querySelector('.fd');
     if (!fd) return [];

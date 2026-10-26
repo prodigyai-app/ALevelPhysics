@@ -155,7 +155,9 @@
     cfg.forEach((n, i) => {
       const rr = R0 + dR * (i + 1), slots = n <= 2 ? [[-90, n]] : [];
       if (n > 2) { const per = [0, 0, 0, 0]; for (let k = 0; k < n; k++) per[k % 4]++; [-90, 0, 90, 180].forEach((a, j) => slots.push([a, per[j]])); }
-      slots.forEach(([a, m]) => { for (let k = 0; k < m; k++) { const aa = (a + (m === 2 ? (k ? 9 : -9) * 52 / rr : 0)) * Math.PI / 180, x = cx + Math.cos(aa) * rr, y = cy + Math.sin(aa) * rr; if (!firstE) firstE = [x, y]; b += `<circle cx="${f(x)}" cy="${f(y)}" r="7.5" fill="url(#${id}-e)" stroke="#123c6b" stroke-opacity=".6"/>` + (lv >= 1 ? `<text x="${f(x)}" y="${f(y + 3.5)}" text-anchor="middle" font-size="10" font-weight="700" class="sf-in" style="fill:#fff">−</text>` : ''); } });
+      let es = '';
+      slots.forEach(([a, m]) => { for (let k = 0; k < m; k++) { const aa = (a + (m === 2 ? (k ? 9 : -9) * 52 / rr : 0)) * Math.PI / 180, x = cx + Math.cos(aa) * rr, y = cy + Math.sin(aa) * rr; if (!firstE) firstE = [x, y]; es += `<circle cx="${f(x)}" cy="${f(y)}" r="7.5" fill="url(#${id}-e)" stroke="#123c6b" stroke-opacity=".6"/>` + (lv >= 1 ? `<text x="${f(x)}" y="${f(y + 3.5)}" text-anchor="middle" font-size="10" font-weight="700" class="sf-in" style="fill:#fff">−</text>` : ''); } });
+      b += qg(es, cx, cy, rr);
     });
     const pk = pts.findIndex((_, k) => isP[k]), nk = pts.findIndex((_, k) => !isP[k]);
     const labs = [{ x: cx - nr - 6, y: cy + 4, t: 'Nucleus', side: 'l' }];
@@ -166,7 +168,7 @@
     labs.push({ x: cx + outR * 0.71, y: cy + outR * 0.71, t: lv ? 'Shell (energy level)' : 'Shell', side: 'r', ly: cy + 150 });
     let sideTxt = `<g transform="translate(${W - 140} 150)"><text x="0" y="0" font-size="16" class="sf-lab" text-anchor="middle">${esc(o.title || (NAME[Z][0].toUpperCase() + NAME[Z].slice(1) + (ch ? ' ion' : ' atom')))}</text>`;
     sideTxt += `<text x="-6" y="44" font-size="14" text-anchor="end" class="sf-lab">${A}</text><text x="-6" y="72" font-size="14" text-anchor="end" class="sf-lab">${Z}</text><text x="0" y="70" font-size="40" font-weight="700" class="sf-lab">${SYM[Z]}</text>${ch ? `<text x="${SYM[Z].length * 24 + 4}" y="46" font-size="16" class="sf-lab">${Math.abs(ch) > 1 ? Math.abs(ch) : ''}${ch > 0 ? '+' : '−'}</text>` : ''}`;
-    if (lv >= 1) sideTxt += `<text x="0" y="104" font-size="13" text-anchor="middle" class="sf-lab">${Z} p · ${N} n · ${e} e⁻</text><text x="0" y="124" font-size="13" text-anchor="middle" class="sf-lab">Electrons: ${cfg.join(', ')}</text>`;
+    if (lv >= 1) { const t1 = `${Z} p · ${N} n · ${e} e⁻`, t2 = `Electrons: ${cfg.join(', ')}`; sideTxt += qt(`<text x="0" y="104" font-size="13" text-anchor="middle" class="sf-lab">${t1}</text>`, -t1.length * 3.8 - 6, 91, t1.length * 7.6 + 12, 17) + qt(`<text x="0" y="124" font-size="13" text-anchor="middle" class="sf-lab">${t2}</text>`, -t2.length * 3.8 - 6, 112, t2.length * 7.6 + 12, 17); }
     sideTxt += '</g>';
     return wrap(W, H, o.aria || `Atom diagram of ${NAME[Z]}: ${Z} protons, ${N} neutrons, ${e} electrons arranged ${cfg.join(', ')}`, defs, b + labels(labs, { W, H, lx: cx - outR - 26, rx: cx + outR + 30, top: 30 }) + sideTxt);
   }
@@ -392,6 +394,9 @@
 
   /* ---------- chemistry: shell diagrams for bonding ---------- */
   const EL = { 1: ['H', '#e9eef2'], 3: ['Li', '#c9a6e8'], 6: ['C', '#9aa3ab'], 7: ['N', '#7fb2ff'], 8: ['O', '#ff8a7a'], 9: ['F', '#9fe08a'], 11: ['Na', '#c9a6e8'], 12: ['Mg', '#b5e08a'], 17: ['Cl', '#8fe08a'], 19: ['K', '#c9a6e8'], 20: ['Ca', '#b5e08a'] };
+  /* Test-yourself groups: qg hides electrons and shows a dashed ring to tap; qt hides a text and shows a blank box. */
+  const qg = (inner, x, y, r) => inner ? `<g class="sf-q">${inner}<circle class="sf-ring" cx="${f(x)}" cy="${f(y)}" r="${f(r)}"/><circle class="sf-hit" cx="${f(x)}" cy="${f(y)}" r="${f(r)}"/></g>` : '';
+  const qt = (inner, x, y, w, h) => `<g class="sf-q"><rect class="sf-blank" x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="5"/>${inner}</g>`;
   const mark = (x, y, k, col) => k === 'x' ? `<path d="M${f(x - 4)} ${f(y - 4)}l8 8M${f(x + 4)} ${f(y - 4)}l-8 8" stroke="${col || '#ffcf5a'}" stroke-width="2.2"/>` : `<circle cx="${f(x)}" cy="${f(y)}" r="4.2" fill="${col || '#7fd0ff'}"/>`;
   function shellAtom(cx, cy, Z, o = {}) {
     const [sym, col] = EL[Z] || [SYM[Z], '#ccc'], e = Z - (o.charge || 0), cfg = shells(e), outerOnly = o.outerOnly;
@@ -400,22 +405,24 @@
     use.forEach(i => { const rr = outerOnly ? 40 : rs[i]; s += `<circle cx="${f(cx)}" cy="${f(cy)}" r="${rr}" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/>`; });
     s += `<circle cx="${f(cx)}" cy="${f(cy)}" r="17" fill="${col}" stroke="#000" stroke-opacity=".3"/><text x="${f(cx)}" y="${f(cy + 6)}" text-anchor="middle" font-size="16" font-weight="700" class="sf-in" style="fill:#1b1f22">${sym}</text>`;
     use.forEach(i => {
-      const rr = outerOnly ? 40 : rs[i], n = cfg[i], gained = (i === cfg.length - 1 && o.gain) ? o.gain : 0;
+      const rr = outerOnly ? 40 : rs[i], n = cfg[i], gained = (i === cfg.length - 1 && o.gain) ? o.gain : 0, q = o.quiz && i === cfg.length - 1;
+      let es = '';
       const per = [0, 0, 0, 0]; for (let k = 0; k < n; k++) per[k % 4]++;
       let gi = n - gained;
-      [-90, 0, 90, 180].forEach((a, j) => { for (let k = 0; k < per[j]; k++) { const aa = (a + (per[j] === 2 ? (k ? 10 : -10) * 40 / rr : 0)) * Math.PI / 180, idx = [-90, 0, 90, 180].slice(0, j).reduce((t, _, q) => t + per[q], 0) + k; s += mark(cx + Math.cos(aa) * rr, cy + Math.sin(aa) * rr, idx >= gi ? (o.other || 'x') : (o.own || 'o')); } });
+      [-90, 0, 90, 180].forEach((a, j) => { for (let k = 0; k < per[j]; k++) { const aa = (a + (per[j] === 2 ? (k ? 10 : -10) * 40 / rr : 0)) * Math.PI / 180, idx = [-90, 0, 90, 180].slice(0, j).reduce((t, _, q) => t + per[q], 0) + k; es += mark(cx + Math.cos(aa) * rr, cy + Math.sin(aa) * rr, idx >= gi ? (o.other || 'x') : (o.own || 'o')); } });
+      s += q ? qg(es, cx, cy, rr) : es;
     });
     return { s, R: outerOnly ? 40 : rs[rs.length - 1] };
   }
-  const bracket = (cx, cy, R, ch) => `<path d="M${f(cx - R - 8)} ${f(cy - R - 6)}h-8v${f(2 * R + 12)}h8M${f(cx + R + 8)} ${f(cy - R - 6)}h8v${f(2 * R + 12)}h-8" fill="none" stroke="currentColor" stroke-width="2"/><text x="${f(cx + R + 20)}" y="${f(cy - R - 2)}" font-size="18" font-weight="700" class="sf-lab">${ch}</text>`;
+  const bracket = (cx, cy, R, ch) => `<path d="M${f(cx - R - 8)} ${f(cy - R - 6)}h-8v${f(2 * R + 12)}h8M${f(cx + R + 8)} ${f(cy - R - 6)}h8v${f(2 * R + 12)}h-8" fill="none" stroke="currentColor" stroke-width="2"/>` + qt(`<text x="${f(cx + R + 20)}" y="${f(cy - R - 2)}" font-size="18" font-weight="700" class="sf-lab">${ch}</text>`, cx + R + 16, cy - R - 20, String(ch).length * 11 + 10, 24);
   function ionicBond(o = {}) {
     const M = o.metal || 11, N = o.nonmetal || 17, mv = { 11: 1, 19: 1, 3: 1, 12: 2, 20: 2 }[M] || 1, nv = { 17: 1, 9: 1, 8: 2 }[N] || 1;
     const W = 960, H = 330, cy = 150;
     const a = shellAtom(120, cy, M, { own: 'o' }), b = shellAtom(330, cy, N, { own: 'x' });
     let g = a.s + b.s;
-    g += `<path d="M${f(120 + a.R + 6)} ${cy - a.R + 10}Q225 ${cy - a.R - 40} ${f(330 - b.R + 4)} ${cy - b.R + 6}" fill="none" stroke="#ffcf5a" stroke-width="2.4" stroke-dasharray="6 4"/><path d="M${f(330 - b.R + 4)} ${cy - b.R + 6}l-14 -2 6 -10z" fill="#ffcf5a"/><text x="225" y="${cy - a.R - 34}" text-anchor="middle" font-size="14" class="sf-lab">${mv > 1 ? mv + ' electrons' : '1 electron'} transferred</text>`;
+    g += `<path d="M${f(120 + a.R + 6)} ${cy - a.R + 10}Q225 ${cy - a.R - 40} ${f(330 - b.R + 4)} ${cy - b.R + 6}" fill="none" stroke="#ffcf5a" stroke-width="2.4" stroke-dasharray="6 4"/><path d="M${f(330 - b.R + 4)} ${cy - b.R + 6}l-14 -2 6 -10z" fill="#ffcf5a"/>` + qt(`<text x="225" y="${cy - a.R - 34}" text-anchor="middle" font-size="14" class="sf-lab">${mv > 1 ? mv + ' electrons' : '1 electron'} transferred</text>`, 150, cy - a.R - 50, 150, 22);
     g += `<path d="M430 ${cy}h70" stroke="currentColor" stroke-width="3"/><path d="M500 ${cy}l-12 -7v14z" fill="currentColor"/>`;
-    const c = shellAtom(610, cy, M, { charge: mv, own: 'o' }), d = shellAtom(830, cy, N, { charge: -nv, own: 'x', gain: nv, other: 'o' });
+    const c = shellAtom(610, cy, M, { charge: mv, own: 'o', quiz: true }), d = shellAtom(830, cy, N, { charge: -nv, own: 'x', gain: nv, other: 'o', quiz: true });
     g += c.s + bracket(610, cy, c.R, (mv > 1 ? mv : '') + '+') + d.s + bracket(830, cy, d.R, (nv > 1 ? nv : '') + '−');
     const nm = { 11: 'sodium', 12: 'magnesium', 3: 'lithium', 19: 'potassium', 20: 'calcium' }[M], nn = { 17: 'chlorine', 9: 'fluorine', 8: 'oxygen' }[N], ion = { 17: 'chloride', 9: 'fluoride', 8: 'oxide' }[N];
     g += `<text x="225" y="${H - 50}" text-anchor="middle" font-size="15" class="sf-lab">${nm} atom + ${nn} atom</text><text x="720" y="${H - 50}" text-anchor="middle" font-size="15" class="sf-lab">${nm} ion + ${ion} ion</text><text x="480" y="${H - 18}" text-anchor="middle" font-size="13" class="sf-lab">• and × show electrons from different atoms; both ions now have full outer shells</text>`;
@@ -428,12 +435,12 @@
     let g = '', d = 72;
     const own = (Z) => (Z === 1 ? 1 : shells(Z)[shells(Z).length - 1]);
     nb.forEach((Z, i) => { const a = angs[i] * Math.PI / 180, x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d; g += `<circle cx="${f(x)}" cy="${f(y)}" r="46" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/><circle cx="${f(x)}" cy="${f(y)}" r="17" fill="${EL[Z][1]}"/><text x="${f(x)}" y="${f(y + 6)}" text-anchor="middle" font-size="16" font-weight="700" class="sf-in" style="fill:#1b1f22">${EL[Z][0]}</text>`;
-      const shared = order; for (let k = 0; k < shared; k++) { const off = (k - (shared - 1) / 2) * 14, mx = cx + Math.cos(a) * d * 0.5, my = cy + Math.sin(a) * d * 0.5, px = -Math.sin(a), py = Math.cos(a); g += mark(mx + px * (off - 5), my + py * (off - 5), 'o') + mark(mx + px * (off + 5), my + py * (off + 5), 'x'); }
-      const rest = own(Z) - shared; for (let k = 0; k < rest; k++) { const b = a + Math.PI + (k - (rest - 1) / 2) * 0.55 + Math.PI; g += mark(x + Math.cos(b) * 46, y + Math.sin(b) * 46, 'x'); }
+      const shared = order, mx = cx + Math.cos(a) * d * 0.5, my = cy + Math.sin(a) * d * 0.5; let bp = ''; for (let k = 0; k < shared; k++) { const off = (k - (shared - 1) / 2) * 14, px = -Math.sin(a), py = Math.cos(a); bp += mark(mx + px * (off - 5), my + py * (off - 5), 'o') + mark(mx + px * (off + 5), my + py * (off + 5), 'x'); } g += qg(bp, mx, my, 10 + shared * 5);
+      const rest = own(Z) - shared; let nbp = ''; for (let k = 0; k < rest; k++) { const b = a + Math.PI + (k - (rest - 1) / 2) * 0.55 + Math.PI; nbp += mark(x + Math.cos(b) * 46, y + Math.sin(b) * 46, 'x'); } g += qg(nbp, x, y, 46);
     });
     g = `<circle cx="${cx}" cy="${cy}" r="46" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/><circle cx="${cx}" cy="${cy}" r="17" fill="${EL[Zc][1]}"/><text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="16" font-weight="700" class="sf-in" style="fill:#1b1f22">${EL[Zc][0]}</text>` + g;
     const used = nb.map(n => angs[nb.indexOf(n)]); const free = [270, 90, 180, 0, 135, 45].filter(a => angs.every(u => Math.abs(((a - u) % 360 + 540) % 360 - 180) > 50)).slice(0, lp[0]);
-    free.forEach(a => { const r = a * Math.PI / 180, x = cx + Math.cos(r) * 46, y = cy + Math.sin(r) * 46, px = -Math.sin(r) * 6, py = Math.cos(r) * 6; g += mark(x + px, y + py, 'o') + mark(x - px, y - py, 'o'); });
+    free.forEach(a => { const r = a * Math.PI / 180, x = cx + Math.cos(r) * 46, y = cy + Math.sin(r) * 46, px = -Math.sin(r) * 6, py = Math.cos(r) * 6; g += qg(mark(x + px, y + py, 'o') + mark(x - px, y - py, 'o'), x, y, 13); });
     void used;
     const sub = key.replace(/(\d)/g, d => '₀₁₂₃₄'[d]);
     g += `<text x="${cx}" y="${H - 40}" text-anchor="middle" font-size="16" class="sf-lab">${sub}: ${order > 1 ? 'double covalent bonds' : 'single covalent bonds'} (shared pairs of electrons in the overlap)</text><text x="${cx}" y="${H - 16}" text-anchor="middle" font-size="13" class="sf-lab">Outer shells only. • and × show electrons from different atoms.</text>`;
