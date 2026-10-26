@@ -83,6 +83,8 @@ Live activation was completed on 24 October 2026 after the Supabase connector wa
 
 `client/science-figures.js` (`SciFig`: level-aware realistic figures such as cells, atoms, organs and bonding), `client/flow-diagrams.js`/`.css` (`FlowDiagram`: steps, cycle, compare, branch and chain layouts) and `client/lesson-visuals.js` add figures and flow diagrams to lesson pages. Each course that uses them has a `lesson-visuals-data.js` that sets `window.LESSON_VISUALS = { lessonId: [{ title, after, fig | figs | flow, caption }] }`; `after` counts learn cards. KS3 Science adds them as deck slides in `lesson-decks.js`. These files are copied into the courses by hand, not by `integrate.py`.
 
+`client/lesson-summary.js` merges each lesson's adjacent "Key points" and "Common mistakes" cards into one "Lesson summary" card (Remember / Watch out columns) on the rendered page, so lesson generators and content stay unchanged. Load it after `lesson-visuals.js` and before `diagram-fit.js`.
+
 - Labels that run past a diagram's edge are brought into view by enlarging the viewBox (by at most a quarter per side). Deliberate crops using clip paths or masks are kept.
 - When a diagram's labels would appear smaller than 11 px, the diagram grows: within the column where there is room, otherwise (on columns narrower than 700 px, i.e. phones and small tablets) up to 1.6 times the column inside a sideways-scrolling frame. Wide desktop columns never scroll sideways. Fine print far smaller than the typical label, such as markings printed on apparatus, is ignored when sizing.
 - If labels are still small, an **Enlarge diagram** button opens a full-screen copy at about 14 px labels. The copy sits next to the original so it keeps the same styles.
