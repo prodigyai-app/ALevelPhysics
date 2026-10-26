@@ -3,16 +3,17 @@
    Labels sit outside the drawing with leader lines, so they never cover structures. */
 (function (root) {
   'use strict';
-  let uid = 0;
+  let uid = 0, LAB_K = 1, ONLY = null, EXT = null; /* compact mode for small displays, set per call by svg(name, {labelScale, only}): bigger labels, optional label subset, canvas grows to fit */
   const f = v => (+v).toFixed(1);
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const rnd = seed => { let a = seed >>> 0 || 1; return () => ((a = (a * 1664525 + 1013904223) >>> 0) / 4294967296); };
 
   /* ---------- label layout: labels in columns either side, leader lines to anchors ---------- */
   function labels(list, o) {
-    const W = o.W, H = o.H, size = o.size || 15, lh = size * 1.18, gap = o.gap || Math.max(26, size * 1.7), top = o.top ?? 24, bot = o.bot ?? H - 14;
+    const W = o.W, H = o.H, size = (o.size || 15) * LAB_K, lh = size * 1.18, gap = o.gap ? o.gap * LAB_K : Math.max(26, size * 1.7), top = o.top ?? 24, bot = o.bot ?? H - 14;
     const lx = o.lx ?? 150, rx = o.rx ?? W - 150, cw = size * 0.56;
     const L = [], R = [];
+    if (ONLY) list = list.filter(l => ONLY.some(w => l.t.toLowerCase().startsWith(w.toLowerCase())));
     list.forEach(l => ((l.side || (l.x < W / 2 ? 'l' : 'r')) === 'l' ? L : R).push(l));
     const split = (t, room) => {
       if (t.length * cw <= room) return [t];
@@ -22,7 +23,7 @@
     };
     let g = '';
     const run = (arr, side) => {
-      const tx = side === 'l' ? lx : rx, room = side === 'l' ? tx - 4 : W - tx - 4;
+      const tx = side === 'l' ? lx : rx, room = Math.max(side === 'l' ? tx - 4 : W - tx - 4, LAB_K > 1 ? cw * 16 : 0);
       arr.forEach(l => { l._y = +(l.ly ?? l.y); l._lines = split(l.t, room); l._h = (l._lines.length - 1) * lh; });
       arr.sort((a, b) => a._y - b._y);
       const ys = arr.map(a => Math.max(top + a._h / 2, Math.min(bot - a._h / 2, a._y)));
@@ -32,6 +33,7 @@
       arr.forEach((l, i) => {
         const y = ys[i], ex = side === 'l' ? tx + 6 : tx - 6;
         g += `<path d="M${f(ex)} ${f(y)}L${f(side === 'l' ? ex + 14 : ex - 14)} ${f(y)}L${f(l.x)} ${f(l.y)}" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".75"/><circle cx="${f(l.x)}" cy="${f(l.y)}" r="2.6" fill="currentColor"/>`;
+        if (EXT) { const tw = Math.max(...l._lines.map(t => t.length)) * cw; if (side === 'l') EXT.l = Math.min(EXT.l, tx - tw); else EXT.r = Math.max(EXT.r, tx + tw); EXT.t = Math.min(EXT.t, y - l._h / 2 - size); EXT.b = Math.max(EXT.b, y + l._h / 2 + size * 0.5); }
         const y0 = y - l._h / 2 + size * 0.34, bw = Math.max(...l._lines.map(t => t.length)) * cw + 10, bh = l._lines.length * lh + 6;
         g += `<g class="sf-lbl"><rect class="sf-blank" x="${f(side === 'l' ? tx - bw + 4 : tx - 6)}" y="${f(y - l._h / 2 - lh / 2 - 3)}" width="${f(bw)}" height="${f(bh)}" rx="5"/><text x="${f(tx)}" y="${f(y0)}" text-anchor="${side === 'l' ? 'end' : 'start'}" class="sf-lab" font-size="${size}">${l._lines.map((t, k) => `<tspan x="${f(tx)}" dy="${k ? f(lh) : 0}">${esc(t)}</tspan>`).join('')}</text></g>`;
       });
@@ -39,7 +41,7 @@
     run(L, 'l'); run(R, 'r');
     return g;
   }
-  const wrap = (W, H, aria, defs, body) => `<svg class="sf" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}" style="color:var(--ink,#e8ecf5)"><defs>${defs}</defs>${body}</svg>`;
+  const wrap = (W, H, aria, defs, body) => { let x0 = 0, y0 = 0, w = W, h = H; if (EXT) { x0 = Math.min(0, Math.floor(EXT.l - 10)); y0 = Math.min(0, Math.floor(EXT.t - 4)); w = Math.max(W, Math.ceil(EXT.r + 10)) - x0; h = Math.max(H, Math.ceil(EXT.b + 4)) - y0; } return `<svg class="sf" viewBox="${x0} ${y0} ${w} ${h}" role="img" aria-label="${esc(aria)}" style="color:var(--ink,#e8ecf5)"><defs>${defs}</defs>${body}</svg>`; };
   const LV = l => (l === 'ks3' ? 0 : l === 'alevel' || l === 'a' ? 2 : 1);
 
   /* ---------- organelles ---------- */
@@ -170,6 +172,7 @@
     sideTxt += `<text x="-6" y="44" font-size="14" text-anchor="end" class="sf-lab">${A}</text><text x="-6" y="72" font-size="14" text-anchor="end" class="sf-lab">${Z}</text><text x="0" y="70" font-size="40" font-weight="700" class="sf-lab">${SYM[Z]}</text>${ch ? `<text x="${SYM[Z].length * 24 + 4}" y="46" font-size="16" class="sf-lab">${Math.abs(ch) > 1 ? Math.abs(ch) : ''}${ch > 0 ? '+' : '−'}</text>` : ''}`;
     if (lv >= 1) { const t1 = `${Z} p · ${N} n · ${e} e⁻`, t2 = `Electrons: ${cfg.join(', ')}`; sideTxt += qt(`<text x="0" y="104" font-size="13" text-anchor="middle" class="sf-lab">${t1}</text>`, -t1.length * 3.8 - 6, 91, t1.length * 7.6 + 12, 17) + qt(`<text x="0" y="124" font-size="13" text-anchor="middle" class="sf-lab">${t2}</text>`, -t2.length * 3.8 - 6, 112, t2.length * 7.6 + 12, 17); }
     sideTxt += '</g>';
+    if (o.noSide) sideTxt = '';
     return wrap(W, H, o.aria || `Atom diagram of ${NAME[Z]}: ${Z} protons, ${N} neutrons, ${e} electrons arranged ${cfg.join(', ')}`, defs, b + labels(labs, { W, H, lx: cx - outR - 26, rx: cx + outR + 30, top: 30 }) + sideTxt);
   }
 
@@ -580,7 +583,7 @@
   }
 
   const REG = { animalCell, plantCell, bacterialCell, atom, neurone, heart, leaf, alveolus, eye, specialised, dna, nephron, synapse, mitochondrion, chloroplast, ionicBond, covalent, lattice, metallic, giantCovalent, atomModels, isotopes, states, flower, digestive, lungs, earth };
-  const svg = (name, o) => (REG[name] ? REG[name](o || {}) : '');
+  const svg = (name, o) => { if (!REG[name]) return ''; o = o || {}; LAB_K = o.labelScale || 1; ONLY = o.only || null; EXT = LAB_K > 1 ? { l: 1e9, r: -1e9, t: 1e9, b: -1e9 } : null; try { return REG[name](o); } finally { LAB_K = 1; ONLY = null; EXT = null; } };
   const fig = (name, o = {}) => `<figure class="fig sf-fig">${svg(name, o)}${o.caption ? `<figcaption>${o.caption}</figcaption>` : ''}</figure>`;
   const api = { svg, fig, register: (n, fn) => { REG[n] = fn; }, _labels: labels, _wrap: wrap, _LV: LV, _f: f, _esc: esc, _rnd: rnd, _grad: gradDefs, _mito: mito, _chloro: chloro, _nucleus: nucleus };
   root.SciFig = api;
