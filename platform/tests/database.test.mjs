@@ -21,3 +21,25 @@ test('database rejects direct client reads/writes and reserves AI budget atomica
   await db.exec('reset role;');const rls=await db.query(`select relname,relrowsecurity from pg_class where relname in ('learning_assignments','learning_submissions','learning_marking_attempts')`);assert.ok(rls.rows.every(r=>r.relrowsecurity));
  }finally{await db.close();}
 });
+
+
+test('account helpers reject anonymous calls while signup lookup and signed-in policies retain access',async()=>{
+ const db=new PGlite();try{
+  await db.exec(`create role anon;create role authenticated;create role service_role;grant usage on schema public to anon,authenticated,service_role;
+   create function public.is_teacher() returns boolean language sql security definer as 'select false';
+   create function public.in_class(uuid) returns boolean language sql security definer as 'select false';
+   create function public.owns_class(uuid) returns boolean language sql security definer as 'select false';
+   create function public.teaches(uuid) returns boolean language sql security definer as 'select false';
+   create function public.handle_new_user() returns text language sql security definer as 'select null::text';
+   create function public.check_class_code(text) returns text language sql security definer as 'select null::text';
+   create function public.class_info(text) returns jsonb language sql security definer as 'select null::jsonb';`);
+  await db.exec(readFileSync(new URL('20261027175726_restrict_account_function_execution.sql',migrations),'utf8'));
+  await db.exec('set role anon');
+  for(const call of ['is_teacher()','in_class(null)','owns_class(null)','teaches(null)','handle_new_user()','check_class_code(null)'])await assert.rejects(db.query('select public.'+call),/permission denied/);
+  assert.equal((await db.query('select public.class_info(null) as info')).rows[0].info,null);
+  await db.exec('reset role;set role authenticated');
+  assert.equal((await db.query('select public.is_teacher() as teacher')).rows[0].teacher,false);
+  await assert.rejects(db.query('select public.handle_new_user()'),/permission denied/);
+  await db.exec('reset role');
+ }finally{await db.close();}
+});

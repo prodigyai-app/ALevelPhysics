@@ -1,3 +1,4 @@
+require('./check-node.cjs').check();
 /* Execute only local, owned course source; all external resources are blocked. */
 const {JSDOM,ResourceLoader,VirtualConsole}=require('jsdom');
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
@@ -31,7 +32,7 @@ function extract(w,d,p){
   const cfg=w.EXAM.CARDS[card.id];if(!cfg)continue;
   for(const group of cfg.qs)for(const q of group.parts){
    const prompt=plain((group.stem||'')+' '+q.q),essay=p.id==='essay-workbench'?card.id.replace('xm-essay-workbench-',''):null;
-   questions.push({id:q.id,kind:q.opts?'choice':'written',m:q.m,prompt,options:q.opts?.map(plain)||[],correct:q.opts?q.a:null,scheme:(q.ms||[]).map(x=>plain(Array.isArray(x)?x.join(' · '):x)),levels:q.lor?.map(x=>x.map(plain))||[],indicative:q.ind?.map(plain)||[],note:plain(q.note),numeric:q.ans||null,higher:!!q.ht,visual:/<(svg|img|canvas)\b/i.test((group.stem||'')+q.q),...(essay?{essay}:{})});
+   questions.push({id:q.id,kind:q.opts?'choice':'written',m:q.m,prompt,options:q.opts?.map(plain)||[],correct:q.opts?q.a:null,scheme:(q.ms||[]).map(x=>plain(Array.isArray(x)?x.join(' Â· '):x)),levels:q.lor?.map(x=>x.map(plain))||[],indicative:q.ind?.map(plain)||[],note:plain(q.note),numeric:q.ans||null,higher:!!q.ht,visual:/<(svg|img|canvas)\b/i.test((group.stem||'')+q.q),...(essay?{essay}:{})});
   }
  }
  for(const el of sec.querySelectorAll('.qi[data-q]')){

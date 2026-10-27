@@ -91,3 +91,11 @@ Live activation was completed on 24 October 2026 after the Supabase connector wa
 - Tables wider than the lesson column scroll inside their own frame. Drop-downs, fieldsets and exam answer columns can no longer push a page sideways on phones.
 
 Add `class="dg-ignore"` to an SVG or table to opt out.
+
+## Security maintenance (27 October 2026)
+
+Build/test tooling requires patched Node: 22.23.4, 24.22.1 or 26.12.1, or later in those major lines. Windows: run `./scripts/use-patched-node.ps1 node --test tests/*.test.mjs` from platform. The launcher selects the verified installed Node 24.22.1 and passes it to child processes. The catalogue builder, npm pretest and publisher reject affected runtimes; `.nvmrc` and `.node-version` pin 24.22.1.
+
+The account-function permission migration removes anonymous execution of role/membership helpers and removes API-role execution of the signup trigger and unused legacy class lookup. The current `class_info` lookup remains available before signup; authenticated teacher actions retain their class-ownership checks. Signup triggers execute normally without direct EXECUTE grants. Default privileges no longer grant PUBLIC execution on future postgres-owned public functions. Signed-in SECURITY DEFINER RPC advisories remain expected for existing guarded account/class functions; changing their security mode would break their intended access checks.
+
+Leaked-password protection is unavailable on this project's Free plan. The Dashboard explicitly requires Pro or above. Enable it in Authentication → Sign In / Providers → Email after a plan upgrade. It is not replaced by a browser-only check.

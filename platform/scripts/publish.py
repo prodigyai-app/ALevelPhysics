@@ -1,6 +1,9 @@
 from pathlib import Path
-import json,subprocess,concurrent.futures,shutil
+import json,subprocess,concurrent.futures,shutil,os
 root=Path(__file__).resolve().parents[1];base=root.parents[1]
+patched_node=Path(os.environ.get('LOCALAPPDATA',''))/'Programs/ProdigyNode/node-v24.22.1-win-x64/node.exe'
+if patched_node.is_file():os.environ['PATH']=str(patched_node.parent)+os.pathsep+os.environ['PATH']
+subprocess.run(['node',str(root/'scripts/check-node.cjs')],check=True)
 repos=['ALevelPhysics','ALevelChemistry','ALevelBiology','ALevelMaths','ALevelFurtherMaths','ALevelPsychology','ALevelSociology','ALevelPE','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSEmaths','GCSECombinedScience']
 def run(args,cwd):
     r=subprocess.run(args,cwd=cwd,capture_output=True,text=True)
