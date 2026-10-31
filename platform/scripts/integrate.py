@@ -42,6 +42,8 @@ def patch(text):
     text=re.sub(r'<script src="assessment-core.js(?:\?[^\"]*)?"></script>\n','',text)
     text=re.sub(r'<script src="assignments.js(?:\?[^\"]*)?"></script>\n','',text)
     text=re.sub(r'<script src="subject-icons.js[^"]*"></script>\n','',text)
+    if 'src="desktop-units.js' not in text:
+        text=re.sub(r'(<script src="simple-layout\.js[^"]*"></script>)',r'\1\n<link rel="stylesheet" href="desktop-units.css?v=20261031-fill">\n<script src="desktop-units.js?v=20261031-fill"></script>',text,count=1)
     if 'href="diagram-fit.css' not in text:text=re.sub(r'(<link rel="stylesheet" href="simple-layout\.css[^"]*">)',r'\1\n<link rel="stylesheet" href="diagram-fit.css?v=20261025-diagrams">',text,count=1)
     text=re.sub(r'<script src="diagram-fit.js[^"]*"></script>\n','',text)
     before,after=text.rsplit('</body>',1)
@@ -58,6 +60,6 @@ for repo in repos:
         (target/'assignments.js').write_text(browser_client,encoding='utf-8')
         shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
         shutil.copyfile(platform/'client'/'course-links.js',target/'course-links.js')
-        for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js','diagram-fit.js','diagram-fit.css']:shutil.copyfile(platform/'client'/asset,target/asset)
+        for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js','diagram-fit.js','diagram-fit.css','desktop-units.js','desktop-units.css']:shutil.copyfile(platform/'client'/asset,target/asset)
     print(repo,flush=True)
 shutil.copyfile(platform/'client'/'assessment-core.js',platform/'supabase'/'functions'/'_shared'/'assessment-core.js')
