@@ -754,8 +754,8 @@
     const W = 900, H = 420, x0 = 140, y0 = 350;
     let g = axes(x0, y0, 700, 290, 'Time (s)', 'Distance (m)');
     g += `<path d="M${x0} ${y0}L${x0 + 200} ${y0 - 140}H${x0 + 360}L${x0 + 460} ${y0 - 180}Q${x0 + 560} ${y0 - 210} ${x0 + 680} ${y0 - 290}" stroke="#3f7fd6" stroke-width="4" fill="none"/>`;
-    g += T(x0 + 90, y0 - 120, 'A: steep straight line:', { size: 13, a: 'end' }) + T(x0 + 90, y0 - 104, 'constant, fast speed', { size: 12, a: 'end' }) + T(x0 + 280, y0 - 154, 'B: flat: stationary', { size: 13 }) + T(x0 + 470, y0 - 150, 'C: gentler slope:', { size: 13, a: 'start' }) + T(x0 + 470, y0 - 134, 'constant, slower speed', { size: 12, a: 'start' }) + T(x0 + 580, y0 - 262, 'D: curve getting steeper:', { size: 13, a: 'end' }) + T(x0 + 580, y0 - 246, 'accelerating', { size: 12, a: 'end' });
-    g += `<path d="M${x0 + 40} ${y0 - 28}H${x0 + 140}V${y0 - 98}" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4" fill="none"/>` + T(x0 + 150, y0 - 50, 'speed = gradient = Δd ÷ Δt', { size: 13, a: 'start', fill: '#e0a64a' });
+    g += T(x0 + 158, y0 - 84, 'A: steep straight line:', { size: 13, a: 'start' }) + T(x0 + 158, y0 - 68, 'constant, fast speed', { size: 12, a: 'start' }) + T(x0 + 280, y0 - 154, 'B: flat: stationary', { size: 13 }) + T(x0 + 470, y0 - 150, 'C: gentler slope:', { size: 13, a: 'start' }) + T(x0 + 470, y0 - 134, 'constant, slower speed', { size: 12, a: 'start' }) + T(x0 + 580, y0 - 262, 'D: curve getting steeper:', { size: 13, a: 'end' }) + T(x0 + 580, y0 - 246, 'accelerating', { size: 12, a: 'end' });
+    g += `<path d="M${x0 + 40} ${y0 - 28}H${x0 + 140}V${y0 - 98}" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4" fill="none"/>` + T(x0 + 158, y0 - 44, 'speed = gradient = Δd ÷ Δt', { size: 13, a: 'start', fill: '#e0a64a' });
     return wrap(W, H, o.aria || 'Distance–time graph showing constant speed, stationary and acceleration', '', g);
   }
 
@@ -802,8 +802,8 @@
     g += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 6" opacity=".7"/><circle cx="${cx}" cy="${cy}" r="70" fill="url(#${k})"/><path d="M${cx - 40} ${cy - 30}q20 -20 40 -6t30 20q-20 30 -50 16z" fill="#5aa84a"/>`;
     const a = -0.6, sx = cx + R * Math.cos(a), sy = cy + R * Math.sin(a);
     g += `<rect x="${f(sx - 12)}" y="${f(sy - 9)}" width="24" height="18" fill="#c9ccd2"/><rect x="${f(sx - 44)}" y="${f(sy - 5)}" width="28" height="10" fill="#3f6fd6"/><rect x="${f(sx + 16)}" y="${f(sy - 5)}" width="28" height="10" fill="#3f6fd6"/>`;
-    g += arrow(sx, sy, sx + 110 * Math.sin(-a), sy + 110 * Math.cos(a) * -1 + 0, '#3fb27f', 4, 14) + arrow(sx, sy, sx - 80 * Math.cos(a), sy - 80 * Math.sin(a), '#ef5b4c', 4, 14);
-    g += T(sx + 100, sy - 70, 'velocity (tangent to the orbit)', { size: 13, a: 'start', fill: '#3fb27f' }) + T(sx + 14, sy + 44, 'gravity: towards the centre', { size: 13, a: 'start', fill: '#ef5b4c' });
+    g += arrow(sx, sy, sx - 110 * Math.sin(a), sy + 110 * Math.cos(a), '#3fb27f', 4, 14) + arrow(sx, sy, sx - 80 * Math.cos(a), sy - 80 * Math.sin(a), '#ef5b4c', 4, 14);
+    g += T(sx + 76, sy + 112, 'velocity (tangent to the orbit)', { size: 13, a: 'start', fill: '#3fb27f' }) + T(sx + 30, sy - 26, 'gravity: towards the centre', { size: 13, a: 'start', fill: '#ef5b4c' });
     g += T(560, 300, 'The speed stays the same but the', { size: 13, a: 'start' }) + T(560, 318, 'direction keeps changing, so the', { size: 13, a: 'start' }) + T(560, 336, 'velocity changes: it is accelerating', { size: 13, a: 'start' }) + T(560, 354, 'towards the Earth', { size: 13, a: 'start' });
     return wrap(W, H, o.aria || 'Satellite in a circular orbit with velocity and gravitational force arrows', '', g);
   }
