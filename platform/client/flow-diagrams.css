@@ -68,3 +68,6 @@
 .fd .lv-hidden:focus-visible{outline-width:2.5px;outline-style:solid}
 .fd .fd-col li.lv-hidden::marker{color:var(--data,#7fb2ff)}
 @media print{.lv-tools{display:none}}
+.lv-inline{margin-top:16px}
+.lv-inline>h4{margin:0 0 6px;font-size:1rem}
+.lv-inline .fig{margin:0}

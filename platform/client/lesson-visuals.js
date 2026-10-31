@@ -1,7 +1,8 @@
 /* Shared: add realistic figures (SciFig) and flow diagrams (FlowDiagram) to lesson pages.
    Each course supplies window.LESSON_VISUALS = { lessonId: [visual, ...] } where a visual is
-   { title, after, fig: [name, options], caption, flow: spec, html } and `after` counts the
-   lesson's learn cards (0 = top of the lesson, 1 = after the first card; default 1). */
+   { title, after, in, fig: [name, options], caption, flow: spec, html } and `after` counts the
+   lesson's learn cards (0 = top of the lesson, 1 = after the first card; default 1).
+   `in` names the heading of the card the visual illustrates: it is then placed inside that card. */
 (function () {
   'use strict';
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -74,6 +75,10 @@
       const end = panel.querySelector(':scope > details.lesson-objectives');
       for (const v of all[id]) {
         const html = render(v); if (!html) continue;
+        if (v.in) { // place inside the explanation card it illustrates, under its text or table
+          const host = cards.find(c => { const h = c.querySelector('h3,h4'); return h && h.textContent.trim().toLowerCase().startsWith(v.in.toLowerCase()); });
+          if (host) { const box = document.createElement('div'); box.className = 'lv-inline' + (v.flow ? ' lv-flow' : ' lv-fig'); box.innerHTML = (v.title ? `<h4>${esc(v.title)}</h4>` : '') + html; host.appendChild(box); continue; }
+        }
         const el = document.createElement('div');
         el.className = 'lcard lv-card' + (v.flow ? ' lv-flow' : ' lv-fig');
         el.dataset.visual = v.flow ? 'flow' : 'figure';
