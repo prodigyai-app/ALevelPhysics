@@ -1,0 +1,11 @@
+.lesson-practicals{min-width:0}
+.lesson-practical-list{display:grid!important;gap:24px;width:100%;min-width:0}
+.lesson-practical-item{min-width:0;width:100%}
+.lesson-practical-item>h4{font-size:1.1rem;margin:0 0 10px}
+.lesson-practical-frame{display:block;width:100%;min-height:400px;border:0;background:var(--bg);border-radius:10px}
+.ks-learning [data-panel="lab"]{min-width:0}
+@media(max-width:640px){.lesson-practicals{padding:10px}.lesson-practical-list{gap:16px}}
+
+.practical-loading{color:var(--muted);margin:8px 0 16px}
+.practical-loading[hidden]{display:none!important}
+.lesson-practical-frame:not(.is-ready){opacity:0;pointer-events:none}

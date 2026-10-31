@@ -99,3 +99,12 @@ Build/test tooling requires patched Node: 22.23.4, 24.22.1 or 26.12.1, or later 
 The account-function permission migration removes anonymous execution of role/membership helpers and removes API-role execution of the signup trigger and unused legacy class lookup. The current `class_info` lookup remains available before signup; authenticated teacher actions retain their class-ownership checks. Signup triggers execute normally without direct EXECUTE grants. Default privileges no longer grant PUBLIC execution on future postgres-owned public functions. Signed-in SECURITY DEFINER RPC advisories remain expected for existing guarded account/class functions; changing their security mode would break their intended access checks.
 
 Leaked-password protection is unavailable on this project's Free plan. The Dashboard explicitly requires Pro or above. Enable it in Authentication → Sign In / Providers → Email after a plan upgrade. It is not replaced by a browser-only check.
+
+
+## Practicals inside science lessons (31 October 2026)
+
+The eight science sites load `lesson-practical-map.js` and shared `lesson-practicals.js` before `simple-layout.js`. Each map links lesson IDs to the existing lab IDs. Required practicals appear first in the lesson's Lab panel, ahead of other models. KS3 adds a Lab mode alongside its slides, cards and questions. Keep the course map when rebuilding a site.
+
+A lab loads lazily in a same-origin frame only when its lesson panel is visible. The frame uses the original lab document and saved-state keys, so apparatus controls, notebooks and graphs retain their existing behavior. Its URL discards assignment parameters; experiment questions remain separate from the parent lesson's assessed question IDs. The child only renders the selected lab, does not create more frames, and reports height through messages checked against both origin and the exact frame window. Lab sections replaced by lazy factories are re-observed. Original standalone routes remain usable.
+
+The saved maps cover every currently available practical across the eight science sites. When adding a lab, add its lesson placement to that course's map. A-level entries use practical/PAG wording; GCSE uses required-practical wording; KS3 retains its own scaffolded instructions and state namespace.

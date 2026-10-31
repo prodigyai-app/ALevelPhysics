@@ -58,6 +58,14 @@ for repo in repos:
         index.write_text(patch(index.read_text(encoding='utf-8')),encoding='utf-8')
         (target/'assessment-core.js').write_text(browser_core,encoding='utf-8')
         (target/'assignments.js').write_text(browser_client,encoding='utf-8')
+        if repo in ['ALevelPhysics','ALevelChemistry','ALevelBiology','GCSEPhysics','GCSEChemistry','GCSEBiology','GCSECombinedScience','KS3Science']:
+            text=index.read_text(encoding='utf-8')
+            if 'src="lesson-practicals.js' not in text:
+                text=re.sub(r'(<script src="simple-layout\.js[^"]*"></script>)',r'<link rel="stylesheet" href="lesson-practicals.css?v=20261031-inline">\n<script src="lesson-practical-map.js?v=20261031-inline"></script>\n<script src="lesson-practicals.js?v=20261031-inline"></script>\n\1',text,count=1)
+                index.write_text(text,encoding='utf-8')
+            for asset in ['lesson-practicals.js','lesson-practicals.css']:shutil.copyfile(platform/'client'/asset,target/asset)
+            if target!=source:shutil.copyfile(source/'lesson-practical-map.js',target/'lesson-practical-map.js')
+
         shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
         shutil.copyfile(platform/'client'/'course-links.js',target/'course-links.js')
         for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js','diagram-fit.js','diagram-fit.css','desktop-units.js','desktop-units.css']:shutil.copyfile(platform/'client'/asset,target/asset)
