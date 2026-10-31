@@ -66,6 +66,13 @@ for repo in repos:
             for asset in ['lesson-practicals.js','lesson-practicals.css']:shutil.copyfile(platform/'client'/asset,target/asset)
             if target!=source:shutil.copyfile(source/'lesson-practical-map.js',target/'lesson-practical-map.js')
 
+        if repo in ['GCSEPhysics','GCSEChemistry','GCSEBiology','GCSECombinedScience','GCSEmaths']:
+            text=index.read_text(encoding='utf-8')
+            if 'src="gcse-tiers.js' not in text:
+                before,after=text.rsplit('</body>',1)
+                index.write_text(before+'<link rel="stylesheet" href="gcse-tiers.css?v=20261031-tiers">\n<script src="gcse-tiers.js?v=20261031-tiers"></script>\n</body>'+after,encoding='utf-8')
+            for asset in ['gcse-tiers.js','gcse-tiers.css']:shutil.copyfile(platform/'client'/asset,target/asset)
+
         shutil.copyfile(platform/'client'/'assignments.css',target/'assignments.css')
         shutil.copyfile(platform/'client'/'course-links.js',target/'course-links.js')
         for asset in ['math-notation.js','maths-keyboard.js','maths-keyboard.css','numeric-tools.js','subject-icons.js','diagram-fit.js','diagram-fit.css','desktop-units.js','desktop-units.css']:shutil.copyfile(platform/'client'/asset,target/asset)

@@ -108,3 +108,8 @@ The eight science sites load `lesson-practical-map.js` and shared `lesson-practi
 A lab loads lazily in a same-origin frame only when its lesson panel is visible. The frame uses the original lab document and saved-state keys, so apparatus controls, notebooks and graphs retain their existing behavior. Its URL discards assignment parameters; experiment questions remain separate from the parent lesson's assessed question IDs. The child only renders the selected lab, does not create more frames, and reports height through messages checked against both origin and the exact frame window. Lab sections replaced by lazy factories are re-observed. Original standalone routes remain usable.
 
 The saved maps cover every currently available practical across the eight science sites. When adding a lab, add its lesson placement to that course's map. A-level entries use practical/PAG wording; GCSE uses required-practical wording; KS3 retains its own scaffolded instructions and state namespace.
+
+
+### GCSE tier buttons (31 October 2026)
+
+`client/gcse-tiers.js` and `.css` are copied to all five GCSE courses by `scripts/integrate.py`. They retain the native Maths switch and upgrade science to visible Foundation/Higher/All content buttons. Keep the hidden `#study-tier` select for Biology/Combined filtering and saved preferences. Physics/Chemistry expose `LAB.reroute` and `refreshNav`, filter `ulist()` through `LAB_HIDE`, and omit Higher exam parts from Foundation totals. Run `node platform/tests/gcse-tiers.check.cjs <repository>` with the patched launcher for each GCSE repository.
