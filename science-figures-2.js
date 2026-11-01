@@ -1855,7 +1855,212 @@
     return wrap(W, H, o.aria || 'Colours of copper and cobalt complex ions before and after ligand substitution', '', g);
   }
 
-  const add = { anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 8: NMR, redox titration and KS3 lab pictures ======================= */
+  const burette = (x, y1, y2, liq) => `<rect x="${x - 9}" y="${y1}" width="18" height="${y2 - y1}" rx="3" fill="${liq}" fill-opacity=".45" stroke="${GL}" stroke-width="2.5"/>${Array.from({ length: 10 }, (_, i) => `<path d="M${x - 9} ${y1 + 10 + i * (y2 - y1 - 20) / 9}h7" stroke="${GL}" stroke-width="1.3"/>`).join('')}<path d="M${x - 3} ${y2}V${y2 + 26}M${x + 3} ${y2}V${y2 + 26}" stroke="${GL}" stroke-width="2.5"/><rect x="${x - 12}" y="${y2 + 6}" width="24" height="8" rx="2" fill="#55606c"/>`;
+  const conical = (x, y, liq, op = 0.6) => `<path d="M${x - 12} ${y}V${y + 30}L${x - 52} ${y + 110}Q${x - 56} ${y + 120} ${x - 44} ${y + 120}H${x + 44}Q${x + 56} ${y + 120} ${x + 52} ${y + 110}L${x + 12} ${y + 30}V${y}" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x - 36} ${y + 78}H${x + 36}L${x + 52} ${y + 110}Q${x + 56} ${y + 118} ${x + 44} ${y + 118}H${x - 44}Q${x - 56} ${y + 118} ${x - 52} ${y + 110}Z" fill="${liq}" fill-opacity="${op}"/>`;
+
+  /* ---------- redox titrations ---------- */
+  function redoxTitration(o = {}) {
+    const W = 980, H = 460;
+    let g = panelT(250, 'Manganate(VII) titration', 'MnO₄⁻ is its own indicator') + panelT(720, 'Iodine–thiosulfate titration', 'starch indicator near the end point');
+    g += stand(330, 400, 320, 90, 250) + burette(250, 60, 230, '#8a2a8f') + conical(250, 270, '#c9e3a8', 0.45);
+    g += T(250, 424, 'Fe²⁺ (acidified with dilute H₂SO₄)', { size: 12 }) + T(250, 440, 'end point: first permanent pale pink', { size: 12, w: 700 });
+    g += T(130, 120, 'KMnO₄(aq)', { size: 12, a: 'end' }) + T(130, 136, 'read the top of', { size: 11, a: 'end' }) + T(130, 150, 'the meniscus', { size: 11, a: 'end' });
+    g += stand(800, 400, 320, 90, 720) + burette(720, 60, 230, '#e8eef2') + conical(720, 270, '#3a3fa0', 0.7);
+    g += T(720, 424, 'I₂ released (add starch when it is pale yellow)', { size: 12 }) + T(720, 440, 'end point: blue-black → colourless', { size: 12, w: 700 });
+    g += T(600, 120, 'Na₂S₂O₃(aq)', { size: 12, a: 'end' });
+    g += T(490, 180, 'MnO₄⁻ + 8H⁺ + 5Fe²⁺', { size: 12 }) + T(490, 196, '→ Mn²⁺ + 4H₂O + 5Fe³⁺', { size: 12 }) + T(490, 236, 'I₂ + 2S₂O₃²⁻', { size: 12 }) + T(490, 252, '→ 2I⁻ + S₄O₆²⁻', { size: 12 });
+    return wrap(W, H, o.aria || 'Redox titrations: potassium manganate(VII) with iron(II), and sodium thiosulfate with iodine', '', g);
+  }
+
+  /* ---------- NMR spectra ---------- */
+  const nmrAxes = (x0, y0, w, from, to) => { let s = `<path d="M${x0} ${y0}H${x0 + w}" stroke="currentColor" stroke-width="2"/>`; for (let d = from; d >= to; d -= (from > 50 ? 20 : 1)) { const x = x0 + (from - d) / (from - to) * w; s += `<path d="M${f(x)} ${y0}v5" stroke="currentColor" stroke-width="1.5"/>` + T(x, y0 + 20, String(d), { size: 11 }); } return s + T(x0 + w / 2, y0 + 42, 'chemical shift δ (ppm)', { size: 12 }); };
+  function c13Nmr(o = {}) {
+    const W = 920, H = 400, x0 = 80, y0 = 300, w = 760, X = d => x0 + (220 - d) / 220 * w;
+    let g = nmrAxes(x0, y0, w, 220, 0);
+    [[58, 'C–O', 160], [18, 'CH₃', 140]].forEach(([d, l, h]) => { g += `<path d="M${f(X(d))} ${y0}V${y0 - h}" stroke="#3f7fd6" stroke-width="3"/>` + T(X(d), y0 - h - 10, `${d} ppm`, { size: 12, w: 700 }) + T(X(d), y0 - h - 26, l, { size: 12 }); });
+    g += `<path d="M${f(X(0))} ${y0}V${y0 - 50}" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="3 3"/>` + T(X(0), y0 - 58, 'TMS', { size: 11 });
+    g += T(460, 40, '¹³C NMR spectrum of ethanol, CH₃CH₂OH', { size: 15, w: 700 }) + T(460, 62, 'two peaks: two different carbon environments', { size: 13 });
+    g += T(X(190), 140, 'C=O in aldehydes, ketones,', { size: 12 }) + T(X(190), 156, 'acids and esters: 160–220', { size: 12 }) + `<rect x="${f(X(220))}" y="170" width="${f(X(160) - X(220))}" height="${y0 - 170}" fill="#e0a64a" opacity=".1"/>`;
+    g += T(X(125), 200, 'C=C and aromatic:', { size: 12 }) + T(X(125), 216, '100–150', { size: 12 }) + `<rect x="${f(X(150))}" y="230" width="${f(X(100) - X(150))}" height="${y0 - 230}" fill="#3fb27f" opacity=".1"/>`;
+    g += T(460, 384, 'number of peaks = number of carbon environments; no splitting in ¹³C spectra', { size: 12 });
+    return wrap(W, H, o.aria || 'Carbon-13 NMR spectrum of ethanol with chemical shift ranges', '', g);
+  }
+  function h1Nmr(o = {}) {
+    const W = 940, H = 420, x0 = 80, y0 = 320, w = 780, X = d => x0 + (6 - d) / 6 * w;
+    let g = nmrAxes(x0, y0, w, 6, 0);
+    const peak = (d, n, h, c) => { const sp = 10, c0 = [1], co = []; for (let k = 0; k < n; k++) co.push(k === 0 ? 1 : co[k - 1] * (n - k) / k); return co.map((v, k) => `<path d="M${f(X(d) + (k - (n - 1) / 2) * sp)} ${y0}V${f(y0 - h * v / Math.max(...co))}" stroke="${c}" stroke-width="2.5"/>`).join(''); };
+    g += peak(3.7, 4, 120, '#3f7fd6') + peak(1.2, 3, 170, '#3f7fd6') + peak(2.6, 1, 70, '#e0a64a');
+    g += T(X(3.7), y0 - 140, 'CH₂: quartet (3 H next door)', { size: 12 }) + T(X(3.7), y0 - 156, 'area 2', { size: 12, w: 700 });
+    g += T(X(1.2), y0 - 190, 'CH₃: triplet (2 H next door)', { size: 12 }) + T(X(1.2), y0 - 206, 'area 3', { size: 12, w: 700 });
+    g += T(X(2.6), y0 - 90, 'O–H: singlet', { size: 12 }) + T(X(2.6), y0 - 106, 'area 1', { size: 12, w: 700 });
+    g += T(470, 40, '¹H NMR spectrum of ethanol, CH₃CH₂OH', { size: 15, w: 700 }) + T(470, 62, 'n + 1 rule: a peak splits into n + 1 lines when n H are on the next carbon', { size: 13 });
+    g += T(470, 402, 'peak areas give the ratio of H in each environment; add D₂O and the O–H peak disappears', { size: 12 });
+    return wrap(W, H, o.aria || 'Proton NMR spectrum of ethanol showing a quartet, a triplet and a singlet', '', g);
+  }
+
+  /* ---------- Bunsen burner and reading a measuring cylinder ---------- */
+  function labSkills(o = {}) {
+    const W = 980, H = 420;
+    let g = panelT(170, 'Safety flame', 'air hole closed') + panelT(400, 'Roaring flame', 'air hole open: hottest') + panelT(760, 'Reading a measuring cylinder', 'eye level with the bottom of the curve');
+    const bun = (x, open) => `<rect x="${x - 40}" y="350" width="80" height="12" rx="3" fill="#55606c"/><rect x="${x - 9}" y="230" width="18" height="122" fill="${METAL}"/><rect x="${x - 13}" y="300" width="26" height="14" fill="#55606c"/><rect x="${x - 4}" y="303" width="8" height="8" fill="${open ? '#1f2227' : METAL}"/><path d="M${x + 13} 340H${x + 60}" stroke="#ef8a3a" stroke-width="6"/>` +
+      (open ? `<path d="M${x - 9} 230Q${x - 14} 180 ${x} 120Q${x + 14} 180 ${x + 9} 230Z" fill="#4f9bff" opacity=".8"/><path d="M${x - 5} 230Q${x - 6} 200 ${x} 172Q${x + 6} 200 ${x + 5} 230Z" fill="#bfe0ff"/>` : `<path d="M${x - 9} 230Q${x - 26} 150 ${x - 4} 80Q${x + 4} 120 ${x + 16} 110Q${x + 22} 170 ${x + 9} 230Z" fill="#ffb03a" opacity=".9"/><path d="M${x - 4} 230Q${x - 10} 180 ${x} 140Q${x + 8} 180 ${x + 4} 230Z" fill="#ffe680"/>`);
+    g += bun(170, false) + bun(400, true) + T(170, 390, 'easy to see; use when not heating', { size: 12 }) + T(400, 390, 'blue and almost invisible', { size: 12 });
+    g += T(250, 412, 'tie hair back, wear goggles, light with the air hole closed', { size: 12, w: 700 }).replace('x="250"', 'x="290"');
+    g += `<path d="M700 100V350Q700 360 710 360H790Q800 360 800 350V100" fill="none" stroke="${GL}" stroke-width="3"/><path d="M702 220Q750 236 798 220V358H702Z" fill="${WATER}" fill-opacity=".5"/>${Array.from({ length: 12 }, (_, i) => `<path d="M800 ${120 + i * 18}h-${i % 5 ? 10 : 18}" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
+    g += T(806, 125, '50', { size: 11, a: 'start' }) + T(806, 215, '40', { size: 11, a: 'start' }) + `<path d="M620 228H700" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4"/><circle cx="606" cy="228" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="609" cy="228" r="4" fill="currentColor"/>`;
+    g += T(750, 270, 'meniscus', { size: 12 }) + T(760, 390, 'read 39 cm³ here, not at the edges', { size: 12 });
+    return wrap(W, H, o.aria || 'Bunsen burner safety flame and roaring flame, and reading the meniscus at eye level', '', g);
+  }
+
+  /* ---------- diffusion ---------- */
+  function diffusionFig(o = {}) {
+    const W = 960, H = 400;
+    let g = T(480, 36, 'Diffusion: particles spread from where there are many to where there are few', { size: 15, w: 700 });
+    const rnd = S._rnd(11);
+    [[170, 0, 'start'], [480, 1, 'after a few minutes'], [790, 2, 'later: evenly spread']].forEach(([x, k, t]) => {
+      g += beaker(x - 100, 90, 200, 230, 0.85, WATER, 0.25);
+      for (let i = 0; i < 60; i++) { let px, py; if (k === 0) { px = x - 20 + rnd() * 40; py = 290 + rnd() * 26; } else if (k === 1) { const a = rnd() * Math.PI, r = Math.sqrt(rnd()) * 110; px = x + Math.cos(a) * r * 0.85; py = 316 - Math.sin(a) * r * 1.6; } else { px = x - 90 + rnd() * 180; py = 130 + rnd() * 186; } g += `<circle cx="${f(px)}" cy="${f(py)}" r="4.5" fill="#b04ad6"/>`; }
+      g += T(x, 350, t, { size: 13, w: 700 });
+    });
+    g += arrow(290, 220, 360, 220, 'currentColor', 2.5) + arrow(600, 220, 670, 220, 'currentColor', 2.5);
+    g += T(480, 384, 'faster when it is warmer, because the particles move faster', { size: 13 });
+    return wrap(W, H, o.aria || 'Diffusion of coloured particles spreading through water over time', '', g);
+  }
+
+  /* ---------- energy in food ---------- */
+  function foodBurning(o = {}) {
+    const W = 900, H = 430;
+    let g = stand(160, 400, 340, 110, 300) + tubeV(300, 70, 190, WATER, 0.7, 0.45) + thermo(300, 40, 230, 0.4);
+    g += `<path d="M300 380L300 320" stroke="#9aa3ad" stroke-width="3"/><rect x="270" y="380" width="60" height="14" rx="3" fill="#7d858f"/><ellipse cx="300" cy="312" rx="16" ry="10" fill="#c99a5a"/><path d="M290 302Q286 286 298 270Q308 286 310 302Z" fill="#ffb03a"/>`;
+    g += bench(80, 460, 400);
+    g += T(560, 110, 'Measure:', { size: 14, w: 700, a: 'start' });
+    ['mass of food (g)', 'volume of water (1 cm³ = 1 g)', 'temperature rise of the water'].forEach((t, i) => { g += T(560, 136 + i * 22, '• ' + t, { size: 13, a: 'start' }); });
+    g += T(560, 230, 'Energy released (J) =', { size: 13, w: 700, a: 'start' }) + T(560, 252, 'mass of water × 4.2 × temperature rise', { size: 13, a: 'start' });
+    g += T(560, 300, 'Less than the real value: some energy', { size: 12, a: 'start' }) + T(560, 316, 'heats the air and the tube, and some', { size: 12, a: 'start' }) + T(560, 332, 'food does not burn completely', { size: 12, a: 'start' });
+    const labs = [{ x: 300, y: 312, t: 'Burning food on a mounted needle', side: 'l', ly: 330 }, { x: 300, y: 200, t: 'Boiling tube of water', side: 'l', ly: 200 }, { x: 300, y: 90, t: 'Thermometer', side: 'l', ly: 80 }];
+    return wrap(W, H, o.aria || 'Measuring the energy in food by burning it under a boiling tube of water', '', g + labels(labs, { W, H, lx: 140, rx: 520, size: 12 }));
+  }
+
+  /* ---------- physical and chemical changes ---------- */
+  function changeTypes(o = {}) {
+    const W = 960, H = 400;
+    let g = panelT(240, 'Physical change', 'no new substance; usually easy to reverse') + panelT(720, 'Chemical change', 'a new substance forms; hard to reverse');
+    g += `<rect x="110" y="150" width="70" height="70" rx="10" fill="#d6f0fb" stroke="#9fd4e6" stroke-width="2"/>` + arrow(200, 186, 270, 186, 'currentColor', 2.5) + arrow(270, 210, 200, 210, 'currentColor', 2.5) + beaker(290, 140, 100, 110, 0.5);
+    g += T(145, 250, 'ice', { size: 13 }) + T(340, 270, 'water', { size: 13 }) + T(235, 176, 'melt', { size: 11 }) + T(235, 232, 'freeze', { size: 11 });
+    g += T(240, 320, 'also: dissolving, boiling, condensing', { size: 12 });
+    g += `<path d="M560 230L640 150" stroke="#c9ccd2" stroke-width="4"/><circle cx="640" cy="150" r="22" fill="#ffffff" opacity=".95"/><circle cx="640" cy="150" r="34" fill="#ffffff" opacity=".25"/>` + T(600, 260, 'magnesium burns', { size: 13 }) + T(600, 276, 'with a bright white flame', { size: 12 });
+    g += arrow(690, 190, 760, 190, 'currentColor', 2.5) + `<path d="M780 210Q820 180 860 210Q880 230 850 236H790Q770 230 780 210Z" fill="#f4f6f7"/>` + T(820, 260, 'white powder:', { size: 13 }) + T(820, 276, 'magnesium oxide', { size: 13, w: 700 });
+    g += T(720, 320, 'signs: colour change, fizzing, light, temperature change', { size: 12 });
+    g += T(480, 380, 'magnesium + oxygen → magnesium oxide', { size: 14, w: 700 });
+    return wrap(W, H, o.aria || 'Physical change (ice melting) compared with a chemical change (magnesium burning)', '', g);
+  }
+
+  /* ---------- food tests ---------- */
+  function foodTests(o = {}) {
+    const W = 980, H = 420;
+    let g = T(490, 36, 'Food tests', { size: 16, w: 700 });
+    const set = (x, name, reag, c1, c2, res, extra) => tubeC(x - 34, 100, 190, c1, 0.55, null, 0.7) + tubeC(x + 34, 100, 190, c2, 0.55, null, 0.85) + arrow(x - 14, 160, x + 14, 160, 'currentColor', 1.8, 7) + T(x, 326, name, { size: 14, w: 700 }) + T(x, 344, reag, { size: 12 }) + T(x, 362, res, { size: 12, w: 700 }) + (extra ? T(x, 380, extra, { size: 11 }) : '');
+    g += set(130, 'Starch', 'iodine solution', '#e0a64a', '#141a3a', 'orange-brown → blue-black');
+    g += set(370, 'Reducing sugar', "Benedict's, hot water bath", '#3a8fe0', '#c0502a', 'blue → green → brick red', 'more sugar: further along');
+    g += set(610, 'Protein', 'biuret solution', '#3a8fe0', '#8a3ad6', 'blue → purple');
+    g += set(850, 'Fat (lipid)', 'ethanol, then water', '#f2f2f2', '#f8f8f4', 'clear → cloudy white', 'emulsion');
+    return wrap(W, H, o.aria || 'Food tests for starch, reducing sugar, protein and fat with before and after colours', '', g);
+  }
+
+  /* ---------- levers and moments ---------- */
+  function leverMoments(o = {}) {
+    const W = 920, H = 400;
+    let g = `<path d="M440 260L410 320H470Z" fill="#7d858f"/><rect x="120" y="244" width="640" height="16" rx="4" fill="${WOOD}"/>`;
+    g += `<rect x="170" y="180" width="60" height="64" rx="6" fill="#3f7fd6"/>` + T(200, 218, '400 N', { size: 14, w: 700, fill: '#fff' }) + arrow(200, 260, 200, 330, '#3f7fd6', 3) ;
+    g += `<rect x="660" y="196" width="50" height="48" rx="6" fill="#ef5b4c"/>` + T(685, 226, '200 N', { size: 13, w: 700, fill: '#fff' }) + arrow(685, 260, 685, 330, '#ef5b4c', 3);
+    g += dbl(200, 150, 440, 150, 'currentColor', 1.6) + T(320, 140, '1.5 m', { size: 13, w: 700 }) + dbl(440, 150, 685, 150, 'currentColor', 1.6) + T(562, 140, '3.0 m', { size: 13, w: 700 });
+    g += `<path d="M440 150V240" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>` + T(440, 344, 'pivot', { size: 13 });
+    g += T(460, 40, 'Moment = force × distance from the pivot', { size: 16, w: 700 }) + T(460, 64, 'balanced when clockwise moments = anticlockwise moments', { size: 13 });
+    g += T(200, 360, 'anticlockwise: 400 × 1.5 = 600 N m', { size: 13 }) + T(685, 360, 'clockwise: 200 × 3.0 = 600 N m', { size: 13 });
+    g += T(460, 392, 'a longer lever lets a small force turn a big load', { size: 12 });
+    return wrap(W, H, o.aria || 'A balanced see-saw showing clockwise and anticlockwise moments', '', g);
+  }
+
+  /* ---------- genetic cross ---------- */
+  function punnett(o = {}) {
+    const W = 900, H = 420;
+    const x0 = 320, y0 = 120, c = 110;
+    let g = T(450, 36, 'A genetic cross: two parents who carry the recessive allele', { size: 15, w: 700 }) + T(450, 58, 'B = brown eyes (dominant), b = blue eyes (recessive)', { size: 13 });
+    g += T(x0 + c, y0 - 30, 'Parent 1: Bb', { size: 13, w: 700 }) + T(x0 - 30, y0 + c, 'Parent 2: Bb', { size: 13, w: 700 }).replace('<text', `<text transform="rotate(-90 ${x0 - 30} ${y0 + c})"`);
+    ['B', 'b'].forEach((a, i) => { g += T(x0 + c / 2 + i * c, y0 - 8, a, { size: 18, w: 700, fill: '#e0a64a' }) + T(x0 - 10, y0 + c / 2 + 6 + i * c, a, { size: 18, w: 700, fill: '#e0a64a', a: 'end' }); });
+    const cells = [['BB', '#8a5a2a'], ['Bb', '#8a5a2a'], ['Bb', '#8a5a2a'], ['bb', '#3f7fd6']];
+    cells.forEach(([t, col], i) => { const x = x0 + (i % 2) * c, y = y0 + Math.floor(i / 2) * c; g += `<rect x="${x}" y="${y}" width="${c}" height="${c}" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="${x + c / 2}" cy="${y + 42}" r="16" fill="#f4f6f7"/><circle cx="${x + c / 2}" cy="${y + 42}" r="9" fill="${col}"/><circle cx="${x + c / 2}" cy="${y + 42}" r="4" fill="#111"/>` + T(x + c / 2, y + 88, t, { size: 18, w: 700 }); });
+    g += T(700, 180, '3 brown : 1 blue', { size: 15, w: 700, a: 'start' }) + T(700, 206, 'probability of blue eyes', { size: 13, a: 'start' }) + T(700, 226, '= 1 in 4 = 25%', { size: 13, w: 700, a: 'start' });
+    g += T(450, 390, 'each child has the same chance, whatever happened to brothers or sisters', { size: 12 });
+    return wrap(W, H, o.aria || 'Punnett square for a cross between two heterozygous parents giving a 3 to 1 ratio', '', g);
+  }
+
+  /* ---------- extracting DNA ---------- */
+  function dnaExtraction(o = {}) {
+    const W = 980, H = 400;
+    let g = T(490, 36, 'Extracting DNA from strawberries', { size: 16, w: 700 });
+    const step = (x, n, t1, t2) => `<circle cx="${x}" cy="330" r="13" fill="#e0a64a"/>` + T(x, 335, String(n), { size: 13, w: 700, fill: '#1d2733' }) + T(x, 362, t1, { size: 12 }) + T(x, 378, t2, { size: 12 });
+    g += `<path d="M90 160Q90 140 120 140Q150 140 150 160L140 260Q120 280 100 260Z" fill="#e2483a"/>${[0, 1, 2, 3, 4].map(i => `<circle cx="${106 + (i % 3) * 14}" cy="${170 + i * 18}" r="2" fill="#f4e36a"/>`).join('')}` + step(120, 1, 'mash in a bag with', 'salt + washing-up liquid');
+    g += `<path d="M300 150L360 150L340 200H320Z" fill="#f4f1e6" stroke="${GL}" stroke-width="2.5"/><path d="M330 200V230" stroke="${GL}" stroke-width="2.5"/>` + beaker(290, 230, 80, 70, 0.5, '#e88aa0') + step(330, 2, 'filter out the', 'solid pieces');
+    g += tubeV(540, 110, 190, '#e88aa0', 0.5, 0.7) + `<path d="M526 205H554V160H526Z" fill="#e8f3f8" fill-opacity=".35"/><path d="M540 210q-6 -12 0 -24q6 -12 0 -24" stroke="#fff" stroke-width="3" fill="none"/>` + `<path d="M600 120L560 150" stroke="${GL}" stroke-width="4"/>` + T(610, 120, 'ice-cold ethanol', { size: 12, a: 'start' }) + T(610, 136, 'poured gently down the side', { size: 12, a: 'start' }) + step(540, 3, 'add cold ethanol:', 'a layer forms on top');
+    g += `<path d="M800 120V240" stroke="#9aa3ad" stroke-width="4"/><path d="M800 240q-10 10 0 22q10 10 0 22" stroke="#fff" stroke-width="4" fill="none"/>` + step(800, 4, 'white strands of DNA', 'collect on a rod');
+    g += T(490, 70, 'detergent breaks down cell membranes; salt makes the DNA clump together', { size: 12 });
+    return wrap(W, H, o.aria || 'Steps for extracting DNA from strawberries with salt, detergent and cold ethanol', '', g);
+  }
+
+  /* ---------- the Solar System ---------- */
+  function solarSystem(o = {}) {
+    const W = 980, H = 360;
+    let g = `<defs><radialGradient id="ssun"><stop offset="0" stop-color="#fff3a0"/><stop offset="1" stop-color="#f5a524"/></radialGradient></defs><circle cx="-40" cy="180" r="130" fill="url(#ssun)"/>`;
+    const P = [['Mercury', 6, '#b8b0a6', 140], ['Venus', 10, '#e8c98a', 195], ['Earth', 11, '#3f7fd6', 255], ['Mars', 8, '#d0603a', 310], ['Jupiter', 34, '#d9b08c', 420], ['Saturn', 28, '#e3cf9a', 560], ['Uranus', 18, '#8fd6e0', 690], ['Neptune', 17, '#4a6fe0', 810]];
+    P.forEach(([n, r, c, x]) => { g += (n === 'Saturn' ? `<ellipse cx="${x}" cy="180" rx="${r * 1.9}" ry="${r * 0.5}" fill="none" stroke="#d9c48a" stroke-width="4"/>` : '') + `<circle cx="${x}" cy="180" r="${r}" fill="${c}"/>` + T(x, 180 + r + 26, n, { size: 13, w: 700 }); });
+    g += `<path d="M120 90H340" stroke="currentColor" stroke-width="1.4"/>` + T(230, 80, 'rocky inner planets', { size: 12 }) + `<path d="M380 90H860" stroke="currentColor" stroke-width="1.4"/>` + T(620, 80, 'gas and ice giants', { size: 12 });
+    g += T(490, 36, 'The Solar System (sizes not to scale with distances)', { size: 15, w: 700 });
+    g += T(490, 310, 'Light from the Sun takes about 8 minutes to reach Earth.', { size: 13 }) + T(490, 330, 'A light year is the distance light travels in a year: the nearest star is about 4 light years away.', { size: 12 });
+    return wrap(W, H, o.aria || 'The eight planets of the Solar System in order from the Sun', '', g);
+  }
+
+  /* ---------- KS3 investigations ---------- */
+  function ks3Investigation(o = {}) {
+    const k = o.kind || 'bounce', W = 900, H = 400;
+    let g = '', t = '', s = '';
+    if (k === 'bounce') {
+      t = 'Testing bouncing balls'; s = 'drop from the same height; measure the bounce height against a metre rule';
+      g += `<rect x="300" y="60" width="26" height="300" fill="#f1d58a" stroke="#c9a94a"/>${Array.from({ length: 21 }, (_, i) => `<path d="M300 ${60 + i * 15}h${i % 5 ? 6 : 12}" stroke="#7a5f1f" stroke-width="1.2"/>`).join('')}` + bench(200, 700, 360);
+      g += `<circle cx="380" cy="80" r="14" fill="#ef5b4c"/><circle cx="380" cy="346" r="14" fill="#ef5b4c" opacity=".35"/><circle cx="420" cy="180" r="14" fill="#ef5b4c"/>` + `<path d="M380 96V330Q395 350 410 330L418 196" stroke="currentColor" stroke-width="1.6" fill="none" stroke-dasharray="5 4"/>`;
+      g += T(470, 84, 'drop height (keep it the same)', { size: 13, a: 'start' }) + T(470, 184, 'bounce height: read at eye level', { size: 13, a: 'start' }) + T(470, 270, 'change: type of ball or surface', { size: 13, a: 'start' }) + T(470, 290, 'repeat 3 times and find the mean', { size: 13, a: 'start' });
+    } else if (k === 'bungee') {
+      t = 'Testing a stretchy cord'; s = 'add masses one at a time and measure the new length';
+      g += `<rect x="200" y="60" width="160" height="10" fill="#7d858f"/><path d="M280 70Q270 140 280 210Q290 240 280 250" stroke="#3fb27f" stroke-width="5" fill="none"/>${[0, 1, 2].map(i => `<rect x="266" y="${250 + i * 16}" width="28" height="14" fill="${i % 2 ? '#6b7480' : '#55606c'}"/>`).join('')}<rect x="330" y="70" width="22" height="260" fill="#f1d58a" stroke="#c9a94a"/>${Array.from({ length: 14 }, (_, i) => `<path d="M330 ${76 + i * 18}h8" stroke="#7a5f1f"/>`).join('')}`;
+      g += T(420, 140, 'extension = new length − original length', { size: 13, a: 'start' }) + T(420, 170, 'plot extension against mass (or weight)', { size: 13, a: 'start' }) + T(420, 200, 'add masses gently; wear goggles', { size: 13, a: 'start' });
+    } else if (k === 'conduction') {
+      t = 'Comparing heat transfer through metals'; s = 'wax blobs or pins melt off first on the best conductor';
+      g += bunsen(250, 360) + [['copper', '#c26b3a', 0], ['aluminium', '#c9ccd2', 1], ['iron', '#7d858f', 2]].map(([n, c, i]) => { const a = -0.5 + i * 0.5; return `<path d="M250 260L${f(250 + 380 * Math.cos(a))} ${f(260 + 140 * Math.sin(a))}" stroke="${c}" stroke-width="10" stroke-linecap="round"/>${[1, 2, 3].map(j => `<circle cx="${f(250 + (110 + j * 80) * Math.cos(a))}" cy="${f(268 + (110 + j * 80) * 0.37 * Math.sin(a))}" r="7" fill="#f4f1d6" opacity="${i === 0 && j < 3 ? 0.3 : 1}"/>`).join('')}` + T(250 + 400 * Math.cos(a), 266 + 148 * Math.sin(a), n, { size: 13, w: 700, a: 'start' }); }).join('');
+      g += T(450, 380, 'same length and thickness; heat all the ends together; time when each blob falls', { size: 12 });
+    } else if (k === 'cupcake') {
+      t = 'Testing falling paper cases'; s = 'time the fall from the same height; stack cases to change the mass';
+      g += `<rect x="200" y="60" width="22" height="300" fill="#f1d58a" stroke="#c9a94a"/>` + bench(150, 700, 360);
+      [[330, 1], [450, 2], [570, 3]].forEach(([x, n]) => { for (let i = 0; i < n; i++) g += `<path d="M${x - 30} ${100 - i * 6}H${x + 30}L${x + 20} ${130 - i * 6}H${x - 20}Z" fill="#f2a7b9" stroke="#c76a86"/>`; g += arrow(x, 140, x, 220, '#3f7fd6', 2) + T(x, 250, `${n} case${n > 1 ? 's' : ''}`, { size: 13, w: 700 }); });
+      g += stopwatch(660, 120) + T(450, 300, 'more cases: more weight but the same air resistance area → falls faster', { size: 12 });
+    } else if (k === 'salt') {
+      t = 'Testing how quickly salt dissolves'; s = 'same mass of salt and volume of water; change the temperature';
+      [[200, '20 °C', '#7fc3e0'], [450, '40 °C', '#a8c8d8'], [700, '60 °C', '#d8b8b0']].forEach(([x, tt, c]) => { g += beaker(x - 70, 160, 140, 160, 0.7, c, 0.4) + thermo(x + 40, 110, 300, tt === '20 °C' ? 0.3 : tt === '40 °C' ? 0.5 : 0.7) + `<path d="M${x - 20} 140L${x} 300" stroke="#c9ccd2" stroke-width="5"/>` + [0, 1, 2, 3, 4].map(i => `<rect x="${x - 30 + i * 9}" y="${306 - (i % 2) * 3}" width="5" height="5" fill="#fff"/>`).join('') + T(x, 350, tt, { size: 14, w: 700 }); });
+      g += stopwatch(800, 100) + T(450, 380, 'stir the same way each time; stop the clock when no crystals are left', { size: 12 });
+    } else if (k === 'candle') {
+      t = 'Testing a candle under a container'; s = 'how long does the candle burn under jars of different sizes?';
+      [[220, 70], [450, 95], [700, 120]].forEach(([x, r]) => { g += `<path d="M${x - r * 0.6} 330V${330 - r * 1.3}Q${x - r * 0.6} ${330 - r * 1.6} ${x} ${330 - r * 1.6}Q${x + r * 0.6} ${330 - r * 1.6} ${x + r * 0.6} ${330 - r * 1.3}V330" fill="#e8f3f8" fill-opacity=".1" stroke="${GL}" stroke-width="3"/><rect x="${x - 8}" y="290" width="16" height="40" fill="#f4f1e6"/><path d="M${x - 5} 290Q${x - 6} 274 ${x} 262Q${x + 6} 274 ${x + 5} 290Z" fill="#ffb03a"/>`; });
+      g += bench(100, 820, 330) + T(450, 370, 'bigger jar → more oxygen → the candle burns for longer', { size: 13, w: 700 });
+    } else if (k === 'crater') {
+      t = 'Investigating craters'; s = 'drop a ball into sand from different heights and measure the crater';
+      g += `<rect x="200" y="60" width="22" height="260" fill="#f1d58a" stroke="#c9a94a"/><circle cx="320" cy="90" r="16" fill="#9aa3ad"/>` + arrow(320, 110, 320, 260, 'currentColor', 1.6) + `<rect x="200" y="300" width="500" height="50" rx="6" fill="#e3cf9a"/><path d="M420 300Q460 336 500 300" fill="#c9b07a"/>` + dbl(420, 290, 500, 290, 'currentColor', 1.4) + T(460, 282, 'diameter', { size: 12 });
+      g += T(560, 140, 'higher drop → faster → wider, deeper crater', { size: 13, a: 'start' }) + T(560, 166, 'smooth the sand between drops', { size: 13, a: 'start' });
+    }
+    g += T(W / 2, 30, t, { size: 16, w: 700 }) + T(W / 2, 50, s, { size: 13 });
+    return wrap(W, H, o.aria || t, '', g);
+  }
+
+  const add = { redoxTitration, c13Nmr, h1Nmr, labSkills, diffusionFig, foodBurning, changeTypes, foodTests, leverMoments, punnett, dnaExtraction, solarSystem, ks3Investigation, anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
