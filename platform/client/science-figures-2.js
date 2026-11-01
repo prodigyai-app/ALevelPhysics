@@ -1416,7 +1416,229 @@
     return wrap(W, H, o.aria || 'Decay practical: milk, lipase and phenolphthalein in water baths at different temperatures', '', g);
   }
 
-  const add = { osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 6: A-level practical apparatus ======================= */
+  const res = (x, y, vert) => vert ? `<rect x="${x - 9}" y="${y - 22}" width="18" height="44" fill="var(--panel,#121a33)" stroke="currentColor" stroke-width="2.5"/>` : `<rect x="${x - 22}" y="${y - 9}" width="44" height="18" fill="var(--panel,#121a33)" stroke="currentColor" stroke-width="2.5"/>`;
+  const capS = (x, y, vert) => vert ? `<rect x="${x - 16}" y="${y - 8}" width="32" height="16" fill="var(--panel,#121a33)"/><path d="M${x - 14} ${y - 5}H${x + 14}M${x - 14} ${y + 5}H${x + 14}" stroke="currentColor" stroke-width="3"/>` : `<rect x="${x - 8}" y="${y - 16}" width="16" height="32" fill="var(--panel,#121a33)"/><path d="M${x - 5} ${y - 14}V${y + 14}M${x + 5} ${y - 14}V${y + 14}" stroke="currentColor" stroke-width="3"/>`;
+  const rbFlask = (x, y, r, liq) => `<path d="M${x - 9} ${y - r - 40}V${y - r + 4}A${r} ${r} 0 1 0 ${x + 9} ${y - r + 4}V${y - r - 40}" fill="none" stroke="${GL}" stroke-width="3"/>` + (liq ? `<path d="M${x - r * 0.8} ${y + r * 0.2}A${r * 0.98} ${r * 0.98} 0 0 0 ${x + r * 0.8} ${y + r * 0.2}Z" fill="${liq}" fill-opacity=".5"/>` : '');
+  const condenser = (x1, y1, x2, y2) => { const a = Math.atan2(y2 - y1, x2 - x1), nx = -Math.sin(a) * 14, ny = Math.cos(a) * 14;
+    return `<path d="M${f(x1 + nx)} ${f(y1 + ny)}L${f(x2 + nx)} ${f(y2 + ny)}L${f(x2 - nx)} ${f(y2 - ny)}L${f(x1 - nx)} ${f(y1 - ny)}Z" fill="${WATER}" fill-opacity=".3" stroke="${GL}" stroke-width="2.5"/><path d="M${f(x1 - Math.cos(a) * 16)} ${f(y1 - Math.sin(a) * 16)}L${f(x2 + Math.cos(a) * 16)} ${f(y2 + Math.sin(a) * 16)}" stroke="${GL}" stroke-width="5"/>`; };
+  const heater = (x, y) => `<rect x="${x - 50}" y="${y}" width="100" height="40" rx="6" fill="#55606c"/><path d="M${x - 40} ${y + 4}Q${x} ${y - 14} ${x + 40} ${y + 4}" fill="#3d4654"/><circle cx="${x + 30}" cy="${y + 24}" r="6" fill="#ef5b4c"/>`;
+
+  /* ---------- Young modulus ---------- */
+  function youngModulus(o = {}) {
+    const W = 1000, H = 420;
+    let g = bench(40, 880, 250);
+    g += `<rect x="50" y="200" width="30" height="50" fill="#55606c"/><path d="M80 214H860" stroke="#d6d9de" stroke-width="2"/>`;
+    g += `<rect x="560" y="226" width="300" height="16" fill="#f1d58a" stroke="#c9a94a"/>${Array.from({ length: 31 }, (_, i) => `<path d="M${560 + i * 10} 226v${i % 5 ? 5 : 10}" stroke="#7a5f1f" stroke-width="1.2"/>`).join('')}`;
+    g += `<path d="M690 206l8 8-8 8" fill="#ef5b4c"/><rect x="684" y="204" width="10" height="20" fill="#ef5b4c"/>`;
+    g += `<circle cx="880" cy="228" r="14" fill="#9aa3ad" stroke="#55606c" stroke-width="3"/><path d="M894 228V330" stroke="#d6d9de" stroke-width="2"/>${[0, 1, 2, 3].map(i => `<rect x="882" y="${330 + i * 14}" width="26" height="12" fill="${i % 2 ? '#6b7480' : '#55606c'}"/>`).join('')}`;
+    g += dbl(80, 180, 689, 180, 'currentColor', 1.6) + T(385, 172, 'original length L (about 2 m, metre rule or tape)', { size: 13 });
+    g += T(480, 40, 'Measuring the Young modulus of a metal wire', { size: 16, w: 700 }) + T(480, 62, 'add masses one at a time; read the extension from the marker against the fixed scale', { size: 13 });
+    g += `<rect x="90" y="300" width="120" height="44" rx="6" fill="#c9ccd2" stroke="#7d858f"/><rect x="200" y="314" width="50" height="16" fill="#9aa3ad"/>` + T(170, 370, 'micrometer: diameter d', { size: 12 }) + T(170, 386, 'at several points', { size: 12 });
+    g += T(480, 330, 'stress = F ÷ A,  A = π d² ÷ 4', { size: 14 }) + T(480, 352, 'strain = extension ÷ L', { size: 14 }) + T(480, 380, 'E = stress ÷ strain  (gradient of the stress–strain graph)', { size: 14, w: 700 });
+    g += T(700, 200, 'marker', { size: 12, a: 'start' }) + T(880, 200, 'pulley', { size: 12 }) + T(916, 366, 'masses', { size: 12, a: 'start' });
+    const labs = [{ x: 65, y: 214, t: 'Wire clamped at one end', side: 'l', ly: 120 }];
+    return wrap(W, H, o.aria || 'Young modulus practical: long wire over a pulley with a marker and a fixed scale', '', g + labels(labs, { W, H, lx: 160, rx: 920, size: 13 }));
+  }
+
+  /* ---------- e.m.f. and internal resistance ---------- */
+  function emfInternal(o = {}) {
+    const W = 960, H = 430;
+    let g = `<rect x="160" y="70" width="160" height="80" rx="6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="6 5"/>`;
+    g += wire('M100 110H190') + `<rect x="172" y="94" width="26" height="32" fill="var(--panel,#121a33)"/>` + cell(185, 110) + wire('M198 110H245') + res(270, 110) + wire('M292 110H420V300H100V110');
+    g += T(185, 88, 'ε', { size: 15, w: 700 }) + T(270, 88, 'r', { size: 15, w: 700 }) + T(240, 168, 'the cell', { size: 12 });
+    g += meter(420, 205, 'A') + `<rect x="220" y="282" width="60" height="36" fill="var(--panel,#121a33)"/>` + res(250, 300) + arrow(215, 322, 288, 278, 'currentColor', 2, 9) + T(250, 345, 'variable resistor R', { size: 12 });
+    g += wire('M100 110V40H360V110') ;
+    g += `<rect x="215" y="25" width="30" height="30" fill="var(--panel,#121a33)"/>` + meter(230, 40, 'V');
+    g += T(260, 386, 'Change R, record V and I;', { size: 13 }) + T(260, 404, 'disconnect between readings so the cell does not warm up', { size: 12 });
+    const x0 = 560, y0 = 340;
+    g += axes(x0, y0, 330, 250, 'Current I (A)', 'Terminal p.d. V (V)');
+    g += `<path d="M${x0} ${y0 - 200}L${x0 + 300} ${y0 - 50}" stroke="#3f7fd6" stroke-width="3"/>${[0, 1, 2, 3, 4].map(i => `<circle cx="${x0 + 40 + i * 55}" cy="${y0 - 200 + (40 + i * 55) * 0.5}" r="4.5" fill="#3f7fd6"/>`).join('')}`;
+    g += T(x0 - 8, y0 - 196, 'ε', { size: 15, w: 700, a: 'end' }) + T(x0 + 200, y0 - 160, 'gradient = −r', { size: 14, w: 700, a: 'start' });
+    g += T(x0 + 165, 410, 'V = ε − I r', { size: 15, w: 700 });
+    return wrap(W, H, o.aria || 'Circuit for finding e.m.f. and internal resistance, and the V against I graph', '', g);
+  }
+
+  /* ---------- Young's double slit and the diffraction grating ---------- */
+  function doubleSlit(o = {}) {
+    const W = 1000, H = 440;
+    let g = panelT(260, "Young's double slit", 'λ = a x ÷ D') + panelT(760, 'Diffraction grating', 'd sin θ = n λ');
+    // double slit
+    g += `<rect x="40" y="186" width="70" height="28" rx="4" fill="#3d4654"/><path d="M110 200H200" stroke="#ef5b4c" stroke-width="3"/>` + T(75, 236, 'laser', { size: 12 });
+    g += `<path d="M200 120V190M200 196V204M200 210V280" stroke="currentColor" stroke-width="5"/>`;
+    for (let k = -2; k <= 2; k++) g += `<path d="M200 193L440 ${200 + k * 34}M200 207L440 ${200 + k * 34}" stroke="#ef5b4c" stroke-width="1" opacity=".35"/>`;
+    g += `<rect x="440" y="110" width="12" height="180" fill="#d9dee4"/>${[-2, -1, 0, 1, 2].map(k => `<rect x="440" y="${194 + k * 34}" width="12" height="12" fill="#ef5b4c"/>`).join('')}`;
+    g += dbl(200, 320, 440, 320, 'currentColor', 1.6) + T(320, 342, 'D (slits to screen, ~1 m)', { size: 12 }) + dbl(470, 200, 470, 234, 'currentColor', 1.4) + T(478, 222, 'x', { size: 14, w: 700, a: 'start' }) + T(206, 108, 'slits, separation a', { size: 12 }).replace('text-anchor="middle"', 'text-anchor="start"').replace('x="206"', 'x="150"');
+    g += T(260, 396, 'measure across several fringes and divide;', { size: 12 }) + T(260, 412, 'use a metre rule for D and a travelling microscope or vernier for a', { size: 12 });
+    // grating
+    g += `<rect x="560" y="186" width="70" height="28" rx="4" fill="#3d4654"/><path d="M630 200H680" stroke="#3fb27f" stroke-width="3"/>` + T(595, 236, 'laser', { size: 12 });
+    g += `<path d="M680 120V280" stroke="currentColor" stroke-width="4" stroke-dasharray="2 2"/>`;
+    [[0, 0], [1, 70], [-1, -70], [2, 160], [-2, -160]].forEach(([n, dy]) => { g += `<path d="M680 200L930 ${200 + dy}" stroke="#3fb27f" stroke-width="1.8" opacity=".7"/><circle cx="930" cy="${200 + dy}" r="6" fill="#3fb27f"/>` + T(946, 205 + dy, `n = ${n}`, { size: 12, a: 'start' }); });
+    g += `<path d="M930 30V380" stroke="#d9dee4" stroke-width="6"/><path d="M740 200A60 60 0 0 1 737 216" stroke="#e0a64a" stroke-width="2" fill="none"/>` + T(752, 218, 'θ', { size: 14, w: 700, fill: '#e0a64a', a: 'start' });
+    g += T(800, 396, 'd = 1 ÷ (lines per metre);', { size: 12 }) + T(800, 412, 'sharp, bright, widely spaced maxima', { size: 12 });
+    return wrap(W, H, o.aria || "Young's double-slit experiment and a diffraction grating with laser light", '', g);
+  }
+
+  /* ---------- capacitor charge and discharge ---------- */
+  function capacitorRC(o = {}) {
+    const W = 980, H = 430;
+    let g = wire('M80 120V320H380V120') + `<rect x="66" y="196" width="28" height="30" fill="var(--panel,#121a33)"/>` + cell(80, 210).replace(/M(\d+) (\d+)V/g, 'M$1 $2V').replace(`M74 192V228M86 200V220`, '') ;
+    g = wire('M80 260V320H380V260') + wire('M80 120V200') + `<path d="M62 210H98M70 222H90" stroke="currentColor" stroke-width="3.5"/>` + wire('M80 222V260');
+    g += wire('M80 120V100H166') + `<circle cx="170" cy="100" r="4" fill="currentColor"/><circle cx="170" cy="140" r="4" fill="currentColor"/><circle cx="234" cy="120" r="4" fill="currentColor"/><path d="M231 119L174 102" stroke="currentColor" stroke-width="2.5"/>`;
+    g += wire('M170 144V200') + res(170, 222, true) + wire('M170 244V320');
+    g += wire('M238 120H380V192') + capS(380, 200, true) + wire('M380 208V260');
+    g += wire('M380 170H440V196') + meter(440, 210, 'V') + wire('M440 224V240H380');
+    g += T(205, 82, 'two-way switch', { size: 12 }) + T(345, 204, 'C', { size: 14, w: 700, a: 'end' }) + T(192, 226, 'R', { size: 14, w: 700, a: 'start' }) + T(56, 214, 'd.c.', { size: 12, a: 'end' });
+    g += T(260, 370, 'switch to the supply: C charges; switch to R: C discharges through R', { size: 12 }) + T(260, 388, 'record V every 5 s (or use a data logger)', { size: 12 });
+    const x0 = 560, y0 = 330;
+    g += axes(x0, y0, 360, 240, 'Time t', 'p.d. across C');
+    let d = '', d2 = ''; for (let i = 0; i <= 40; i++) { const t = i / 40; d += (i ? 'L' : 'M') + f(x0 + t * 340) + ' ' + f(y0 - 200 * Math.exp(-t * 4)); d2 += (i ? 'L' : 'M') + f(x0 + t * 340) + ' ' + f(y0 - 200 * (1 - Math.exp(-t * 4))); }
+    g += `<path d="${d}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${d2}" stroke="#e0a64a" stroke-width="3" fill="none" stroke-dasharray="8 5"/>`;
+    g += `<path d="M${x0 + 85} ${y0}V${f(y0 - 200 * Math.exp(-1))}H${x0}" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>` + T(x0 + 85, y0 + 18, 'τ = RC', { size: 12 }) + T(x0 - 6, f(y0 - 200 * Math.exp(-1)) + 4, '0.37 V₀', { size: 12, a: 'end' });
+    g += T(x0 + 250, y0 - 70, 'discharge: V = V₀ e^(−t/RC)', { size: 12, a: 'start', fill: '#3f7fd6' }).replace(`x="${x0 + 250}"`, `x="${x0 + 150}"`) + T(x0 + 150, y0 - 190, 'charging', { size: 12, a: 'start', fill: '#e0a64a' });
+    g += T(x0 + 180, 410, 'ln V against t is a straight line with gradient −1/RC', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Capacitor charging and discharging circuit with a two-way switch, and exponential graphs', '', g);
+  }
+
+  /* ---------- photoelectric effect and LEDs ---------- */
+  function photoelectric(o = {}) {
+    const W = 980, H = 440;
+    let g = panelT(250, 'Gold-leaf electroscope', 'a negatively charged zinc plate') + panelT(740, 'Planck constant from LEDs', 'eV = h c ÷ λ');
+    g += `<path d="M180 200V330Q180 350 200 350H300Q320 350 320 330V200Q320 180 300 180H200Q180 180 180 200Z" fill="#e8f3f8" fill-opacity=".12" stroke="${GL}" stroke-width="3"/><rect x="244" y="150" width="12" height="30" fill="#c9ccd2"/><rect x="200" y="130" width="100" height="20" fill="#9aa3ad" stroke="#6b7480"/>`;
+    g += `<path d="M250 180V290" stroke="#e0b64a" stroke-width="4"/><path d="M250 250L262 300" stroke="#f4d36a" stroke-width="3"/>`;
+    g += `<rect x="60" y="80" width="70" height="40" rx="6" fill="#3d4654"/><path d="M130 100L200 132" stroke="#b07cff" stroke-width="3" stroke-dasharray="6 5"/>` + T(95, 140, 'UV lamp', { size: 12 });
+    ['−', '−', '−'].forEach((c, i) => { g += T(210 + i * 40, 126, c, { size: 16, w: 700, fill: '#ef5b4c' }); });
+    for (let i = 0; i < 3; i++) g += arrow(220 + i * 30, 126, 230 + i * 30, 90, '#5aa9f0', 1.6, 7);
+    g += T(310, 84, 'photoelectrons', { size: 12, a: 'start', fill: '#5aa9f0' });
+    g += T(250, 380, 'UV: leaf falls (electrons emitted at once).', { size: 12 }) + T(250, 396, 'Bright visible light: nothing happens.', { size: 12 }) + T(250, 412, 'Threshold frequency: hf = φ + KEmax', { size: 13, w: 700 });
+    // LED circuit
+    g += wire('M600 120H880V300H600Z') + `<rect x="726" y="104" width="28" height="32" fill="var(--panel,#121a33)"/>` + cell(740, 110).replace(/110/g, '120');
+    g += `<rect x="584" y="190" width="32" height="50" fill="var(--panel,#121a33)"/>` + res(600, 215, true) + arrow(582, 244, 622, 186, 'currentColor', 2, 8);
+    g += `<rect x="716" y="282" width="48" height="36" fill="var(--panel,#121a33)"/><path d="M728 288V312L752 300Z" fill="#ef5b4c"/><path d="M752 288V312" stroke="currentColor" stroke-width="3"/>` + arrow(744, 284, 760, 266, '#ef5b4c', 1.6, 6) + arrow(754, 290, 770, 272, '#ef5b4c', 1.6, 6);
+    g += wire('M700 300V350H725M755 350H780V300') + meter(740, 350, 'V') + meter(880, 210, 'A');
+    g += T(740, 396, 'increase V until each LED just lights;', { size: 12 }) + T(740, 412, 'plot V against 1/λ: gradient = h c ÷ e', { size: 12, w: 700 });
+    ['#ef5b4c', '#f5a524', '#3fb27f', '#3f7fd6'].forEach((c, i) => { g += `<circle cx="${640 + i * 22}" cy="80" r="7" fill="${c}"/>`; });
+    g += T(740, 84, 'LEDs of known λ', { size: 12, a: 'start' });
+    return wrap(W, H, o.aria || 'Photoelectric effect with a gold-leaf electroscope, and finding the Planck constant with LEDs', '', g);
+  }
+
+  /* ---------- charged particles in E and B fields ---------- */
+  function chargedBeams(o = {}) {
+    const W = 980, H = 420;
+    let g = panelT(250, 'Uniform electric field', 'force is constant and parallel to E: a parabola') + panelT(740, 'Uniform magnetic field', 'force is at 90° to v: a circle');
+    g += `<rect x="120" y="110" width="280" height="12" fill="#ef5b4c"/><rect x="120" y="290" width="280" height="12" fill="#3f7fd6"/>` + T(110, 120, '+', { size: 20, w: 700, a: 'end' }) + T(110, 302, '−', { size: 20, w: 700, a: 'end' });
+    for (let i = 0; i < 6; i++) g += arrow(150 + i * 48, 128, 150 + i * 48, 282, '#e0a64a', 1.4, 8);
+    let d = 'M40 206'; for (let i = 0; i <= 40; i++) { const x = 120 + i * 7; d += `L${x} ${f(206 - 0.0008 * (x - 120) * (x - 120))}`; }
+    g += `<path d="${d}L470 ${f(206 - 0.0008 * 280 * 280 - 2 * 0.0008 * 280 * 70)}" stroke="#5aa9f0" stroke-width="3" fill="none"/><circle cx="60" cy="206" r="5" fill="#5aa9f0"/>` + T(60, 232, 'electron', { size: 12 });
+    g += T(250, 340, 'E = V ÷ d,  F = e E', { size: 13, w: 700 }) + T(250, 358, 'horizontal velocity constant; vertical acceleration constant', { size: 12 });
+    // magnetic
+    g += `<rect x="560" y="90" width="360" height="260" rx="6" fill="#3f7fd6" fill-opacity=".08" stroke="#3f7fd6" stroke-opacity=".4"/>`;
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 7; c++) g += `<circle cx="${590 + c * 50}" cy="${115 + r * 52}" r="6" fill="none" stroke="#7fa6e0" stroke-width="1.4"/><circle cx="${590 + c * 50}" cy="${115 + r * 52}" r="2" fill="#7fa6e0"/>`;
+    g += `<path d="M520 330H740" stroke="#5aa9f0" stroke-width="3"/><path d="M740 330A100 100 0 0 0 740 130A100 100 0 0 0 740 330" stroke="#5aa9f0" stroke-width="3" fill="none" stroke-dasharray="0"/>` + arrow(740, 330, 690, 330, '#5aa9f0', 0, 0);
+    g += arrow(740, 130, 720, 130, '#5aa9f0', 3, 12) + arrow(840, 230, 790, 230, '#ef5b4c', 3, 12) + T(830, 220, 'F', { size: 14, w: 700, fill: '#ef5b4c', a: 'start' }).replace('x="830"', 'x="846"');
+    g += T(740, 380, 'B out of the page;  F = B q v,  r = m v ÷ (B q)', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'An electron beam deflected into a parabola between charged plates and into a circle in a magnetic field', '', g);
+  }
+
+  /* ---------- Rutherford scattering ---------- */
+  function rutherford(o = {}) {
+    const W = 980, H = 440;
+    let g = `<circle cx="280" cy="230" r="170" fill="#e8f3f8" fill-opacity=".06" stroke="${GL}" stroke-width="3"/>` + T(280, 420, 'evacuated chamber (alpha particles would be absorbed by air)', { size: 12 });
+    g += `<rect x="90" y="206" width="70" height="48" fill="#6b7480" stroke="#3d4654"/><rect x="146" y="224" width="14" height="12" fill="#1f2227"/>` + T(84, 224, 'alpha', { size: 12, a: 'end' }) + T(84, 240, 'source', { size: 12, a: 'end' });
+    g += `<path d="M160 230H272" stroke="#e0a64a" stroke-width="3"/><rect x="274" y="170" width="6" height="120" fill="#e8c35a"/>` + T(277, 160, 'gold foil', { size: 12 });
+    g += `<path d="M280 230L440 230M280 230L436 196M280 230L380 330M280 230L176 150" stroke="#e0a64a" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+    g += `<path d="M280 230L420 110" stroke="#9aa3ad" stroke-width="6"/><rect x="408" y="88" width="40" height="34" rx="5" fill="#3d4654" transform="rotate(-40 428 105)"/>` + T(470, 90, 'detector (or microscope with a', { size: 12, a: 'start' }) + T(470, 106, 'zinc sulfide screen) on a rotating arm', { size: 12, a: 'start' });
+    // nucleus view
+    const cx = 760, cy = 230;
+    g += `<circle cx="${cx}" cy="${cy}" r="10" fill="#ef5b4c"/>` + T(cx + 16, cy - 14, 'nucleus', { size: 12, a: 'start' });
+    [-90, -50, 50, 90, 130].forEach(dy => { g += `<path d="M560 ${cy + dy}H940" stroke="#e0a64a" stroke-width="1.8"/>`; });
+    g += `<path d="M560 ${cy - 20}H700Q745 ${cy - 22} 770 ${cy - 60}L860 ${cy - 170}" stroke="#e0a64a" stroke-width="1.8" fill="none"/><path d="M560 ${cy + 24}H690Q730 ${cy + 26} 760 ${cy + 50}L900 ${cy + 120}" stroke="#e0a64a" stroke-width="1.8" fill="none"/><path d="M560 ${cy + 3}H735Q748 ${cy + 3} 735 ${cy + 8}L560 ${cy + 40}" stroke="#ef5b4c" stroke-width="2" fill="none"/>`;
+    g += T(750, 40, 'What the results show', { size: 15, w: 700 }) + T(750, 380, 'most pass straight through: the atom is mostly empty space', { size: 12 }) + T(750, 396, 'some deflect: the nucleus is positive', { size: 12 }) + T(750, 412, 'very few bounce back: the nucleus is tiny and dense', { size: 12 });
+    return wrap(W, H, o.aria || 'Rutherford alpha-particle scattering apparatus and the paths of alpha particles near a nucleus', '', g);
+  }
+
+  /* ---------- organic: reflux and distillation ---------- */
+  function refluxDistil(o = {}) {
+    const W = 1000, H = 470;
+    let g = panelT(200, 'Heating under reflux', 'vapour condenses and drips back into the flask') + panelT(700, 'Distillation', 'separates a liquid by its boiling point');
+    // reflux
+    g += heater(220, 380) + rbFlask(220, 340, 50, '#e8b3d6') + condenser(220, 250, 220, 100) + stand(330, 420, 360, 170, 234);
+    g += `<path d="M206 228H180V270M234 120H262V104" stroke="${GL}" stroke-width="4" fill="none"/>` + arrow(160, 290, 180, 272, COLD, 2.5, 9) + arrow(262, 106, 278, 90, COLD, 2.5, 9) + T(150, 300, 'water in', { size: 12, a: 'end' }) + T(282, 92, 'water out', { size: 12, a: 'start' }) + T(240, 200, 'condenser', { size: 12, a: 'start' }) + T(220, 436, 'electric heater or water bath (no flame)', { size: 12 });
+    g += `<circle cx="210" cy="356" r="4" fill="#fff"/><circle cx="228" cy="362" r="4" fill="#fff"/>` + T(220, 452, 'anti-bumping granules; no stopper on top', { size: 12 });
+    // distillation
+    g += heater(520, 380) + rbFlask(520, 340, 50, '#e8b3d6') + `<path d="M511 250V230H540V250" fill="none" stroke="${GL}" stroke-width="3"/>` + thermo(526, 170, 236, 0.5);
+    g += condenser(560, 240, 790, 320) + `<path d="M520 230L560 240" stroke="${GL}" stroke-width="5"/>`;
+    g += `<path d="M810 340V420Q810 434 824 434H880Q894 434 894 420V340" fill="none" stroke="${GL}" stroke-width="3"/><path d="M812 400H892V432H812Z" fill="${WATER}" fill-opacity=".5"/>`;
+    g += arrow(760, 350, 750, 326, COLD, 2.5, 9) + arrow(600, 222, 590, 198, COLD, 2.5, 9) + T(760, 368, 'water in', { size: 12 }) + T(600, 190, 'water out', { size: 12 });
+    g += T(536, 156, 'thermometer bulb level with the side arm', { size: 12, a: 'start' }) + T(724, 262, 'condenser', { size: 12, a: 'start' }) + T(900, 424, 'distillate', { size: 12, a: 'start' });
+    g += T(700, 452, 'collect the fraction that boils at the right temperature', { size: 12 });
+    return wrap(W, H, o.aria || 'Organic apparatus: heating under reflux and distillation', '', g);
+  }
+
+  /* ---------- organic: separating funnel, drying, recrystallisation, melting point ---------- */
+  function purification(o = {}) {
+    const W = 1000, H = 460;
+    let g = panelT(140, 'Separating funnel', 'remove the aqueous layer') + panelT(390, 'Drying', 'anhydrous MgSO₄ or CaCl₂') + panelT(640, 'Vacuum filtration', 'Büchner funnel and flask') + panelT(880, 'Melting point', 'pure: sharp, matches data');
+    g += `<path d="M104 170Q98 194 106 215H174Q182 194 176 170Z" fill="#e8d17a" fill-opacity=".5"/><path d="M106 215Q116 246 132 262H148Q164 246 174 215Z" fill="${WATER}" fill-opacity=".55"/>`;
+    g += `<path d="M132 96V122C92 150 92 232 132 262L136 280V340M144 340V280L148 262C188 232 188 150 148 122V96" fill="none" stroke="${GL}" stroke-width="3"/><rect x="130" y="86" width="20" height="12" rx="3" fill="#55606c"/><rect x="126" y="296" width="28" height="10" rx="2" fill="#55606c"/>`;
+    g += T(200, 200, 'organic', { size: 12, a: 'start' }) + T(200, 246, 'aqueous', { size: 12, a: 'start' }) + T(140, 360, 'shake, release pressure,', { size: 12 }) + T(140, 376, 'run off the lower layer', { size: 12 });
+    g += `<path d="M350 170V280Q350 290 360 290H420Q430 290 430 280V170" fill="none" stroke="${GL}" stroke-width="3"/><path d="M352 200H428V288H352Z" fill="#e8d17a" fill-opacity=".45"/>${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${360 + i * 11}" y="${276 - (i % 2) * 6}" width="8" height="8" fill="#fff"/>`).join('')}` + T(390, 330, 'swirl until the liquid', { size: 12 }) + T(390, 346, 'turns clear; then filter', { size: 12 });
+    g += `<path d="M622 250V272L572 368Q566 380 580 380H700Q714 380 708 368L658 272V250" fill="#e8f3f8" fill-opacity=".1" stroke="${GL}" stroke-width="3"/><path d="M582 368H698L690 352H590Z" fill="#e8d17a" fill-opacity=".45"/><path d="M664 286H730" stroke="${GL}" stroke-width="5"/><rect x="618" y="240" width="44" height="14" rx="3" fill="#55606c"/><rect x="600" y="190" width="80" height="34" rx="4" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><path d="M632 224V262H648V224" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><rect x="606" y="182" width="68" height="8" fill="#fff8e0"/>` + T(734, 290, 'to vacuum', { size: 11, a: 'start' }) + T(640, 410, 'wash crystals with a little', { size: 12 }) + T(640, 426, 'cold solvent', { size: 12 });
+    g += `<rect x="830" y="160" width="100" height="150" rx="8" fill="#3d4654"/><rect x="842" y="174" width="76" height="22" rx="3" fill="#9fe0b0"/>` + T(880, 190, '122 °C', { size: 12, w: 700, fill: '#163a22' }) + `<rect x="864" y="220" width="32" height="50" rx="4" fill="#1f2227"/><path d="M876 214V260" stroke="#e8f3f8" stroke-width="3"/><rect x="874.5" y="250" width="3" height="10" fill="#fff"/>` + T(880, 340, 'capillary tube of solid;', { size: 12 }) + T(880, 356, 'impure: lower, wider range', { size: 12 });
+    g += T(500, 450, 'Recrystallisation: dissolve in the minimum hot solvent, filter hot, cool to crystallise, filter under reduced pressure', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Purifying organic products: separating funnel, drying agent, Büchner filtration and melting point', '', g);
+  }
+
+  /* ---------- electrochemical cell with the standard hydrogen electrode ---------- */
+  function electrochemCell(o = {}) {
+    const W = 980, H = 440;
+    let g = beaker(140, 200, 180, 170, 0.7, '#cfe7f2') + beaker(620, 200, 180, 170, 0.7, '#56a0e0', 0.55);
+    g += `<path d="M300 260V200Q300 160 340 160H600Q640 160 640 200V260" fill="none" stroke="#e0d090" stroke-width="18"/><path d="M300 260V200Q300 160 340 160H600Q640 160 640 200V260" fill="none" stroke="#f4ecc4" stroke-width="12"/>`;
+    g += `<path d="M216 130V250Q216 262 230 262Q244 262 244 250V130" fill="none" stroke="${GL}" stroke-width="3"/><rect x="222" y="280" width="16" height="40" fill="#cfd5dc" stroke="#8e98a3"/><path d="M230 130V280" stroke="#9aa3ad" stroke-width="2"/><path d="M180 140H216" stroke="${GL}" stroke-width="4"/>` + arrow(150, 140, 176, 140, '#cfd5dc', 2.5, 9) + [0, 1, 2].map(i => `<circle cx="${226 + (i % 2) * 8}" cy="${300 + i * 12}" r="3" fill="none" stroke="#fff"/>`).join('');
+    g += `<rect x="702" y="220" width="16" height="120" fill="#c26b3a"/>`;
+    g += wire('M230 130V70H420') + meter(450, 70, 'V') + wire('M480 70H710V220') + T(450, 40, 'high-resistance voltmeter: +0.34 V', { size: 13, w: 700 });
+    g += T(230, 400, 'standard hydrogen electrode', { size: 14, w: 700 }) + T(230, 418, 'H₂ at 100 kPa, 1.00 mol dm⁻³ H⁺, platinum', { size: 12 });
+    g += T(710, 400, 'Cu²⁺/Cu half-cell', { size: 14, w: 700 }) + T(710, 418, '1.00 mol dm⁻³ Cu²⁺, copper electrode', { size: 12 });
+    g += T(470, 138, 'salt bridge (filter paper soaked in KNO₃)', { size: 12 }) + T(470, 260, 'standard conditions: 298 K', { size: 12 });
+    g += T(140, 136, 'H₂ in', { size: 12, a: 'end' });
+    g += T(212, 304, 'platinum', { size: 12, a: 'end' }) + T(212, 318, 'electrode', { size: 12, a: 'end' });
+    return wrap(W, H, o.aria || 'Electrochemical cell: standard hydrogen electrode connected to a copper half-cell by a salt bridge', '', g);
+  }
+
+  /* ---------- pH titration curves ---------- */
+  function phCurves(o = {}) {
+    const W = 1000, H = 400;
+    const gr = (x0, title, start, end, mid, lo, hi) => {
+      let s = `<path d="M${x0} 90V300H${x0 + 200}" stroke="currentColor" stroke-width="2" fill="none"/>` + T(x0 + 100, 330, title, { size: 13, w: 700 });
+      const y = p => 300 - p * 15;
+      s += `<rect x="${x0}" y="${y(10)}" width="200" height="${y(8.2) - y(10)}" fill="#ef5b9c" opacity=".18"/><rect x="${x0}" y="${y(4.4)}" width="200" height="${y(3.1) - y(4.4)}" fill="#f5a524" opacity=".22"/>`;
+      s += `<path d="M${x0} ${y(start)}C${x0 + 70} ${y(start + 0.6)} ${x0 + 95} ${y(lo)} ${x0 + 100} ${y(mid)}C${x0 + 105} ${y(hi)} ${x0 + 130} ${y(end - 0.4)} ${x0 + 200} ${y(end)}" stroke="#3f7fd6" stroke-width="3" fill="none"/>`;
+      return s;
+    };
+    let g = T(30, 96, 'pH', { size: 12, a: 'end' }) + gr(40, 'strong acid + strong base', 1, 13, 7, 3, 11) + gr(280, 'weak acid + strong base', 3, 13, 8.7, 7, 11) + gr(520, 'strong acid + weak base', 1, 11, 5.3, 3, 7.5) + gr(760, 'weak acid + weak base', 3, 11, 7, 4.5, 9.5);
+    g += T(500, 40, 'pH curves: acid in the flask, base added from the burette', { size: 16, w: 700 }) + T(500, 62, 'choose an indicator whose colour-change range lies on the vertical section', { size: 13 });
+    g += `<rect x="300" y="352" width="18" height="12" fill="#ef5b9c" opacity=".5"/>` + T(324, 362, 'phenolphthalein (8.2–10)', { size: 12, a: 'start' }) + `<rect x="540" y="352" width="18" height="12" fill="#f5a524" opacity=".55"/>` + T(564, 362, 'methyl orange (3.1–4.4)', { size: 12, a: 'start' });
+    g += T(860, 384, 'no sharp change: no suitable indicator', { size: 11 });
+    return wrap(W, H, o.aria || 'Four pH titration curves with the ranges of phenolphthalein and methyl orange', '', g);
+  }
+
+  /* ---------- combustion calorimetry ---------- */
+  function combustionCal(o = {}) {
+    const W = 940, H = 440;
+    let g = bench(80, 560, 400);
+    g += stand(140, 410, 330, 150, 300);
+    g += `<path d="M250 140V250Q250 262 262 262H338Q350 262 350 250V140" fill="#c27a3a" stroke="#8a4f22" stroke-width="3"/><path d="M254 170H346V258H254Z" fill="${WATER}" fill-opacity=".45"/>` + thermo(310, 90, 240, 0.5);
+    g += `<path d="M268 330Q268 304 300 304Q332 304 332 330V400H268Z" fill="#e8f3f8" fill-opacity=".25" stroke="${GL}" stroke-width="3"/><path d="M270 360H330V398H270Z" fill="#e8d17a" fill-opacity=".5"/><rect x="296" y="290" width="8" height="16" fill="#f4f1e6"/><path d="M292 290Q290 276 300 262Q310 276 308 290Z" fill="#ffb03a"/>`;
+    g += `<path d="M220 400V230M380 400V230" stroke="#c9ccd2" stroke-width="4" opacity=".7"/>`;
+    g += T(470, 40, 'Enthalpy change of combustion', { size: 16, w: 700 }) + T(470, 62, 'weigh the spirit burner before and after; q = m c ΔT', { size: 13 });
+    g += T(720, 120, 'Why the value is too small', { size: 14, w: 700 });
+    ['energy lost to the surroundings and the can', 'incomplete combustion (soot on the can)', 'evaporation of fuel from the wick', 'not under standard conditions'].forEach((t, i) => { g += T(600, 150 + i * 24, '• ' + t, { size: 12, a: 'start' }); });
+    g += T(720, 290, 'ΔcH = −q ÷ n (fuel)', { size: 15, w: 700 });
+    const labs = [{ x: 300, y: 200, t: 'Copper calorimeter of water', side: 'l', ly: 120 }, { x: 300, y: 380, t: 'Spirit burner (fuel)', side: 'l', ly: 380 }, { x: 220, y: 300, t: 'Draught shield', side: 'l', ly: 300 }, { x: 310, y: 100, t: 'Thermometer', side: 'r', ly: 90 }];
+    return wrap(W, H, o.aria || 'Combustion calorimetry: spirit burner heating a copper can of water, with sources of error', '', g + labels(labs, { W, H, lx: 120, rx: 400, size: 12 }));
+  }
+
+  const add = { youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
