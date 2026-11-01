@@ -994,7 +994,292 @@
     return wrap(W, H, o.aria || 'Phagocytosis, antibody production and clumping of pathogens', '', g);
   }
 
-  const add = { seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 4: required-practical apparatus ======================= */
+  const GL = '#a9c4d4', WATER = '#7fc3e0', METAL = '#9aa3ad', WOOD = '#b98a5a', WIRE = 'currentColor';
+  const wire = d => `<path d="${d}" stroke="${WIRE}" stroke-width="2.5" fill="none" stroke-linejoin="round"/>`;
+  // glass beaker: x,y = top-left; lvl = fraction filled
+  const beaker = (x, y, w, h, lvl = 0.6, liq = WATER, op = 0.45) => {
+    const ly = y + h * (1 - lvl);
+    return (lvl > 0 ? `<path d="M${x + 2} ${f(ly)}H${x + w - 2}V${y + h - 8}Q${x + w - 2} ${y + h - 2} ${x + w - 8} ${y + h - 2}H${x + 8}Q${x + 2} ${y + h - 2} ${x + 2} ${y + h - 8}Z" fill="${liq}" fill-opacity="${op}"/>` : '') +
+      `<path d="M${x - 6} ${y - 4}Q${x} ${y} ${x} ${y + 6}V${y + h - 8}Q${x} ${y + h} ${x + 8} ${y + h}H${x + w - 8}Q${x + w} ${y + h} ${x + w} ${y + h - 8}V${y}" fill="none" stroke="${GL}" stroke-width="3"/>`;
+  };
+  const thermo = (x, y1, y2, lvl = 0.55) => `<rect x="${x - 4}" y="${y1}" width="8" height="${y2 - y1}" rx="4" fill="#f4f7f9" stroke="#8fa3b0" stroke-width="1.5"/><rect x="${x - 1.6}" y="${f(y1 + (y2 - y1) * (1 - lvl))}" width="3.2" height="${f((y2 - y1) * lvl)}" fill="#e2483a"/><circle cx="${x}" cy="${y2}" r="6" fill="#e2483a" stroke="#8fa3b0" stroke-width="1.5"/>`;
+  const psu = (x, y, w = 110, h = 64, t = 'power supply') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#3d4654" stroke="#22262e" stroke-width="2"/><rect x="${x + 10}" y="${y + 10}" width="${w - 20}" height="18" rx="3" fill="#9fe0b0" opacity=".85"/><circle cx="${x + 26}" cy="${y + 46}" r="7" fill="#e2483a"/><circle cx="${x + w - 26}" cy="${y + 46}" r="7" fill="#22262e" stroke="#777"/><circle cx="${x + w / 2}" cy="${y + 46}" r="8" fill="#cfd5dc" stroke="#777"/>` + T(x + w / 2, y + h + 18, t, { size: 13 });
+  const stopwatch = (x, y) => `<circle cx="${x}" cy="${y}" r="20" fill="#f4f7f9" stroke="#55606c" stroke-width="3"/><rect x="${x - 5}" y="${y - 30}" width="10" height="8" fill="#55606c"/><path d="M${x} ${y}V${y - 13}M${x} ${y}L${x + 9} ${y + 5}" stroke="#22262e" stroke-width="2.5" stroke-linecap="round"/>`;
+  const stand = (x, by, h, ay, ax2) => `<rect x="${x - 40}" y="${by - 10}" width="90" height="10" rx="2" fill="#55606c"/><rect x="${x - 3}" y="${by - h}" width="6" height="${h - 10}" fill="${METAL}"/><rect x="${x - 7}" y="${ay - 7}" width="14" height="14" fill="#55606c"/><rect x="${Math.min(x, ax2)}" y="${ay - 3}" width="${Math.abs(ax2 - x)}" height="6" fill="${METAL}"/>`;
+  const bunsen = (x, by, flame = true) => `<rect x="${x - 22}" y="${by - 8}" width="44" height="8" rx="2" fill="#55606c"/><rect x="${x - 6}" y="${by - 52}" width="12" height="44" fill="${METAL}"/><rect x="${x - 8}" y="${by - 30}" width="16" height="6" fill="#55606c"/>` + (flame ? `<path d="M${x - 7} ${by - 52}Q${x - 9} ${by - 70} ${x} ${by - 92}Q${x + 9} ${by - 70} ${x + 7} ${by - 52}Z" fill="#4f9bff" opacity=".9"/><path d="M${x - 3} ${by - 52}Q${x - 4} ${by - 62} ${x} ${by - 72}Q${x + 4} ${by - 62} ${x + 3} ${by - 52}Z" fill="#bfe0ff"/>` : '');
+  const tripod = (x, ty, h = 70, w = 90) => `<rect x="${x - w / 2}" y="${ty}" width="${w}" height="6" fill="#7d858f"/><path d="M${x - w / 2 + 10} ${ty + 6}L${x - w / 2 - 6} ${ty + h}M${x + w / 2 - 10} ${ty + 6}L${x + w / 2 + 6} ${ty + h}M${x} ${ty + 6}V${ty + h}" stroke="#7d858f" stroke-width="5"/>`;
+  const bench = (x1, x2, y) => `<rect x="${x1}" y="${y}" width="${x2 - x1}" height="12" rx="3" fill="${WOOD}" opacity=".85"/>`;
+  const box = (x, y, w, h, t, sub) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#3d4654" stroke="#22262e" stroke-width="2"/><rect x="${x + 8}" y="${y + 8}" width="${w - 16}" height="${Math.min(22, h - 16)}" rx="3" fill="#9fe0b0" opacity=".85"/>` + (t ? T(x + w / 2, y + h + 18, t, { size: 13 }) : '') + (sub ? T(x + w / 2, y + 24, sub, { size: 12, w: 700, fill: '#163a22' }) : '');
+  const panelT = (x, t, s) => T(x, 40, t, { size: 16, w: 700 }) + (s ? T(x, 60, s, { size: 12 }) : '');
+
+  /* ---------- specific heat capacity ---------- */
+  function shcPractical(o = {}) {
+    const W = 940, H = 470;
+    let g = bench(150, 800, 400);
+    // insulated aluminium block
+    g += `<rect x="330" y="200" width="160" height="200" rx="6" fill="#efe6c9" stroke="#c9b98a" stroke-width="2"/>${Array.from({ length: 9 }, (_, i) => `<path d="M334 ${214 + i * 20}q38 -8 76 0t76 0" stroke="#d8cba0" stroke-width="2" fill="none"/>`).join('')}`;
+    g += `<rect x="350" y="220" width="120" height="180" fill="#c3cad2" stroke="#8e98a3" stroke-width="2"/><rect x="350" y="220" width="120" height="14" fill="#dde2e8"/>`;
+    g += `<rect x="374" y="164" width="22" height="196" rx="4" fill="#5b636e"/><rect x="372" y="120" width="26" height="46" rx="3" fill="#22262e"/>`;
+    g += thermo(440, 120, 330, 0.5);
+    // circuit: heater leads to the supply; ammeter in series; voltmeter across the heater
+    g += psu(660, 150, 110, 64, ' ');
+    g += wire('M378 120V60H630V250H686V196') + wire('M392 120V100H535') + meter(550, 100, 'A') + wire('M565 100H610V270H744V196');
+    g += wire('M480 60V65') + meter(480, 80, 'V') + wire('M480 95V100');
+    g += T(715, 140, 'power supply', { size: 13 });
+    g += stopwatch(200, 250) + T(200, 290, 'stopwatch', { size: 13 });
+    g += T(470, 440, 'E = V × I × t;   c = E ÷ (m × Δθ)', { size: 15, w: 700 });
+    const labs = [
+      { x: 374, y: 150, t: 'Immersion heater', side: 'l', ly: 130 },
+      { x: 440, y: 260, t: 'Thermometer', side: 'r', ly: 300 },
+      { x: 466, y: 380, t: 'Aluminium block (mass m, measured on a balance)', side: 'r', ly: 350 },
+      { x: 336, y: 330, t: 'Insulation reduces energy lost to the surroundings', side: 'l', ly: 360 },
+      { x: 480, y: 66, t: 'Voltmeter across the heater', side: 'r', ly: 40 }
+    ];
+    return wrap(W, H, o.aria || 'Specific heat capacity practical: heater and thermometer in an insulated aluminium block', '', g + labels(labs, { W, H, lx: 280, rx: 660, size: 14, top: 30 }));
+  }
+
+  /* ---------- thermal insulation ---------- */
+  function insulationPractical(o = {}) {
+    const W = 1010, H = 460;
+    let g = bench(40, 560, 380);
+    const set = (x, kind, name) => {
+      let s = beaker(x - 70, 200, 140, 180, 0, WATER);
+      if (kind === 1) s += `<path d="M${x - 64} 210H${x + 64}V372H${x - 64}Z" fill="#e8f1f6" opacity=".5"/>${Array.from({ length: 24 }, (_, i) => `<circle cx="${x - 56 + (i % 6) * 22}" cy="${222 + Math.floor(i / 6) * 40}" r="8" fill="none" stroke="#c9d8e2" stroke-width="2"/>`).join('')}`;
+      if (kind === 2) s += `<path d="M${x - 64} 210H${x + 64}V372H${x - 64}Z" fill="#f6f2ea"/>${Array.from({ length: 20 }, (_, i) => `<circle cx="${x - 54 + (i % 5) * 27}" cy="${226 + Math.floor(i / 5) * 38}" r="13" fill="#fffdf6" stroke="#e7e0cf"/>`).join('')}`;
+      s += beaker(x - 36, 240, 72, 120, 0.8, '#e88a6a', 0.5) + `<rect x="${x - 44}" y="232" width="88" height="8" rx="2" fill="#7b8794"/>` + thermo(x, 150, 320, 0.7);
+      return s + T(x, 404, name, { size: 14, w: 700 });
+    };
+    g += set(110, 0, 'no insulation') + set(290, 1, 'bubble wrap') + set(470, 2, 'cotton wool');
+    g += T(290, 40, 'Same volume of hot water, same starting temperature', { size: 15, w: 700 }) + T(290, 62, 'record the temperature every minute for 10 minutes', { size: 13 }) + T(290, 84, 'each small beaker has a lid and a thermometer', { size: 13 });
+    g += axes(640, 360, 270, 230, 'Time (min)', 'Temperature (°C)');
+    g += `<path d="M642 150Q700 260 905 320" stroke="${HOT}" stroke-width="3" fill="none"/><path d="M642 150Q720 210 905 250" stroke="#e0a64a" stroke-width="3" fill="none"/><path d="M642 150Q740 180 905 205" stroke="#3fb27f" stroke-width="3" fill="none"/>`;
+    g += T(918, 324, 'none', { size: 12, a: 'start', fill: HOT }) + T(918, 254, 'bubble wrap', { size: 12, a: 'start', fill: '#e0a64a' }) + T(918, 209, 'cotton wool', { size: 12, a: 'start', fill: '#3fb27f' });
+    g += T(780, 430, 'Shallowest curve = best insulator', { size: 14, w: 700 });
+    return wrap(W, H, o.aria || 'Thermal insulation practical: beakers of hot water wrapped in different materials, with cooling curves', '', g);
+  }
+
+  /* ---------- resistance of a wire ---------- */
+  function resistanceWire(o = {}) {
+    const W = 1000, H = 460;
+    let g = `<rect x="120" y="250" width="560" height="26" fill="#f1d58a" stroke="#c9a94a" stroke-width="2"/>${Array.from({ length: 51 }, (_, i) => `<path d="M${130 + i * 10.8} 250v${i % 10 ? 7 : 14}" stroke="#7a5f1f" stroke-width="1.4"/>`).join('')}`;
+    g += T(130, 296, '0', { size: 12 }) + T(670, 296, '100 cm', { size: 12 });
+    g += `<path d="M130 246H670" stroke="#d9822b" stroke-width="2.5"/>`;
+    g += `<path d="M118 238l16 8-16 8z" fill="#7b8794"/><path d="M444 222l-8 22h16z" fill="#2f6fd6"/><rect x="430" y="210" width="28" height="14" rx="3" fill="#2f6fd6"/>`;
+    g += psu(330, 60, 110, 64, ' ') + T(385, 50, 'power supply', { size: 13 });
+    g += wire('M356 106V140H260') + meter(245, 140, 'A') + wire('M230 140H140V238') + wire('M414 106V140H444V210');
+    g += wire('M140 190H275') + meter(290, 190, 'V') + wire('M305 190H444');
+    g += dbl(130, 330, 444, 330) + T(287, 352, 'length L (moved along the wire)', { size: 13 });
+    g += axes(780, 380, 170, 180, 'Length L', 'Resistance R');
+    g += `<path d="M782 378L940 220" stroke="#3f7fd6" stroke-width="3"/>` + T(865, 440, 'R ∝ L: a straight line', { size: 13 });
+    const labs = [{ x: 400, y: 246, t: 'Resistance wire', side: 'r', ly: 200 }, { x: 452, y: 216, t: 'Crocodile clip', side: 'r', ly: 160 }, { x: 126, y: 246, t: 'Fixed end at 0 cm', side: 'l', ly: 270 }];
+    g += T(400, 400, 'R = V ÷ I for each length', { size: 15, w: 700 }) + T(400, 422, 'keep the current low so the wire stays at a constant temperature', { size: 13 });
+    return wrap(W, H, o.aria || 'Resistance of a wire practical: wire on a metre rule with ammeter, voltmeter and crocodile clip', '', g + labels(labs, { W, H, lx: 110, rx: 540, size: 13 }));
+  }
+
+  /* ---------- I–V characteristics ---------- */
+  function ivCharacteristic(o = {}) {
+    const W = 980, H = 460;
+    let g = '';
+    g += wire('M100 110H380V280H100Z') + `<rect x="226" y="94" width="28" height="32" fill="var(--panel,#121a33)"/>` + cell(240, 110);
+    g += `<rect x="84" y="166" width="32" height="68" fill="var(--panel,#121a33)"/><rect x="88" y="170" width="24" height="60" fill="none" stroke="currentColor" stroke-width="2.5"/>` + arrow(78, 238, 124, 162, 'currentColor', 2, 9);
+    g += T(72, 196, 'variable', { size: 12, a: 'end' }) + T(72, 212, 'resistor', { size: 12, a: 'end' });
+    g += meter(380, 195, 'A') + `<rect x="200" y="266" width="80" height="28" fill="var(--panel,#121a33)"/><rect x="210" y="268" width="60" height="24" fill="#3a4250" stroke="currentColor" stroke-width="2.5"/>` + T(240, 285, 'X', { size: 14, w: 700 });
+    g += T(240, 256, 'component', { size: 12 });
+    g += wire('M190 280V340H225M255 340H290V280') + meter(240, 340, 'V');
+    g += T(240, 54, 'Circuit', { size: 16, w: 700 }) + T(240, 400, 'Change the variable resistor, record V and I;', { size: 13 }) + T(240, 418, 'reverse the supply for negative values', { size: 13 });
+    const gr = (cx, title, d) => `<path d="M${cx - 80} 230H${cx + 80}M${cx} 130V330" stroke="currentColor" stroke-width="2"/>` + T(cx + 84, 236, 'V', { size: 13, a: 'start' }) + T(cx + 6, 130, 'I', { size: 13, a: 'start' }) + `<path d="${d}" stroke="#3f7fd6" stroke-width="3.5" fill="none"/>` + T(cx, 370, title, { size: 15, w: 700 });
+    g += gr(530, 'Resistor', 'M460 300L600 160');
+    g += gr(710, 'Filament lamp', 'M640 290Q670 285 690 260L730 200Q750 175 780 170');
+    g += gr(880, 'Diode', 'M822 232H905Q918 230 922 150');
+    g += T(530, 394, 'straight line: R constant', { size: 12 }) + T(710, 394, 'R rises as it gets hotter', { size: 12 }) + T(880, 394, 'current flows one way only', { size: 12 });
+    return wrap(W, H, o.aria || 'I–V characteristics practical circuit and graphs for a resistor, filament lamp and diode', '', g);
+  }
+
+  /* ---------- density ---------- */
+  function densityPractical(o = {}) {
+    const W = 940, H = 460;
+    let g = bench(30, 910, 380);
+    // regular block on balance
+    g += `<rect x="90" y="330" width="170" height="50" rx="6" fill="#d9dee4" stroke="#8e98a3" stroke-width="2"/><rect x="110" y="345" width="70" height="22" rx="3" fill="#9fe0b0"/>` + T(145, 361, '96.0 g', { size: 13, w: 700, fill: '#163a22' }) + `<rect x="100" y="318" width="150" height="12" rx="3" fill="#b7bfc8"/>`;
+    g += `<path d="M130 318V258L160 236H230V296L200 318Z" fill="#c78e5a" stroke="#8a5a30" stroke-width="2"/><path d="M130 258H200V318M200 258L230 236" fill="none" stroke="#8a5a30" stroke-width="2"/>`;
+    g += dbl(130, 210, 200, 210, 'currentColor', 1.8) + T(165, 202, 'length', { size: 12 }) + dbl(108, 258, 108, 318, 'currentColor', 1.8) + T(92, 292, 'height', { size: 12, a: 'end' });
+    g += T(165, 410, 'top-pan balance (mass)', { size: 13 });
+    g += T(170, 40, 'Regular solid', { size: 16, w: 700 }) + T(170, 62, 'volume = length × width × height', { size: 13 }) + T(170, 80, '(measure with a ruler)', { size: 12 });
+    // eureka can
+    g += `<path d="M420 200V372H520V200" fill="none" stroke="${GL}" stroke-width="3"/><path d="M422 236H518V370H422Z" fill="${WATER}" fill-opacity=".45"/><path d="M520 236L590 270" stroke="${GL}" stroke-width="7"/><path d="M520 236L590 270" stroke="${WATER}" stroke-width="3" opacity=".7"/>`;
+    g += `<path d="M470 120V280" stroke="#888" stroke-width="1.5"/><path d="M452 280Q470 262 490 284Q500 304 480 318Q456 326 448 306Q440 292 452 280Z" fill="#7d7468" stroke="#5a5248" stroke-width="2"/>`;
+    g += `<path d="M596 282q-3 10 0 18" stroke="${WATER}" stroke-width="3" fill="none"/><path d="M570 290V372Q570 378 576 378H620Q626 378 626 372V290" fill="none" stroke="${GL}" stroke-width="3"/><path d="M572 330H624V376H572Z" fill="${WATER}" fill-opacity=".5"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M626 ${300 + i * 13}h-10" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
+    g += T(520, 40, 'Irregular solid', { size: 16, w: 700 }) + T(520, 62, 'volume = volume of water displaced', { size: 13 });
+    g += T(800, 160, 'density = mass ÷ volume', { size: 16, w: 700 }) + T(800, 186, 'ρ = m ÷ V', { size: 15 }) + T(800, 214, 'units: g/cm³ or kg/m³', { size: 13 }) + T(800, 250, '1 cm³ = 1 ml', { size: 13 });
+    const labs = [{ x: 440, y: 300, t: 'Eureka (displacement) can filled to the spout', side: 'l', ly: 140 }, { x: 610, y: 340, t: 'Measuring cylinder', side: 'r', ly: 320 }, { x: 470, y: 300, t: 'Object on a thread', side: 'r', ly: 120 }];
+    return wrap(W, H, o.aria || 'Density practical: measuring a regular block and using a eureka can for an irregular object', '', g + labels(labs, { W, H, lx: 330, rx: 650, size: 13 }));
+  }
+
+  /* ---------- acceleration (trolley, light gates) ---------- */
+  function accelerationPractical(o = {}) {
+    const W = 980, H = 440;
+    let g = `<path d="M60 300L760 260" stroke="${WOOD}" stroke-width="14" stroke-linecap="round"/><path d="M70 312L70 360M740 272L740 360" stroke="#7d858f" stroke-width="6"/><rect x="40" y="360" width="760" height="8" fill="#7d858f" opacity=".6"/>`;
+    // trolley
+    g += `<g transform="rotate(-3.3 200 270)"><rect x="140" y="250" width="120" height="34" rx="5" fill="#2f6fd6"/><rect x="180" y="210" width="6" height="40" fill="#22262e"/><rect x="170" y="196" width="26" height="14" fill="#22262e"/><circle cx="160" cy="288" r="10" fill="#22262e"/><circle cx="240" cy="288" r="10" fill="#22262e"/><rect x="200" y="236" width="30" height="14" fill="#9aa3ad"/><rect x="204" y="226" width="22" height="10" fill="#9aa3ad"/></g>`;
+    // light gates
+    const gate = x => { const y = 300 - (x - 60) * 40 / 700; return `<path d="M${x - 14} ${f(y - 8)}V${f(y - 90)}H${x + 14}V${f(y - 8)}" stroke="#e0a64a" stroke-width="7" fill="none"/><path d="M${x - 10} ${f(y - 50)}H${x + 10}" stroke="#ef5b4c" stroke-width="1.5" stroke-dasharray="3 3"/>`; };
+    g += gate(340) + gate(600);
+    g += `<rect x="420" y="110" width="110" height="60" rx="6" fill="#3d4654"/><rect x="430" y="120" width="90" height="22" rx="3" fill="#9fe0b0"/>` + T(475, 136, '0.42 m/s²', { size: 12, w: 700, fill: '#163a22' }) + wire('M340 204Q360 160 420 150M600 190Q580 160 530 150');
+    // string over pulley to masses
+    g += `<path d="M260 262L770 236" stroke="#d9d0bc" stroke-width="2"/><circle cx="772" cy="250" r="14" fill="#9aa3ad" stroke="#55606c" stroke-width="3"/><path d="M786 250V330" stroke="#d9d0bc" stroke-width="2"/><rect x="772" y="330" width="28" height="12" fill="#55606c"/><rect x="772" y="342" width="28" height="12" fill="#6b7480"/><rect x="772" y="354" width="28" height="12" fill="#55606c"/><path d="M786 330V324" stroke="#55606c" stroke-width="3"/>`;
+    g += T(480, 40, 'Investigating F = m a', { size: 16, w: 700 }) + T(480, 62, 'falling masses pull the trolley; light gates measure speed at two points', { size: 13 });
+    g += T(480, 400, 'Vary force: move masses from the trolley to the hanger (total mass stays the same).', { size: 13 }) + T(480, 418, 'Vary mass: add masses to the trolley, keep the hanging mass the same.  a = (v − u) ÷ t', { size: 13 });
+    const labs = [{ x: 183, y: 205, t: 'Card (interrupts the beam)', side: 'l', ly: 120 }, { x: 200, y: 268, t: 'Trolley', side: 'l', ly: 230 }, { x: 600, y: 230, t: 'Light gate', side: 'r', ly: 110 }, { x: 772, y: 250, t: 'Pulley', side: 'r', ly: 200 }, { x: 800, y: 348, t: 'Hanging masses (force)', side: 'r', ly: 320 }, { x: 420, y: 140, t: 'Data logger', side: 'l', ly: 80 }];
+    return wrap(W, H, o.aria || 'Acceleration practical: trolley on a runway with light gates, pulley and hanging masses', '', g + labels(labs, { W, H, lx: 120, rx: 830, size: 13, top: 80 }));
+  }
+
+  /* ---------- waves: ripple tank and vibrating string ---------- */
+  function wavesPractical(o = {}) {
+    const W = 980, H = 450;
+    let g = panelT(230, 'Ripple tank', 'water waves') + panelT(720, 'Vibrating string', 'waves on a string');
+    // ripple tank (side view)
+    g += `<circle cx="230" cy="96" r="14" fill="#fff6c8" stroke="#e0a64a" stroke-width="2"/><path d="M216 112l-80 70M244 112l80 70" stroke="#fff6c8" stroke-width="1.5" opacity=".6" stroke-dasharray="4 4"/>`;
+    g += `<path d="M90 190H370V230H90Z" fill="${WATER}" fill-opacity=".45" stroke="${GL}" stroke-width="3"/><path d="M92 196q12 -6 24 0t24 0t24 0t24 0t24 0t24 0t24 0t24 0t24 0t24 0t24 0t24 0" stroke="#d6f0fb" stroke-width="2" fill="none"/>`;
+    g += `<rect x="96" y="176" width="14" height="22" fill="#55606c"/><rect x="88" y="162" width="30" height="16" rx="3" fill="#3d4654"/>` + T(103, 156, 'motor', { size: 11 });
+    g += `<path d="M110 230L90 330M350 230L370 330" stroke="#7d858f" stroke-width="5"/><rect x="60" y="330" width="340" height="40" fill="#f4f1e6"/>${Array.from({ length: 10 }, (_, i) => `<rect x="${78 + i * 32}" y="334" width="14" height="32" fill="#b9c6cf" opacity=".8"/>`).join('')}`;
+    g += T(230, 394, 'shadow of the waves on paper', { size: 12 }) + T(230, 420, 'measure across 10 waves, ÷ 10 = λ;  count waves in 10 s ÷ 10 = f', { size: 12 });
+    // vibrating string
+    g += `<rect x="520" y="200" width="60" height="50" rx="6" fill="#3d4654"/><path d="M550 200V180" stroke="#55606c" stroke-width="6"/>` + T(550, 270, 'vibration generator', { size: 12 });
+    g += `<path d="M550 178H880" stroke="#c9ccd2" stroke-width="1"/>`;
+    const L = 330, nl = 3; let d = 'M550 178'; for (let i = 1; i <= 60; i++) { const x = 550 + L * i / 60; d += `L${f(x)} ${f(178 - 28 * Math.sin(Math.PI * nl * i / 60))}`; }
+    let d2 = 'M550 178'; for (let i = 1; i <= 60; i++) { const x = 550 + L * i / 60; d2 += `L${f(x)} ${f(178 + 28 * Math.sin(Math.PI * nl * i / 60))}`; }
+    g += `<path d="${d}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${d2}" stroke="#3f7fd6" stroke-width="2" fill="none" opacity=".5"/>`;
+    g += `<rect x="868" y="168" width="12" height="160" fill="${WOOD}"/><circle cx="890" cy="186" r="12" fill="#9aa3ad" stroke="#55606c" stroke-width="3"/><path d="M902 186V280" stroke="#c9ccd2" stroke-width="2"/><rect x="890" y="280" width="24" height="12" fill="#55606c"/><rect x="890" y="292" width="24" height="12" fill="#6b7480"/>`;
+    g += `<rect x="600" y="300" width="70" height="40" rx="5" fill="#3d4654"/><rect x="608" y="306" width="54" height="14" rx="2" fill="#9fe0b0"/>` + T(635, 317, '60 Hz', { size: 10, w: 700, fill: '#163a22' }) + wire('M600 320H560V250') + T(635, 360, 'signal generator (f)', { size: 12 }) + T(902, 324, 'masses', { size: 12 }) + T(902, 340, '(tension)', { size: 12 });
+    g += dbl(550, 130, 660, 130, 'currentColor', 1.6) + T(605, 122, 'λ/2', { size: 13, w: 700 });
+    g += T(720, 400, 'adjust f until a clear stationary wave appears;', { size: 12 }) + T(720, 418, 'measure the length of several half wavelengths.  v = f λ', { size: 12 });
+    const labs = [{ x: 230, y: 96, t: 'Lamp', side: 'l', ly: 96 }, { x: 103, y: 188, t: 'Vibrating bar (dipper)', side: 'l', ly: 200 }, { x: 890, y: 186, t: 'Pulley', side: 'r', ly: 140 }];
+    return wrap(W, H, o.aria || 'Waves practical: ripple tank and a vibrating string with a signal generator', '', g + labels(labs, { W, H, lx: 80, rx: 920, size: 12 }));
+  }
+
+  /* ---------- infrared radiation: Leslie cube ---------- */
+  function irPractical(o = {}) {
+    const W = 920, H = 440;
+    let g = bench(80, 840, 360);
+    // cube in perspective: front face (matt black), side face (shiny silver), top
+    g += `<path d="M300 180L360 140H520L460 180Z" fill="#cfd5dc" stroke="#8e98a3" stroke-width="2"/><path d="M300 180H460V360H300Z" fill="#1f2227" stroke="#55606c" stroke-width="2"/><path d="M460 180L520 140V320L460 360Z" fill="url(#${'irS'})" stroke="#8e98a3" stroke-width="2"/>`;
+    g = `<defs><linearGradient id="irS" x1="0" x2="1"><stop offset="0" stop-color="#eef2f5"/><stop offset=".5" stop-color="#9aa3ad"/><stop offset="1" stop-color="#e6ebef"/></linearGradient></defs>` + g;
+    g += `<ellipse cx="420" cy="160" rx="16" ry="6" fill="#55606c"/>` + thermo(420, 70, 230, 0.8).replace(/cy="230"/, 'cy="230"');
+    g += `<path d="M330 156q-6 -14 4 -26M360 148q-6 -14 4 -26" stroke="#c9d8e2" stroke-width="2" fill="none" opacity=".7"/>`;
+    g += T(380, 270, 'matt black', { size: 13, w: 700, fill: '#e8ecf5' });
+    // detector
+    g += `<rect x="640" y="230" width="90" height="56" rx="6" fill="#3d4654"/><path d="M640 248L610 240V276L640 268Z" fill="#55606c"/><rect x="652" y="240" width="66" height="22" rx="3" fill="#9fe0b0"/>` + T(685, 256, '41.6 °C', { size: 12, w: 700, fill: '#163a22' }) + `<path d="M685 286V360" stroke="#7d858f" stroke-width="6"/>`;
+    for (let i = 0; i < 3; i++) g += wavy(468 + 0, 230 + i * 24, 596, 242 + i * 9, HOT, 2);
+    g += dbl(460, 380, 610, 380, 'currentColor', 1.6) + T(535, 400, 'same distance for every face', { size: 12 });
+    g += T(460, 40, 'Leslie cube: which surface emits most infrared?', { size: 16, w: 700 }) + T(460, 62, 'fill with hot water from a kettle; point the detector at each face in turn', { size: 13 });
+    g += T(460, 428, 'Matt black emits most; shiny silver emits least (all faces at the same temperature).', { size: 13, w: 700 });
+    const labs = [{ x: 420, y: 160, t: 'Hot water inside, thermometer to check temperature', side: 'l', ly: 100 }, { x: 685, y: 236, t: 'Infrared detector', side: 'r', ly: 180 }, { x: 500, y: 300, t: 'Shiny silver face', side: 'r', ly: 320 }, { x: 330, y: 330, t: 'Faces: matt black, shiny silver, matt white, shiny black', side: 'l', ly: 330 }];
+    return wrap(W, H, o.aria || 'Infrared radiation practical with a Leslie cube and an infrared detector', '', g + labels(labs, { W, H, lx: 260, rx: 750, size: 13, top: 80 }));
+  }
+
+  /* ---------- specific latent heat of fusion ---------- */
+  function latentHeat(o = {}) {
+    const W = 920, H = 460;
+    let g = bench(140, 760, 400);
+    const rig = (x, on) => {
+      let s = `<path d="M${x - 70} 150H${x + 70}L${x + 12} 250V300H${x - 12}V250Z" fill="#e8f3f8" fill-opacity=".18" stroke="${GL}" stroke-width="3"/>`;
+      s += Array.from({ length: 16 }, (_, i) => { const r = Math.floor(i / 5), c = i % 5, xx = x - 52 + c * 24 + r * 10, yy = 166 + r * 22; return xx < x + 70 - r * 26 ? `<path d="M${xx} ${yy}l12 -4 8 10 -6 12 -14 -2z" fill="#e3f4fb" stroke="#a9d3e6" stroke-width="1.5"/>` : ''; }).join('');
+      s += `<rect x="${x - 7}" y="100" width="14" height="140" rx="4" fill="#5b636e"/>` + wire(`M${x - 3} 100V80M${x + 3} 100V80`);
+      s += `<path d="M${x} 304q-4 10 0 18" stroke="${WATER}" stroke-width="3" fill="none"/>` + beaker(x - 40, 320, 80, 70, 0.35);
+      s += `<rect x="${x - 60}" y="390" width="120" height="10" rx="3" fill="#b7bfc8"/>`;
+      return s + T(x, 440, on ? 'heater ON' : 'control: heater OFF', { size: 14, w: 700 });
+    };
+    g += rig(300, true) + rig(580, false);
+    g += box(100, 40, 120, 56, 'joulemeter', '12 480 J') + wire('M220 70H297V80');
+    g += T(460, 30, 'L = E ÷ m', { size: 17, w: 700 }).replace('y="30"', 'y="38"');
+    g += T(800, 160, 'm = extra mass of water', { size: 13 }) + T(800, 178, 'collected with the heater on', { size: 13 }) + T(800, 196, '(minus the control funnel)', { size: 13 }) + T(800, 230, 'E from the joulemeter', { size: 13 });
+    const labs = [{ x: 300, y: 130, t: 'Immersion heater', side: 'l', ly: 140 }, { x: 260, y: 180, t: 'Crushed ice in a funnel', side: 'l', ly: 210 }, { x: 300, y: 370, t: 'Beaker collects melted water', side: 'l', ly: 340 }];
+    return wrap(W, H, o.aria || 'Specific latent heat of fusion practical: immersion heater in crushed ice with a control funnel', '', g + labels(labs, { W, H, lx: 200, rx: 720, size: 13, top: 120 }));
+  }
+
+  /* ---------- making a pure dry soluble salt ---------- */
+  function saltPrep(o = {}) {
+    const W = 990, H = 460;
+    let g = '';
+    // step 1: warm acid + excess copper oxide
+    g += tripod(170, 280) + bunsen(170, 380) + beaker(120, 180, 100, 100, 0.55, '#56a0e0', 0.55) + `<path d="M126 274q20 -6 40 0t48 0" stroke="#1f2227" stroke-width="7" fill="none"/>` + `<path d="M190 150L230 120" stroke="${METAL}" stroke-width="5"/><ellipse cx="190" cy="152" rx="10" ry="4" fill="#1f2227"/>`;
+    g += T(170, 40, '1  React', { size: 16, w: 700 }) + T(170, 60, 'add copper oxide to warm', { size: 12 }) + T(170, 76, 'dilute sulfuric acid until', { size: 12 }) + T(170, 92, 'some is left over (excess)', { size: 12 });
+    // step 2: filter
+    g += `<path d="M450 170L510 170L486 220H474Z" fill="#f4f1e6" stroke="${GL}" stroke-width="3"/><path d="M458 175L502 175L483 212H477Z" fill="#1f2227" opacity=".85"/><path d="M480 220V250" stroke="${GL}" stroke-width="3"/>` + stand(560, 390, 260, 190, 500) + `<path d="M430 270V360Q430 380 450 380H510Q530 380 530 360V270" fill="none" stroke="${GL}" stroke-width="3"/><path d="M432 320H528V378H432Z" fill="#56a0e0" fill-opacity=".55"/>`;
+    g += T(490, 40, '2  Filter', { size: 16, w: 700 }) + T(490, 60, 'remove the excess solid;', { size: 12 }) + T(490, 76, 'the filtrate is copper', { size: 12 }) + T(490, 92, 'sulfate solution', { size: 12 });
+    // step 3: evaporate on a water bath, then crystallise
+    g += tripod(790, 300) + bunsen(790, 400) + beaker(735, 240, 110, 60, 0.6, WATER) + `<path d="M745 236Q790 268 835 236" fill="#56a0e0" fill-opacity=".6" stroke="${GL}" stroke-width="3"/><path d="M742 236H838" stroke="${GL}" stroke-width="3"/>`;
+    g += `<path d="M770 210q-6 -14 4 -26M800 206q-6 -14 4 -26" stroke="#c9d8e2" stroke-width="2" fill="none" opacity=".7"/>`;
+    g += `<path d="M880 180H960V200Q920 214 880 200Z" fill="#c7d2dc" stroke="${GL}" stroke-width="2"/>${[0, 1, 2].map(i => `<path d="M${892 + i * 20} 196l8 -8 8 8 -8 8z" fill="#2f7fe0" stroke="#bfe0ff"/>`).join('')}` + T(920, 232, 'blue crystals', { size: 12 });
+    g += T(800, 40, '3  Crystallise', { size: 16, w: 700 }) + T(800, 60, 'heat gently to evaporate some water,', { size: 12 }) + T(800, 76, 'leave to cool; pat crystals dry', { size: 12 }) + T(800, 92, 'with filter paper', { size: 12 });
+    g += arrow(270, 260, 380, 260, 'currentColor', 2.5) + arrow(600, 260, 700, 260, 'currentColor', 2.5);
+    g += T(495, 440, 'CuO(s) + H₂SO₄(aq) → CuSO₄(aq) + H₂O(l)', { size: 15, w: 700 });
+    g += T(112, 270, 'excess', { size: 12, a: 'end' }) + T(112, 285, 'copper oxide', { size: 12, a: 'end' }) + T(442, 186, 'filter paper', { size: 12, a: 'end' }) + T(726, 280, 'water bath', { size: 12, a: 'end' }) + T(852, 266, 'evaporating', { size: 12, a: 'start' }) + T(852, 281, 'basin', { size: 12, a: 'start' });
+    return wrap(W, H, o.aria || 'Making a pure dry sample of copper sulfate: react excess copper oxide, filter, crystallise', '', g);
+  }
+
+  /* ---------- electrolysis of aqueous solutions ---------- */
+  function electrolysisAq(o = {}) {
+    const W = 960, H = 460;
+    const cat = o.cathode || 'hydrogen', an = o.anode || 'chlorine';
+    let g = psu(410, 40, 140, 64, ' ') + T(560, 76, 'd.c. power supply', { size: 13, a: 'start' });
+    g += `<path d="M300 200V400Q300 420 320 420H640Q660 420 660 400V200" fill="none" stroke="${GL}" stroke-width="3"/><path d="M302 240H658V418H302Z" fill="#9ad6c8" fill-opacity=".35"/>`;
+    // electrodes
+    g += `<rect x="382" y="200" width="16" height="190" fill="#3a3f47"/><rect x="562" y="200" width="16" height="190" fill="#3a3f47"/>`;
+    // inverted test tubes
+    const tube = (x, gasH, col) => `<path d="M${x - 24} 400V250Q${x - 24} 222 ${x} 222Q${x + 24} 222 ${x + 24} 250V400" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x - 22} ${250 + gasH}V250Q${x - 22} 224 ${x} 224Q${x + 22} 224 ${x + 22} 250V${250 + gasH}Z" fill="${col}" fill-opacity=".35"/>` + [0, 1, 2, 3].map(i => `<circle cx="${x - 8 + (i % 2) * 14}" cy="${380 - i * 26}" r="4" fill="none" stroke="#fff" stroke-width="1.5"/>`).join('');
+    g += tube(390, 80, '#ffffff') + tube(570, 50, an === 'chlorine' ? '#d6f08a' : '#ffffff');
+    g += wire('M436 92V140H390V200') + wire('M524 92V140H570V200');
+    g += T(390, 132, '−', { size: 20, w: 700 }).replace('x="390"', 'x="372"') + T(570, 132, '+', { size: 20, w: 700 }).replace('x="570"', 'x="588"');
+    g += T(160, 210, 'Cathode (−)', { size: 15, w: 700 }) + T(160, 232, 'metal if less reactive', { size: 13 }) + T(160, 250, 'than hydrogen,', { size: 13 }) + T(160, 268, 'otherwise hydrogen', { size: 13 });
+    g += T(800, 210, 'Anode (+)', { size: 15, w: 700 }) + T(800, 232, 'halogen if a halide', { size: 13 }) + T(800, 250, 'is present, otherwise', { size: 13 }) + T(800, 268, 'oxygen', { size: 13 });
+    g += T(480, 448, o.caption || `e.g. sodium chloride solution: ${cat} at the cathode, ${an} at the anode`, { size: 14, w: 700 });
+    const labs = [{ x: 390, y: 300, t: 'Inert (graphite) electrodes', side: 'l', ly: 330 }, { x: 390, y: 236, t: 'Inverted test tubes collect the gases', side: 'l', ly: 300 }, { x: 640, y: 380, t: 'Aqueous solution (electrolyte)', side: 'r', ly: 370 }, { x: 594, y: 260, t: 'Test chlorine with damp litmus: bleached', side: 'r', ly: 310 }];
+    return wrap(W, H, o.aria || 'Electrolysis of an aqueous solution with inert electrodes and gas collected in test tubes', '', g + labels(labs, { W, H, lx: 250, rx: 700, size: 12, top: 290 }));
+  }
+
+  /* ---------- rates of reaction: three methods ---------- */
+  function ratesPractical(o = {}) {
+    const W = 1000, H = 490;
+    const flask = (x, y, liq, op = 0.5) => `<path d="M${x - 12} ${y}V${y + 50}L${x - 52} ${y + 120}Q${x - 56} ${y + 130} ${x - 44} ${y + 130}H${x + 44}Q${x + 56} ${y + 130} ${x + 52} ${y + 120}L${x + 12} ${y + 50}V${y}" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x - 37} ${y + 96}H${x + 37}L${x + 52} ${y + 120}Q${x + 56} ${y + 128} ${x + 44} ${y + 128}H${x - 44}Q${x - 56} ${y + 128} ${x - 52} ${y + 120}Z" fill="${liq}" fill-opacity="${op}"/>`;
+    let g = panelT(170, 'Gas syringe') + panelT(500, 'Collect over water') + panelT(830, 'Disappearing cross');
+    // gas syringe
+    g += flask(110, 230, WATER) + `<rect x="98" y="222" width="24" height="14" rx="3" fill="#55606c"/>` + `<path d="M110 222V170H170" stroke="${GL}" stroke-width="4" fill="none"/>`;
+    g += `<rect x="170" y="156" width="140" height="28" rx="4" fill="#e8f3f8" fill-opacity=".25" stroke="${GL}" stroke-width="2.5"/>${Array.from({ length: 11 }, (_, i) => `<path d="M${180 + i * 12} 156v8" stroke="${GL}" stroke-width="1.5"/>`).join('')}<rect x="240" y="158" width="10" height="24" fill="#8e98a3"/><path d="M250 170H330" stroke="#8e98a3" stroke-width="4"/><rect x="330" y="160" width="6" height="20" fill="#8e98a3"/>`;
+    g += [0, 1, 2].map(i => `<circle cx="${100 + i * 10}" cy="${336 - i * 8}" r="3" fill="none" stroke="#fff" stroke-width="1.4"/>`).join('') + `<path d="M96 352l8 -4 10 2" stroke="#b7bfc8" stroke-width="4"/>`;
+    g += T(110, 384, 'magnesium + acid', { size: 12 }) + T(240, 144, 'gas syringe', { size: 12 }) + T(170, 412, 'read the gas volume', { size: 12 }) + T(170, 428, 'every 10 seconds', { size: 12 });
+    // over water
+    g += flask(410, 230, WATER) + `<rect x="398" y="222" width="24" height="14" rx="3" fill="#55606c"/><path d="M410 222V190H520V330H560" stroke="${GL}" stroke-width="4" fill="none"/>`;
+    g += `<path d="M480 300V370Q480 380 490 380H640Q650 380 650 370V300" fill="none" stroke="${GL}" stroke-width="3"/><path d="M482 316H648V378H482Z" fill="${WATER}" fill-opacity=".45"/>`;
+    g += `<path d="M560 340V196Q560 190 566 190H594Q600 190 600 196V340" fill="none" stroke="${GL}" stroke-width="3"/><path d="M562 250H598V338H562Z" fill="${WATER}" fill-opacity=".45"/>${Array.from({ length: 8 }, (_, i) => `<path d="M600 ${206 + i * 16}h-8" stroke="${GL}" stroke-width="1.5"/>`).join('')}<circle cx="574" cy="300" r="3" fill="none" stroke="#fff"/><circle cx="584" cy="276" r="3" fill="none" stroke="#fff"/>`;
+    g += T(656, 360, 'trough', { size: 12, a: 'start' }) + T(500, 412, 'upturned measuring cylinder', { size: 12 }) + T(500, 428, 'full of water', { size: 12 });
+    // disappearing cross
+    g += `<rect x="760" y="352" width="140" height="22" fill="#f4f1e6"/><path d="M816 356l24 14M840 356l-24 14" stroke="#1f2227" stroke-width="3"/>` + flask(830, 222, '#efe6b0', 0.75);
+    g += `<path d="M818 120c8 -10 18 -10 26 0c-8 10 -18 10 -26 0z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="831" cy="120" r="4" fill="currentColor"/>` + arrow(831, 134, 831, 300, 'currentColor', 1.5, 8);
+    g += T(830, 394, 'sodium thiosulfate + acid', { size: 12 }) + T(830, 412, 'time until the cross', { size: 12 }) + T(830, 428, 'can no longer be seen (sulfur forms)', { size: 12 });
+    g += T(500, 466, 'Rate = amount of product ÷ time.  Change one variable (e.g. acid concentration) and keep the others the same.', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Three ways to measure the rate of a reaction: gas syringe, collecting gas over water, and the disappearing cross', '', g);
+  }
+
+  /* ---------- temperature change: polystyrene cup calorimeter ---------- */
+  function calorimeter(o = {}) {
+    const W = 920, H = 440;
+    let g = bench(80, 460, 380);
+    g += beaker(150, 210, 200, 170, 0);
+    g += `<path d="M180 190L200 360H300L320 190Z" fill="#f7f7f2" stroke="#d6d6cc" stroke-width="2"/><path d="M190 260L200 356H300L310 260Z" fill="${WATER}" fill-opacity=".45"/><rect x="172" y="180" width="156" height="12" rx="4" fill="#f0f0e8" stroke="#d6d6cc"/>`;
+    g += thermo(270, 90, 330, 0.62);
+    g += `<path d="M110 40L150 30L170 170L150 176Z" fill="none" stroke="${GL}" stroke-width="2.5" opacity="0"/>`;
+    g += `<path d="M380 110V200Q380 210 390 210H420Q430 210 430 200V110" fill="none" stroke="${GL}" stroke-width="3"/><path d="M382 150H428V208H382Z" fill="#e8b3d6" fill-opacity=".45"/>`;
+    g += axes(560, 360, 320, 240, 'Volume of acid added (cm³)', 'Max temperature (°C)');
+    g += `<path d="M562 320L720 160L878 230" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="M720 160V360" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4"/>` + T(726, 150, 'neutralisation complete', { size: 12, a: 'start' });
+    g += T(460, 40, 'Temperature change in a reaction', { size: 16, w: 700 }).replace('x="460"', 'x="300"');
+    g += T(300, 420, 'add acid 5 cm³ at a time, stir, record the highest temperature', { size: 13 });
+    const labs = [{ x: 270, y: 120, t: 'Thermometer', side: 'l', ly: 100 }, { x: 250, y: 186, t: 'Lid reduces energy loss', side: 'l', ly: 150 }, { x: 186, y: 230, t: 'Polystyrene cup (insulator)', side: 'l', ly: 220 }, { x: 160, y: 300, t: 'Beaker keeps the cup stable', side: 'l', ly: 300 }, { x: 405, y: 120, t: 'Measuring cylinder of acid', side: 'r', ly: 70 }];
+    return wrap(W, H, o.aria || 'Polystyrene cup calorimeter for measuring the temperature change in a reaction', '', g + labels(labs, { W, H, lx: 140, rx: 450, size: 13 }));
+  }
+
+  const add = { shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
