@@ -1279,7 +1279,144 @@
     return wrap(W, H, o.aria || 'Polystyrene cup calorimeter for measuring the temperature change in a reaction', '', g + labels(labs, { W, H, lx: 140, rx: 450, size: 13 }));
   }
 
-  const add = { shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 5: biology practical apparatus ======================= */
+  const tubeV = (x, y, h, liq, lvl = 0.7, op = 0.5) => { const ly = y + h * (1 - lvl); return `<path d="M${x - 14} ${f(ly)}H${x + 14}V${y + h - 14}Q${x + 14} ${y + h} ${x} ${y + h}Q${x - 14} ${y + h} ${x - 14} ${y + h - 14}Z" fill="${liq}" fill-opacity="${op}"/><path d="M${x - 16} ${y}V${y + h - 14}Q${x - 16} ${y + h + 2} ${x} ${y + h + 2}Q${x + 16} ${y + h + 2} ${x + 16} ${y + h - 14}V${y}" fill="none" stroke="${GL}" stroke-width="2.5"/>`; };
+
+  /* ---------- osmosis in potato ---------- */
+  function osmosisPractical(o = {}) {
+    const W = 980, H = 470;
+    const conc = ['0.0', '0.2', '0.4', '0.6', '0.8'];
+    let g = `<rect x="60" y="250" width="420" height="16" rx="3" fill="${WOOD}"/><rect x="60" y="330" width="420" height="10" rx="3" fill="${WOOD}"/><path d="M70 266V380M470 266V380" stroke="${WOOD}" stroke-width="8"/>`;
+    conc.forEach((c, i) => { const x = 110 + i * 80, len = [62, 56, 50, 44, 40][i], wid = [15, 14, 12, 11, 10][i];
+      g += tubeV(x, 170, 200, '#cfe7f2', 0.75, 0.45) + `<rect x="${x - wid / 2}" y="${300 - len / 2}" width="${wid}" height="${len}" rx="3" fill="#f2e3a8" stroke="#c9b06a" stroke-width="1.5"/>` + T(x, 400, c, { size: 14, w: 700 }); });
+    g += T(270, 424, 'sucrose concentration (mol/dm³)', { size: 13 });
+    g += T(270, 40, 'Osmosis in potato cylinders', { size: 16, w: 700 }) + T(270, 62, 'same length cylinders (cork borer), blotted dry and weighed', { size: 13 }) + T(270, 80, 'before and after 24 hours in each solution', { size: 13 });
+    g += `<rect x="60" y="110" width="70" height="40" rx="5" fill="#d9dee4" stroke="#8e98a3"/><rect x="72" y="122" width="46" height="16" rx="2" fill="#9fe0b0"/>` + T(95, 135, '2.41 g', { size: 11, w: 700, fill: '#163a22' }) + T(95, 168, 'balance', { size: 12 });
+    // graph
+    const x0 = 600, y0 = 250;
+    g += `<path d="M${x0} 110V400M${x0} ${y0}H${x0 + 320}" stroke="currentColor" stroke-width="2.5"/>` + arrow(x0 + 310, y0, x0 + 326, y0, 'currentColor', 2.5, 10) + arrow(x0, 120, x0, 104, 'currentColor', 2.5, 10);
+    g += T(x0 + 12, 104, '% change in mass', { size: 13, a: 'start' }) + T(x0 + 320, y0 - 12, 'sucrose concentration', { size: 13, a: 'end' });
+    g += `<path d="M${x0 + 10} 150L${x0 + 290} 360" stroke="#3f7fd6" stroke-width="3"/>${[0, 1, 2, 3, 4].map(i => `<circle cx="${x0 + 10 + i * 70}" cy="${150 + i * 52.5}" r="5" fill="#3f7fd6"/>`).join('')}`;
+    g += `<circle cx="${x0 + 143}" cy="${y0}" r="7" fill="none" stroke="#e0a64a" stroke-width="2.5"/>` + T(x0 + 12, y0 + 96, 'crosses the axis: no net', { size: 12, a: 'start', fill: '#e0a64a' }) + T(x0 + 12, y0 + 112, 'movement of water (same', { size: 12, a: 'start', fill: '#e0a64a' }) + T(x0 + 12, y0 + 128, 'concentration as the cells)', { size: 12, a: 'start', fill: '#e0a64a' });
+    g += T(x0 + 20, 140, 'gains water', { size: 12, a: 'start' }).replace(`x="${x0 + 20}"`, `x="${x0 + 30}"`) + T(x0 + 300, 390, 'loses water', { size: 12, a: 'end' });
+    g += T(480, 456, '% change = (final mass − initial mass) ÷ initial mass × 100', { size: 14, w: 700 });
+    return wrap(W, H, o.aria || 'Osmosis practical: potato cylinders in sucrose solutions and a graph of percentage change in mass', '', g);
+  }
+
+  /* ---------- enzymes and pH ---------- */
+  function enzymePractical(o = {}) {
+    const W = 980, H = 460;
+    let g = '';
+    // water bath
+    g += `<rect x="60" y="200" width="220" height="150" rx="8" fill="#d9dee4" stroke="#8e98a3" stroke-width="2"/><rect x="70" y="230" width="200" height="110" fill="${WATER}" fill-opacity=".45"/><rect x="70" y="208" width="60" height="18" rx="3" fill="#9fe0b0"/>` + T(100, 222, '35 °C', { size: 11, w: 700, fill: '#163a22' });
+    g += tubeV(150, 130, 180, '#f2eecf', 0.55) + tubeV(210, 130, 180, '#e7f0f2', 0.55) + T(150, 120, 'starch', { size: 12 }) + T(210, 120, 'amylase', { size: 12 });
+    g += T(170, 376, 'water bath: keeps the temperature constant', { size: 12 });
+    // spotting tile
+    g += `<rect x="360" y="226" width="280" height="146" rx="8" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/>`;
+    const cols = ['#1e2440', '#1e2440', '#2b2a4a', '#5a4630', '#b57a2a', '#c9892f', '#c9892f', '#c9892f'];
+    cols.forEach((c, i) => { const x = 395 + (i % 4) * 70, y = 265 + Math.floor(i / 4) * 60; g += `<circle cx="${x}" cy="${y}" r="20" fill="#dfe4e8"/><circle cx="${x}" cy="${y}" r="14" fill="${c}"/>` + T(x, y + 36, `${(i + 1) * 30} s`, { size: 11, fill: '#55606c' }); });
+    g += `<path d="M560 150V200" stroke="${GL}" stroke-width="5"/><path d="M552 140H568V150H552Z" fill="#e0a64a"/><circle cx="560" cy="212" r="4" fill="${WATER}"/>` + T(600, 160, 'pipette', { size: 12, a: 'start' });
+    g += T(500, 390, 'a drop of mixture into iodine every 30 s:', { size: 12 }) + T(500, 406, 'blue-black → orange-brown when the starch has gone', { size: 12 });
+    g += T(330, 40, 'Effect of pH on amylase', { size: 16, w: 700 }) + T(330, 62, 'repeat with buffer solutions of different pH; record the time for starch to be digested', { size: 13 });
+    g += stopwatch(700, 140);
+    // graph
+    const x0 = 720, y0 = 360;
+    g += axes(x0, y0, 220, 170, 'pH', 'Rate');
+    g += `<path d="M${x0 + 10} ${y0 - 10}Q${x0 + 70} ${y0 - 20} ${x0 + 100} ${y0 - 120}Q${x0 + 115} ${y0 - 165} ${x0 + 130} ${y0 - 120}Q${x0 + 160} ${y0 - 20} ${x0 + 210} ${y0 - 10}" stroke="#3f7fd6" stroke-width="3" fill="none"/>` + T(x0 + 115, y0 - 160, 'optimum', { size: 12 }).replace(`y="${y0 - 160}"`, `y="${y0 - 156}"`);
+    g += T(x0 + 120, 430, 'rate = 1000 ÷ time (s)', { size: 13 });
+    return wrap(W, H, o.aria || 'Enzyme practical: amylase and starch in a water bath, tested with iodine on a spotting tile', '', g);
+  }
+
+  /* ---------- pondweed photosynthesis ---------- */
+  function pondweedPractical(o = {}) {
+    const W = 980, H = 450;
+    let g = bench(40, 620, 360);
+    // lamp
+    g += `<rect x="70" y="340" width="70" height="20" rx="4" fill="#55606c"/><path d="M105 340V230" stroke="#55606c" stroke-width="6"/><path d="M80 200H140L130 240H90Z" fill="#3d4654"/><circle cx="110" cy="246" r="12" fill="#fff6c8"/>`;
+    for (let i = 0; i < 4; i++) g += `<path d="M${130 + i * 6} ${240 + i * 2}L${250} ${226 + i * 14}" stroke="#ffe680" stroke-width="2" opacity=".55" stroke-dasharray="6 5"/>`;
+    // ruler
+    g += `<rect x="110" y="372" width="400" height="14" fill="#f1d58a" stroke="#c9a94a"/>${Array.from({ length: 21 }, (_, i) => `<path d="M${110 + i * 20} 372v${i % 5 ? 5 : 10}" stroke="#7a5f1f" stroke-width="1.3"/>`).join('')}` + dbl(110, 404, 400, 404, 'currentColor', 1.6) + T(255, 424, 'distance d (cm)', { size: 13 });
+    // beaker of water as heat shield and boiling tube with pondweed
+    g += beaker(270, 220, 80, 140, 0.85) + T(310, 210, 'water', { size: 12 }).replace('y="210"', 'y="206"');
+    g += tubeV(400, 150, 200, WATER, 0.88, 0.4);
+    g += `<path d="M400 340Q396 300 404 270Q410 250 402 230" stroke="#3f8f3a" stroke-width="4" fill="none"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M${400 + (i % 2 ? 4 : -4)} ${330 - i * 18}l${i % 2 ? 10 : -10} -6" stroke="#4fa84a" stroke-width="3"/>`).join('')}<path d="M394 344l12 4" stroke="#9aa3ad" stroke-width="4"/>`;
+    g += [0, 1, 2, 3].map(i => `<circle cx="${402 + (i % 2) * 3}" cy="${215 - i * 16}" r="3.5" fill="none" stroke="#fff" stroke-width="1.5"/>`).join('');
+    g += T(330, 40, 'Rate of photosynthesis in pondweed', { size: 16, w: 700 }) + T(330, 62, 'count oxygen bubbles per minute at different distances from the lamp', { size: 13 });
+    // graph
+    const x0 = 700, y0 = 340;
+    g += axes(x0, y0, 240, 200, 'Light intensity', 'Bubbles per minute');
+    g += `<path d="M${x0 + 4} ${y0 - 10}Q${x0 + 90} ${y0 - 170} ${x0 + 160} ${y0 - 180}H${x0 + 240}" stroke="#3f7fd6" stroke-width="3" fill="none"/>` + T(x0 + 195, y0 - 160, 'another factor limits', { size: 12 });
+    g += T(x0 + 125, 410, 'light intensity ∝ 1 ÷ d²', { size: 14, w: 700 }) + T(x0 + 125, 430, 'halve d → 4 × the light intensity', { size: 12 });
+    const labs = [{ x: 110, y: 246, t: 'Lamp', side: 'l', ly: 170 }, { x: 310, y: 300, t: 'Water absorbs heat from the lamp', side: 'r', ly: 110 }, { x: 404, y: 260, t: 'Pondweed (Elodea)', side: 'r', ly: 250 }, { x: 405, y: 200, t: 'Oxygen bubbles', side: 'r', ly: 190 }, { x: 400, y: 346, t: 'Paper clip', side: 'r', ly: 320 }];
+    return wrap(W, H, o.aria || 'Pondweed photosynthesis practical: lamp at distance d, heat-shield beaker and oxygen bubbles', '', g + labels(labs, { W, H, lx: 60, rx: 450, size: 12, top: 100 }));
+  }
+
+  /* ---------- quadrats and transects ---------- */
+  function samplingPractical(o = {}) {
+    const W = 980, H = 460;
+    let g = `<rect x="40" y="90" width="420" height="300" rx="8" fill="#5c9a46"/>`;
+    const rnd = S._rnd ? S._rnd(7) : Math.random;
+    for (let i = 0; i < 70; i++) { const x = 50 + rnd() * 400, y = 100 + rnd() * 280; g += `<circle cx="${f(x)}" cy="${f(y)}" r="3" fill="${i % 3 ? '#f4e36a' : '#ffffff'}"/>`; }
+    // tape axes for random coordinates
+    g += `<path d="M40 390H460M40 390V90" stroke="#f1d58a" stroke-width="5"/>`;
+    [[110, 150], [300, 130], [210, 260], [380, 300], [90, 320]].forEach(([x, y]) => { g += `<rect x="${x}" y="${y}" width="44" height="44" fill="none" stroke="#fff" stroke-width="3"/>`; });
+    g += `<path d="M300 152H40M322 130V390" stroke="#fff" stroke-width="1.2" stroke-dasharray="4 4" opacity=".8"/>`;
+    g += T(250, 40, 'Random sampling with quadrats', { size: 16, w: 700 }) + T(250, 62, 'random-number coordinates along two tape measures', { size: 13 }) + T(250, 420, 'estimated population = mean per quadrat × (total area ÷ quadrat area)', { size: 13, w: 700 });
+    // transect
+    g += `<rect x="530" y="90" width="410" height="200" rx="8" fill="#5c9a46"/><path d="M530 98Q560 90 600 96V282Q560 290 530 282Z" fill="#2f5a2a"/><circle cx="560" cy="130" r="40" fill="#24461f"/><circle cx="575" cy="230" r="34" fill="#24461f"/>`;
+    g += `<path d="M560 190H930" stroke="#f1d58a" stroke-width="5"/>${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${580 + i * 62}" y="168" width="40" height="40" fill="none" stroke="#fff" stroke-width="3"/>`).join('')}`;
+    g += T(735, 40, 'Belt transect', { size: 16, w: 700 }) + T(735, 62, 'quadrats at regular intervals along a tape', { size: 13 }) + T(735, 312, 'from shade under trees to open field:', { size: 13 }) + T(735, 330, 'record abundance and light intensity at each quadrat', { size: 13 });
+    // close-up quadrat
+    g += `<rect x="640" y="350" width="90" height="90" fill="#6aa84f" stroke="#fff" stroke-width="3"/>${Array.from({ length: 9 }, (_, i) => `<path d="M${640 + (i + 1) * 9} 350V440M640 ${350 + (i + 1) * 9}H730" stroke="#fff" stroke-width=".8" opacity=".6"/>`).join('')}${[[655, 365], [690, 372], [672, 400], [712, 420], [660, 428]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f4e36a"/>`).join('')}`;
+    g += T(745, 380, '0.5 m × 0.5 m quadrat', { size: 12, a: 'start' }) + T(745, 398, 'count individuals or', { size: 12, a: 'start' }) + T(745, 414, 'estimate % cover', { size: 12, a: 'start' });
+    return wrap(W, H, o.aria || 'Sampling practical: random quadrats placed using coordinates, and a belt transect from shade to open ground', '', g);
+  }
+
+  /* ---------- culturing bacteria, antibiotic discs ---------- */
+  function culturePractical(o = {}) {
+    const W = 1080, H = 450;
+    let g = '<g transform="translate(80 0)">';
+    // plate
+    g += `<circle cx="250" cy="250" r="160" fill="#e8e1c0" stroke="${GL}" stroke-width="5"/><circle cx="250" cy="250" r="150" fill="#ddd2a4"/>`;
+    const rnd = S._rnd ? S._rnd(3) : Math.random;
+    for (let i = 0; i < 260; i++) { const a = rnd() * 6.283, r = Math.sqrt(rnd()) * 145; g += `<circle cx="${f(250 + Math.cos(a) * r)}" cy="${f(250 + Math.sin(a) * r)}" r="2.2" fill="#c7b06a" opacity=".8"/>`; }
+    [[190, 190, 54, 'A'], [320, 210, 30, 'B'], [240, 330, 0, 'C'], [160, 300, 18, 'Control']].forEach(([x, y, z, l]) => {
+      if (z) g += `<circle cx="${x}" cy="${y}" r="${z}" fill="#efe9cf"/>`;
+      g += `<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="#bbb"/>` + T(x, y + 4, l === 'Control' ? '' : l, { size: 11, w: 700, fill: '#333' });
+    });
+    g += `<circle cx="160" cy="300" r="18" fill="#ddd2a4"/><circle cx="160" cy="300" r="10" fill="#fff" stroke="#bbb"/>`;
+    g += dbl(136, 190, 244, 190, '#c0392b', 1.8);
+    g += `<path d="M120 112L160 136M380 112L340 136" stroke="#e0d090" stroke-width="10" opacity=".7"/>`;
+    g += '</g>';
+    g += T(330, 40, 'Antibiotic discs on a lawn of bacteria', { size: 16, w: 700 }) + T(330, 62, 'clear zone = bacteria killed or not growing', { size: 13 });
+    g += T(330, 430, 'area of clear zone = π r²  (measure the diameter, r = d ÷ 2)', { size: 13, w: 700 });
+    // aseptic steps
+    const steps = ['Sterilise the inoculating loop in a Bunsen flame', 'Pour sterile agar; spread bacteria evenly', 'Place antibiotic discs with sterile forceps', 'Tape the lid on (not fully sealed), label', 'Incubate upside down at 25 °C for 48 hours'];
+    g += T(800, 110, 'Aseptic technique', { size: 15, w: 700 });
+    steps.forEach((s, i) => { g += `<circle cx="640" cy="${150 + i * 56}" r="13" fill="#e0a64a"/>` + T(640, 155 + i * 56, String(i + 1), { size: 13, w: 700, fill: '#1d2733' }) + T(664, 155 + i * 56, s, { size: 13, a: 'start' }); });
+    g += T(640, 430, '25 °C limits growth of pathogens that grow at body temperature', { size: 12, a: 'start' }).replace('y="430"', 'y="420"');
+    const labs = [{ x: 270, y: 190, t: 'Largest clear zone: most effective', side: 'l', ly: 110 }, { x: 240, y: 300, t: 'Control disc (no antibiotic)', side: 'l', ly: 330 }, { x: 210, y: 250, t: 'Lawn of bacteria on agar', side: 'l', ly: 230 }];
+    return wrap(W, H, o.aria || 'Agar plate with antibiotic discs and clear zones, plus the steps of aseptic technique', '', g + labels(labs, { W, H, lx: 164, rx: 520, size: 12, top: 90 }));
+  }
+
+  /* ---------- decay: milk, lipase and pH ---------- */
+  function decayPractical(o = {}) {
+    const W = 980, H = 440;
+    let g = '';
+    [[150, '20 °C', '#f39ac9'], [330, '30 °C', '#f6c4de'], [510, '40 °C', '#fbf2f6']].forEach(([x, t, c]) => {
+      g += `<rect x="${x - 70}" y="200" width="140" height="150" rx="8" fill="#d9dee4" stroke="#8e98a3" stroke-width="2"/><rect x="${x - 60}" y="232" width="120" height="108" fill="${WATER}" fill-opacity=".45"/><rect x="${x - 60}" y="208" width="48" height="16" rx="3" fill="#9fe0b0"/>` + T(x - 36, 221, t, { size: 10, w: 700, fill: '#163a22' });
+      g += tubeV(x + 18, 130, 180, c, 0.6, 0.95) + thermo(x - 20, 150, 300, 0.4);
+    });
+    g += T(150, 376, 'still pink', { size: 13 }) + T(330, 376, 'paler', { size: 13 }) + T(510, 376, 'colourless first', { size: 13 });
+    g += T(330, 40, 'Temperature and the rate of decay', { size: 16, w: 700 }) + T(330, 62, 'milk + sodium carbonate + phenolphthalein (pink), then add lipase', { size: 13 });
+    g += T(330, 410, 'lipase breaks fat into fatty acids → pH falls → indicator turns colourless; time how long it takes', { size: 13 });
+    const x0 = 680, y0 = 330;
+    g += axes(x0, y0, 250, 200, 'Temperature (°C)', 'Rate (1 ÷ time)');
+    g += `<path d="M${x0 + 10} ${y0 - 20}Q${x0 + 110} ${y0 - 60} ${x0 + 160} ${y0 - 170}Q${x0 + 180} ${y0 - 200} ${x0 + 200} ${y0 - 120}Q${x0 + 215} ${y0 - 40} ${x0 + 240} ${y0 - 10}" stroke="#3f7fd6" stroke-width="3" fill="none"/>` + T(x0 + 125, y0 + 56, 'falls above the optimum: enzymes denature', { size: 12 });
+    return wrap(W, H, o.aria || 'Decay practical: milk, lipase and phenolphthalein in water baths at different temperatures', '', g);
+  }
+
+  const add = { osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
