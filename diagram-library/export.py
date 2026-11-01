@@ -35,6 +35,13 @@ FIGS=[
  ('nuclear-fission-chain-reaction','fission',{},'Nuclear and particle physics','Induced fission and a chain reaction'),
  ('gravitation-orbits','orbit',{},'Gravitation and astrophysics','Circular orbit: gravity provides the centripetal force'),
  ('astro-life-cycle-of-stars','starLife',{},'Gravitation and astrophysics','Life cycles of low-mass and massive stars'),
+ ('oscillations-shm','shmPractical',{},'Oscillations','Simple harmonic motion: mass on a spring, pendulum, x, v and a graphs'),
+ ('oscillations-resonance','resonanceCurves',{},'Oscillations','Forced oscillations and resonance curves with damping'),
+ ('thermal-boyles-law','boylesLaw',{},'Thermal physics','Boyle\'s law apparatus and p against 1/V'),
+ ('waves-speed-of-sound-resonance-tube','resonanceTube',{},'Waves and quantum','Speed of sound with a resonance tube'),
+ ('medical-x-ray-tube','xrayTube',{},'Medical imaging','X-ray tube'),
+ ('medical-gamma-camera','gammaCamera',{},'Medical imaging','Gamma camera'),
+ ('medical-ultrasound-a-scan','ultrasoundScan',{},'Medical imaging','Ultrasound transducer and A-scan'),
 ]
 async def m():
   async with async_playwright() as p:

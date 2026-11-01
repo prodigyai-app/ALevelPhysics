@@ -234,5 +234,54 @@
   "options": {},
   "topic": "Gravitation and astrophysics",
   "description": "Life cycles of low-mass and massive stars"
+ },
+ {
+  "file": "oscillations-shm",
+  "figure": "shmPractical",
+  "options": {},
+  "topic": "Oscillations",
+  "description": "Simple harmonic motion: mass on a spring, pendulum, x, v and a graphs"
+ },
+ {
+  "file": "oscillations-resonance",
+  "figure": "resonanceCurves",
+  "options": {},
+  "topic": "Oscillations",
+  "description": "Forced oscillations and resonance curves with damping"
+ },
+ {
+  "file": "thermal-boyles-law",
+  "figure": "boylesLaw",
+  "options": {},
+  "topic": "Thermal physics",
+  "description": "Boyle's law apparatus and p against 1/V"
+ },
+ {
+  "file": "waves-speed-of-sound-resonance-tube",
+  "figure": "resonanceTube",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Speed of sound with a resonance tube"
+ },
+ {
+  "file": "medical-x-ray-tube",
+  "figure": "xrayTube",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "X-ray tube"
+ },
+ {
+  "file": "medical-gamma-camera",
+  "figure": "gammaCamera",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "Gamma camera"
+ },
+ {
+  "file": "medical-ultrasound-a-scan",
+  "figure": "ultrasoundScan",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "Ultrasound transducer and A-scan"
  }
 ]

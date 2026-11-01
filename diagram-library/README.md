@@ -1,6 +1,6 @@
 # A level Physics diagram library
 
-31 realistic A level Physics diagrams, exported from the shared figure library used on the prodigyai revision sites
+38 realistic A level Physics diagrams, exported from the shared figure library used on the prodigyai revision sites
 (`ALevelPhysics/platform/client/science-figures.js` and `science-figures-2.js`).
 
 Open `index.html` to browse them.
@@ -47,6 +47,13 @@ File names start with the topic (energy, particle, electricity, magnetism, atomi
 - **Nuclear and particle physics**: Induced fission and a chain reaction (`nuclear-fission-chain-reaction`)
 - **Gravitation and astrophysics**: Circular orbit: gravity provides the centripetal force (`gravitation-orbits`)
 - **Gravitation and astrophysics**: Life cycles of low-mass and massive stars (`astro-life-cycle-of-stars`)
+- **Oscillations**: Simple harmonic motion: mass on a spring, pendulum, x, v and a graphs (`oscillations-shm`)
+- **Oscillations**: Forced oscillations and resonance curves with damping (`oscillations-resonance`)
+- **Thermal physics**: Boyle's law apparatus and p against 1/V (`thermal-boyles-law`)
+- **Waves and quantum**: Speed of sound with a resonance tube (`waves-speed-of-sound-resonance-tube`)
+- **Medical imaging**: X-ray tube (`medical-x-ray-tube`)
+- **Medical imaging**: Gamma camera (`medical-gamma-camera`)
+- **Medical imaging**: Ultrasound transducer and A-scan (`medical-ultrasound-a-scan`)
 
 ## Making more or changing one
 

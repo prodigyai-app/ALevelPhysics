@@ -1638,7 +1638,224 @@
     return wrap(W, H, o.aria || 'Combustion calorimetry: spirit burner heating a copper can of water, with sources of error', '', g + labels(labs, { W, H, lx: 120, rx: 400, size: 12 }));
   }
 
-  const add = { youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 7: more apparatus ======================= */
+  const tubeC = (x, y, h, liq, lvl, ppt, op = 0.75) => tubeV(x, y, h, liq, lvl, op) + (ppt ? `<path d="M${x - 13} ${y + h - 30}H${x + 13}V${y + h - 14}Q${x + 13} ${y + h} ${x} ${y + h}Q${x - 13} ${y + h} ${x - 13} ${y + h - 14}Z" fill="${ppt}"/>` : '');
+
+  /* ---------- tests for anions ---------- */
+  function anionTests(o = {}) {
+    const W = 1000, H = 440;
+    let g = panelT(170, 'Carbonate', 'add dilute acid') + panelT(500, 'Halides', 'add dilute nitric acid, then silver nitrate') + panelT(840, 'Sulfate', 'add dilute HCl, then barium chloride');
+    g += tubeC(110, 150, 170, '#e7f0f2', 0.55, null, 0.3) + [0, 1, 2, 3].map(i => `<circle cx="${104 + (i % 2) * 10}" cy="${290 - i * 18}" r="4" fill="none" stroke="#fff" stroke-width="1.5"/>`).join('');
+    g += `<rect x="98" y="140" width="24" height="14" rx="3" fill="#55606c"/><path d="M110 140V110H220V200" stroke="${GL}" stroke-width="4" fill="none"/>` + tubeC(230, 170, 150, '#f4f5f6', 0.6, null, 0.55) + `<path d="M218 210V300" stroke="${GL}" stroke-width="3"/>` + [0, 1].map(i => `<circle cx="${222 + i * 8}" cy="${280 - i * 20}" r="3.5" fill="none" stroke="#fff"/>`).join('');
+    g += T(110, 350, 'fizzes', { size: 12 }) + T(230, 350, 'limewater', { size: 12 }) + T(230, 366, 'turns milky', { size: 12 }) + T(170, 400, 'carbon dioxide given off', { size: 13, w: 700 });
+    [[420, '#f8f8f6', 'chloride', 'white'], [500, '#efe6c4', 'bromide', 'cream'], [580, '#f2dc6a', 'iodide', 'yellow']].forEach(([x, c, n, col]) => { g += tubeC(x, 150, 170, '#eef3f5', 0.6, c, 0.3) + T(x, 350, n, { size: 13, w: 700 }) + T(x, 368, col, { size: 12 }) + T(x, 384, 'precipitate', { size: 12 }); });
+    g += tubeC(840, 150, 170, '#eef3f5', 0.6, '#ffffff', 0.3) + T(840, 350, 'white precipitate', { size: 13, w: 700 }) + T(840, 368, '(barium sulfate)', { size: 12 });
+    g += T(500, 420, 'The acid removes carbonate ions first, which would also give a precipitate.', { size: 12 });
+    return wrap(W, H, o.aria || 'Tests for carbonate, halide and sulfate ions with the results', '', g);
+  }
+
+  /* ---------- metal displacement ---------- */
+  function displacementMetal(o = {}) {
+    const W = 960, H = 420;
+    let g = panelT(200, 'Before', 'iron nail in blue copper sulfate solution') + panelT(560, 'After', 'brown copper coats the nail; solution turns pale green');
+    g += beaker(130, 140, 140, 190, 0.7, '#3a8fe0', 0.6) + `<path d="M200 100V300" stroke="#8e98a3" stroke-width="10" stroke-linecap="round"/><path d="M190 100H210" stroke="#8e98a3" stroke-width="6"/>`;
+    g += beaker(490, 140, 140, 190, 0.7, '#9fd49a', 0.45) + `<path d="M560 100V300" stroke="#8e98a3" stroke-width="10" stroke-linecap="round"/><path d="M550 100H570" stroke="#8e98a3" stroke-width="6"/><path d="M560 205V302" stroke="#b5652e" stroke-width="13" stroke-linecap="round" opacity=".95"/>${[0, 1, 2, 3, 4].map(i => `<circle cx="${555 + (i % 2) * 10}" cy="${215 + i * 18}" r="3" fill="#8a4a20"/>`).join('')}`;
+    g += arrow(300, 230, 460, 230, 'currentColor', 3);
+    g += T(380, 380, 'Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)', { size: 15, w: 700 }) + T(380, 402, 'a more reactive metal displaces a less reactive metal from its compound', { size: 13 });
+    const lad = ['potassium', 'sodium', 'calcium', 'magnesium', 'aluminium', '(carbon)', 'zinc', 'iron', '(hydrogen)', 'copper', 'silver', 'gold'];
+    g += T(840, 70, 'Reactivity series', { size: 14, w: 700 });
+    lad.forEach((m, i) => { g += T(840, 98 + i * 22, m, { size: 12, w: m === 'iron' || m === 'copper' ? 700 : 400, fill: m === 'iron' ? '#e0a64a' : m === 'copper' ? '#d9822b' : undefined }); });
+    g += arrow(760, 110, 760, 340, 'currentColor', 2) + T(752, 230, 'less reactive', { size: 11, a: 'end' });
+    return wrap(W, H, o.aria || 'An iron nail displacing copper from copper sulfate solution, with the reactivity series', '', g);
+  }
+
+  /* ---------- halogen colours and displacement ---------- */
+  function halogenColours(o = {}) {
+    const W = 980, H = 430;
+    let g = panelT(200, 'Halogens in water', 'colours of the solutions') + panelT(680, 'Displacement results', 'halogen added to a solution of a halide');
+    [[110, '#d7ef9a', 'chlorine', 'pale green'], [200, '#f0a23a', 'bromine', 'orange'], [290, '#8a5a2a', 'iodine', 'brown']].forEach(([x, c, n, col]) => { g += tubeC(x, 110, 200, c, 0.6) + T(x, 340, n, { size: 13, w: 700 }) + T(x, 358, col, { size: 12 }); });
+    const cols = ['potassium chloride', 'potassium bromide', 'potassium iodide'], rows = ['chlorine', 'bromine', 'iodine'];
+    const res = [[null, '#f0a23a', '#8a5a2a'], [0, null, '#8a5a2a'], [0, 0, null]];
+    cols.forEach((c, j) => { g += T(560 + j * 120, 104, c.split(' ')[0], { size: 11 }) + T(560 + j * 120, 118, c.split(' ')[1], { size: 12, w: 700 }); });
+    rows.forEach((r, i) => { g += T(484, 166 + i * 70, r, { size: 12, w: 700, a: 'end' });
+      cols.forEach((c, j) => { const x = 560 + j * 120, y = 160 + i * 70, v = res[i][j];
+        g += `<rect x="${x - 50}" y="${y - 28}" width="100" height="56" rx="6" fill="none" stroke="currentColor" stroke-opacity=".3"/>`;
+        g += v === null ? T(x, y + 5, '—', { size: 16 }) : v ? `<circle cx="${x}" cy="${y - 4}" r="14" fill="${v}"/>` + T(x, y + 22, v === '#8a5a2a' ? 'brown: iodine formed' : 'orange: bromine formed', { size: 10 }) : T(x, y + 5, 'no reaction', { size: 11 });
+      }); });
+    g += T(680, 390, 'A more reactive halogen displaces a less reactive one: Cl₂ + 2KBr → 2KCl + Br₂', { size: 13, w: 700 }) + T(200, 390, 'reactivity decreases down group 7', { size: 13 });
+    return wrap(W, H, o.aria || 'Colours of chlorine, bromine and iodine solutions and a table of halogen displacement results', '', g);
+  }
+
+  /* ---------- chemical cell and fuel cell ---------- */
+  function chemicalCell(o = {}) {
+    const W = 980, H = 430;
+    let g = panelT(230, 'A simple chemical cell', 'two different metals in an electrolyte') + panelT(720, 'Hydrogen fuel cell', 'hydrogen + oxygen → water');
+    g += beaker(130, 180, 200, 170, 0.7, '#cfe7f2') + `<rect x="166" y="150" width="20" height="170" fill="#9aa3ad"/><rect x="276" y="150" width="20" height="170" fill="#c26b3a"/>`;
+    g += wire('M176 150V120H215') + meter(230, 120, 'V') + wire('M245 120H286V150') + T(230, 100, '1.10 V', { size: 15, w: 700 });
+    g += T(176, 378, 'zinc', { size: 13, w: 700 }) + T(286, 378, 'copper', { size: 13, w: 700 }) + T(230, 404, 'bigger difference in reactivity → bigger voltage', { size: 12 }) + T(230, 420, 'stops when a reactant is used up (non-rechargeable)', { size: 12 });
+    g += `<rect x="620" y="150" width="200" height="170" rx="8" fill="#3d4654"/><rect x="660" y="160" width="14" height="150" fill="#9aa3ad"/><rect x="766" y="160" width="14" height="150" fill="#9aa3ad"/><rect x="674" y="160" width="92" height="150" fill="#cfe7f2" opacity=".35"/>`;
+    g += arrow(560, 200, 640, 200, '#7fb2ff', 3) + T(552, 205, 'H₂ in', { size: 13, a: 'end' }) + arrow(900, 200, 820, 200, '#ef5b4c', 3) + T(908, 205, 'O₂ in', { size: 13, a: 'start' }) + arrow(800, 300, 900, 340, '#5aa9f0', 3) + T(904, 360, 'H₂O out', { size: 13, a: 'start' });
+    g += wire('M667 150V100H773V150') + lamp(720, 100) + arrow(690, 118, 640, 118, '#e0a64a', 0, 0) + T(720, 140, 'electrons flow through the external circuit', { size: 12 });
+    g += T(720, 345, 'electrolyte', { size: 12 }).replace('<text', '<text opacity=".9"') + T(720, 404, 'only product is water; hydrogen must be made and stored', { size: 12 });
+    return wrap(W, H, o.aria || 'A zinc and copper chemical cell, and a hydrogen fuel cell', '', g);
+  }
+
+  /* ---------- simple harmonic motion ---------- */
+  function shmPractical(o = {}) {
+    const W = 980, H = 460;
+    let g = `<rect x="40" y="40" width="160" height="10" fill="#7d858f"/>`;
+    let d = 'M120 50'; for (let i = 1; i <= 16; i++) d += `L${i % 2 ? 106 : 134} ${50 + i * 9}`; d += 'L120 202';
+    g += `<path d="${d}" stroke="#d9822b" stroke-width="2.5" fill="none"/><rect x="98" y="202" width="44" height="40" rx="4" fill="#55606c"/>` + T(120, 227, 'm', { size: 14, w: 700, fill: '#fff' });
+    g += `<path d="M150 222H166M150 172H166M150 272H166" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3"/>` + dbl(176, 222, 176, 172, 'currentColor', 1.4) + T(184, 200, 'A', { size: 13, w: 700, a: 'start' }) + T(170, 240, 'equilibrium', { size: 11, a: 'start' });
+    g += `<rect x="96" y="330" width="48" height="24" rx="4" fill="#3d4654"/>` + T(120, 374, 'motion sensor', { size: 12 }) + `<path d="M120 330V256" stroke="#9fe0b0" stroke-width="1.4" stroke-dasharray="4 4"/>`;
+    g += `<rect x="240" y="40" width="140" height="10" fill="#7d858f"/><path d="M310 50L270 250" stroke="#d6d9de" stroke-width="2"/><circle cx="270" cy="258" r="14" fill="#9aa3ad"/><path d="M310 50V260" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/><path d="M345 250Q310 268 275 250" stroke="#e0a64a" stroke-width="2" fill="none" stroke-dasharray="4 3"/>` + T(310, 300, 'pendulum: T = 2π√(l/g)', { size: 12 }) + T(120, 400, 'mass–spring: T = 2π√(m/k)', { size: 12 });
+    const x0 = 470, wv = 440;
+    [['displacement x', 0, '#3f7fd6', 110], ['velocity v', Math.PI / 2, '#3fb27f', 230], ['acceleration a', Math.PI, '#ef5b4c', 350]].forEach(([n, ph, c, y]) => {
+      let p = ''; for (let i = 0; i <= 80; i++) { const t = i / 80; p += (i ? 'L' : 'M') + f(x0 + t * wv) + ' ' + f(y - 40 * Math.cos(2 * Math.PI * 1.5 * t + ph)); }
+      g += `<path d="M${x0} ${y}H${x0 + wv + 10}M${x0} ${y - 50}V${y + 50}" stroke="currentColor" stroke-width="1.6"/><path d="${p}" stroke="${c}" stroke-width="3" fill="none"/>` + T(x0 + 6, y - 54, n, { size: 13, a: 'start', fill: c });
+    });
+    g += T(x0 + wv / 2, 430, 'a = −ω² x:  a is always opposite to x;  v is greatest at x = 0', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Simple harmonic motion: mass on a spring, a pendulum, and displacement, velocity and acceleration graphs', '', g);
+  }
+
+  /* ---------- forced oscillations and resonance ---------- */
+  function resonanceCurves(o = {}) {
+    const W = 900, H = 420;
+    const x0 = 340, y0 = 350;
+    let g = `<rect x="40" y="60" width="80" height="50" rx="6" fill="#3d4654"/>` + T(130, 80, 'vibration generator', { size: 12, a: 'start' }) + T(130, 96, '(driving frequency f)', { size: 12, a: 'start' }) + `<path d="M80 110V160" stroke="#55606c" stroke-width="6"/>`;
+    let d = 'M80 160'; for (let i = 1; i <= 14; i++) d += `L${i % 2 ? 66 : 94} ${160 + i * 8}`; d += 'L80 284';
+    g += `<path d="${d}" stroke="#d9822b" stroke-width="2.5" fill="none"/><rect x="58" y="284" width="44" height="36" rx="4" fill="#55606c"/>` + T(80, 344, 'mass on a spring', { size: 12 }) + T(80, 360, '(natural frequency f₀)', { size: 12 });
+    g += `<path d="M160 330Q200 280 240 330" stroke="#e0a64a" stroke-width="2" fill="none" opacity="0"/>`;
+    g += axes(x0, y0, 500, 280, 'Driving frequency f', 'Amplitude');
+    const curve = (h, w, c) => { let p = ''; for (let i = 0; i <= 100; i++) { const fq = 0.05 + i * 0.02, A = 1 / Math.sqrt((1 - fq * fq) ** 2 + (w * fq) ** 2); p += (i ? 'L' : 'M') + f(x0 + fq * 230) + ' ' + f(y0 - Math.min(A * h, 270)); } return `<path d="${p}" stroke="${c}" stroke-width="3" fill="none"/>`; };
+    g += curve(24, 0.12, '#ef5b4c') + curve(24, 0.35, '#e0a64a') + curve(24, 0.9, '#3f7fd6');
+    g += `<path d="M${x0 + 230} ${y0}V60" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4"/>` + T(x0 + 230, y0 + 18, 'f₀', { size: 13, w: 700 });
+    g += T(x0 + 250, 90, 'light damping: tall, sharp peak', { size: 12, a: 'start', fill: '#ef5b4c' }) + T(x0 + 290, 200, 'heavier damping:', { size: 12, a: 'start', fill: '#e0a64a' }) + T(x0 + 290, 216, 'lower, wider peak', { size: 12, a: 'start', fill: '#e0a64a' }) + T(x0 + 380, 300, 'heavy damping', { size: 12, a: 'start', fill: '#3f7fd6' });
+    g += T(450, 40, 'Resonance: maximum amplitude when the driving frequency = the natural frequency', { size: 14, w: 700 });
+    return wrap(W, H, o.aria || 'Forced oscillations: a driven mass on a spring and resonance curves with different damping', '', g);
+  }
+
+  /* ---------- Boyle's law ---------- */
+  function boylesLaw(o = {}) {
+    const W = 940, H = 430;
+    let g = `<rect x="150" y="60" width="40" height="280" rx="6" fill="#e8f3f8" fill-opacity=".12" stroke="${GL}" stroke-width="3"/><rect x="154" y="64" width="32" height="140" fill="#e8f3f8" fill-opacity=".12"/><rect x="154" y="204" width="32" height="134" fill="#e0a64a" fill-opacity=".7"/>`;
+    g += `<rect x="200" y="60" width="16" height="280" fill="#f1d58a" stroke="#c9a94a"/>${Array.from({ length: 15 }, (_, i) => `<path d="M200 ${64 + i * 18}h${i % 5 ? 6 : 12}" stroke="#7a5f1f" stroke-width="1.2"/>`).join('')}`;
+    g += `<path d="M170 340V380H320V300" stroke="${GL}" stroke-width="6" fill="none"/><circle cx="320" cy="260" r="40" fill="#f4f6f7" stroke="#55606c" stroke-width="4"/><path d="M320 260L346 238" stroke="#ef5b4c" stroke-width="3"/>${Array.from({ length: 9 }, (_, i) => { const a = Math.PI * (0.8 + i * 0.175); return `<path d="M${f(320 + 32 * Math.cos(a))} ${f(260 + 32 * Math.sin(a))}L${f(320 + 38 * Math.cos(a))} ${f(260 + 38 * Math.sin(a))}" stroke="#55606c" stroke-width="2"/>`; }).join('')}`;
+    g += `<path d="M320 380H420" stroke="#55606c" stroke-width="5"/><rect x="420" y="360" width="60" height="30" rx="5" fill="#3d4654"/>` + T(450, 410, 'foot pump', { size: 12 });
+    g += T(170, 44, 'trapped air', { size: 12 }) + T(110, 270, 'oil', { size: 12, a: 'end' }) + T(366, 264, 'pressure gauge', { size: 12, a: 'start' }) + T(222, 140, 'scale: length of air column ∝ V', { size: 12, a: 'start' });
+    const x0 = 580, y0 = 350;
+    g += axes(x0, y0, 300, 250, '1 ÷ V', 'Pressure p');
+    g += `<path d="M${x0} ${y0}L${x0 + 280} ${y0 - 230}" stroke="#3f7fd6" stroke-width="3"/>${[1, 2, 3, 4, 5].map(i => `<circle cx="${x0 + i * 50}" cy="${f(y0 - i * 50 * 230 / 280)}" r="4.5" fill="#3f7fd6"/>`).join('')}`;
+    g += T(x0 + 150, 410, 'pV = constant (fixed mass, constant temperature)', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || "Boyle's law apparatus: oil column, scale, pressure gauge and foot pump, with a p against 1/V graph", '', g);
+  }
+
+  /* ---------- X-ray tube ---------- */
+  function xrayTube(o = {}) {
+    const W = 960, H = 420;
+    let g = `<rect x="100" y="90" width="700" height="240" rx="20" fill="#6b7480" opacity=".35"/><path d="M180 140H680Q740 140 740 210Q740 280 680 280H180Q150 280 150 210Q150 140 180 140Z" fill="#e8f3f8" fill-opacity=".1" stroke="${GL}" stroke-width="3"/>`;
+    g += `<path d="M210 190q8 -10 16 0t16 0t16 0" stroke="#ffb03a" stroke-width="4" fill="none"/><path d="M210 190V160M258 190V160" stroke="currentColor" stroke-width="2"/><path d="M198 230h80" stroke="none"/>`;
+    g += `<rect x="560" y="160" width="140" height="100" fill="#c26b3a"/><path d="M560 170L610 250H560Z" fill="#9aa3ad"/>`;
+    for (let i = 0; i < 4; i++) g += arrow(280, 186 + i * 12, 560, 196 + i * 12, '#5aa9f0', 1.6, 8);
+    g += `<rect x="560" y="330" width="60" height="10" fill="#cfe7f2"/>`;
+    for (let i = 0; i < 3; i++) g += wavy(584 + i * 6, 240, 560 + i * 24, 390, '#b07cff', 2);
+    g += wire('M210 160V60H120') + wire('M258 160V70H160') + T(140, 50, 'low-voltage filament supply', { size: 12 }) + wire('M700 210H860V50H240V60');
+    g += `<rect x="420" y="38" width="120" height="24" rx="4" fill="var(--panel,#121a33)" stroke="currentColor" stroke-width="2"/>` + T(480, 55, 'high p.d. (~100 kV)', { size: 12, w: 700 });
+    g += T(234, 310, 'heated filament (cathode):', { size: 12 }) + T(234, 326, 'thermionic emission', { size: 12 }) + T(420, 266, 'electrons accelerated in a vacuum', { size: 12, fill: '#5aa9f0' });
+    g += T(630, 106, 'tungsten target on a copper anode', { size: 12 }) + T(630, 122, '(rotating, oil-cooled)', { size: 12 });
+    g += T(640, 380, 'X-rays out through a window', { size: 12, a: 'start' }) + T(640, 396, 'in the lead casing', { size: 12, a: 'start' });
+    g += T(300, 380, 'about 1% of the kinetic energy becomes X-rays;', { size: 12 }) + T(300, 396, 'the rest heats the anode', { size: 12 });
+    return wrap(W, H, o.aria || 'X-ray tube: heated filament, electrons accelerated to a tungsten target, X-rays out of a window', '', g);
+  }
+
+  /* ---------- gamma camera ---------- */
+  function gammaCamera(o = {}) {
+    const W = 960, H = 420;
+    let g = `<ellipse cx="480" cy="360" rx="300" ry="44" fill="#e8c4a4" opacity=".75"/><circle cx="520" cy="350" r="22" fill="#3fb27f" opacity=".8"/>` + T(480, 410, 'patient injected with a tracer (e.g. technetium-99m, a gamma emitter)', { size: 12 });
+    g += `<rect x="260" y="220" width="440" height="60" fill="#55606c"/>${Array.from({ length: 21 }, (_, i) => `<rect x="${268 + i * 20.5}" y="220" width="6" height="60" fill="#2c3038"/>`).join('')}`;
+    g += `<rect x="260" y="180" width="440" height="40" fill="#cfe7f2" opacity=".75"/>`;
+    for (let i = 0; i < 7; i++) g += `<path d="M${290 + i * 62} 180V120Q${290 + i * 62} 104 ${306 + i * 62} 104H${330 + i * 62}Q${346 + i * 62} 104 ${346 + i * 62} 120V180Z" fill="#3d4654" stroke="#22262e"/>`;
+    g += `<path d="M480 104V70H760" stroke="currentColor" stroke-width="2.5" fill="none"/><rect x="760" y="40" width="120" height="70" rx="6" fill="#3d4654"/><rect x="770" y="48" width="100" height="54" rx="3" fill="#0f1620"/><circle cx="820" cy="76" r="14" fill="#3fb27f" opacity=".7"/>` + T(820, 130, 'computer image', { size: 12 });
+    g += wavy(520, 330, 516, 284, '#b07cff', 2) + wavy(470, 336, 450, 290, '#b07cff', 2) + `<path d="M450 290L440 286" stroke="none"/>` + T(436, 312, '✕', { size: 13, fill: '#ef5b4c' });
+    g += `<circle cx="516" cy="198" r="8" fill="#fff6c8"/>`;
+    const labs = [{ x: 700, y: 250, t: 'Lead collimator: only gamma rays parallel to the holes pass', side: 'r', ly: 250 }, { x: 700, y: 200, t: 'Scintillator (sodium iodide): each gamma photon gives a flash of light', side: 'r', ly: 190 }, { x: 260, y: 140, t: 'Photomultiplier tubes turn the flashes into electrical pulses', side: 'l', ly: 140 }];
+    return wrap(W, H, o.aria || 'Gamma camera: collimator, scintillator, photomultiplier tubes and computer', '', g + labels(labs, { W, H, lx: 240, rx: 720, size: 12 }));
+  }
+
+  /* ---------- ultrasound A-scan ---------- */
+  function ultrasoundScan(o = {}) {
+    const W = 980, H = 420;
+    let g = `<rect x="60" y="70" width="70" height="80" rx="6" fill="#3d4654"/><rect x="66" y="150" width="58" height="16" fill="#e0a64a"/><rect x="60" y="166" width="70" height="10" fill="#9fd4e6" opacity=".8"/>` + T(95, 60, 'transducer', { size: 12 });
+    const layers = [['skin', '#f2c9a8', 176, 196], ['fat', '#f4e3a0', 196, 246], ['muscle', '#c8705e', 246, 326], ['bone', '#efece2', 326, 370]];
+    layers.forEach(([n, c, y1, y2]) => { g += `<rect x="40" y="${y1}" width="300" height="${y2 - y1}" fill="${c}" opacity=".85"/>` + T(350, (y1 + y2) / 2 + 4, n, { size: 12, a: 'start' }); });
+    g += arrow(86, 172, 86, 240, '#3f7fd6', 2.5, 9) + arrow(104, 246, 104, 180, '#3f7fd6', 2, 8) + arrow(116, 326, 116, 182, '#3f7fd6', 2, 8);
+    g += T(200, 400, 'coupling gel removes air, so the pulse is not all reflected at the skin', { size: 12 });
+    g += T(40, 30, 'piezoelectric crystal sends pulses and detects echoes', { size: 12, a: 'start' });
+    const x0 = 460, y0 = 300;
+    g += axes(x0, y0, 460, 200, 'Time', 'Echo amplitude');
+    [[0, 180], [70, 60], [170, 90], [320, 150]].forEach(([dx, h]) => { g += `<path d="M${x0 + 10 + dx} ${y0}L${x0 + 16 + dx} ${y0 - h}L${x0 + 22 + dx} ${y0}" stroke="#3f7fd6" stroke-width="2.5" fill="none"/>`; });
+    g += dbl(x0 + 86, y0 + 40, x0 + 186, y0 + 40, 'currentColor', 1.4) + T(x0 + 136, y0 + 60, 'Δt', { size: 13, w: 700 });
+    g += T(x0 + 28, y0 - 150, 'transmitted pulse', { size: 11, a: 'start' }) + T(x0 + 346, y0 - 140, 'bone boundary', { size: 11, a: 'start' });
+    g += T(x0 + 230, 400, 'A-scan: depth = v Δt ÷ 2  (the pulse goes there and back)', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Ultrasound transducer on layers of tissue and an A-scan showing echoes', '', g);
+  }
+
+  /* ---------- speed of sound by resonance ---------- */
+  function resonanceTube(o = {}) {
+    const W = 900, H = 440;
+    let g = `<path d="M160 120V400Q160 420 180 420H340Q360 420 360 400V120" fill="none" stroke="${GL}" stroke-width="3"/><path d="M162 200H358V418H162Z" fill="${WATER}" fill-opacity=".45"/>`;
+    g += `<rect x="236" y="60" width="48" height="280" fill="#e8f3f8" fill-opacity=".15" stroke="${GL}" stroke-width="3"/><rect x="239" y="200" width="42" height="138" fill="${WATER}" fill-opacity=".35"/>`;
+    g += `<path d="M260 40V20M250 40V10M270 40V10" stroke="#9aa3ad" stroke-width="5"/>` + T(300, 24, 'tuning fork (known f)', { size: 12, a: 'start' });
+    let L = 'M248 60', R = 'M272 60'; for (let i = 0; i <= 30; i++) { const y = 60 + i * 140 / 30, a = 10 * Math.cos(Math.PI / 2 * i / 30); L += `L${f(260 - a)} ${f(y)}`; R += `L${f(260 + a)} ${f(y)}`; }
+    g += `<path d="${L}" stroke="#3f7fd6" stroke-width="2" fill="none"/><path d="${R}" stroke="#3f7fd6" stroke-width="2" fill="none"/>`;
+    g += dbl(214, 60, 214, 200, 'currentColor', 1.6) + T(206, 134, 'L', { size: 15, w: 700, a: 'end' });
+    g += T(300, 64, 'antinode (just above the open end)', { size: 12, a: 'start' }) + T(300, 204, 'node at the water surface', { size: 12, a: 'start' }) + T(380, 300, 'raise the tube until the', { size: 12, a: 'start' }) + T(380, 316, 'sound is loudest (first resonance)', { size: 12, a: 'start' });
+    g += T(640, 140, 'first resonance:', { size: 14, a: 'start' }) + T(640, 166, 'L + c = λ ÷ 4', { size: 16, w: 700, a: 'start' }) + T(640, 196, 'c = end correction (≈ 0.3 d)', { size: 12, a: 'start' }) + T(640, 232, 'second resonance: L₂ + c = 3λ ÷ 4', { size: 12, a: 'start' }) + T(640, 252, 'so λ = 2 (L₂ − L₁)', { size: 13, w: 700, a: 'start' }) + T(640, 286, 'v = f λ', { size: 16, w: 700, a: 'start' });
+    return wrap(W, H, o.aria || 'Resonance tube in water with a tuning fork, showing a node at the water surface and an antinode at the open end', '', g);
+  }
+
+  /* ---------- mass spectrum ---------- */
+  function massSpectrum(o = {}) {
+    const W = 900, H = 420;
+    const x0 = 120, y0 = 340;
+    let g = axes(x0, y0, 420, 270, 'm/z', 'Relative abundance (%)');
+    [[24, 78.99], [25, 10.00], [26, 11.01]].forEach(([m, a]) => { const x = x0 + (m - 23) * 120; g += `<rect x="${x - 8}" y="${f(y0 - a * 3)}" width="16" height="${f(a * 3)}" fill="#3f7fd6"/>` + T(x, y0 + 18, String(m), { size: 13 }) + T(x, f(y0 - a * 3 - 8), a.toFixed(2), { size: 12, w: 700 }); });
+    g += T(330, 40, 'Mass spectrum of magnesium', { size: 15, w: 700 });
+    g += T(600, 140, 'Ar = Σ(m/z × abundance) ÷ 100', { size: 14, w: 700, a: 'start' }) + T(600, 174, '= (24 × 78.99 + 25 × 10.00', { size: 13, a: 'start' }) + T(600, 194, '   + 26 × 11.01) ÷ 100', { size: 13, a: 'start' }) + T(600, 222, '= 24.32', { size: 15, w: 700, a: 'start' });
+    g += T(600, 270, 'each peak is one isotope;', { size: 12, a: 'start' }) + T(600, 286, 'for a molecule, the peak with the', { size: 12, a: 'start' }) + T(600, 302, 'highest m/z (M⁺) gives Mr', { size: 12, a: 'start' });
+    return wrap(W, H, o.aria || 'Mass spectrum of magnesium showing three isotopes and the relative atomic mass calculation', '', g);
+  }
+
+  /* ---------- infrared spectrum ---------- */
+  function irSpectrum(o = {}) {
+    const W = 980, H = 420;
+    const x0 = 80, y0 = 330, w = 820, hgt = 250, X = n => x0 + (4000 - n) / 3500 * w, Y = t => y0 - t / 100 * hgt;
+    let g = `<path d="M${x0} ${y0 - hgt}V${y0}H${x0 + w}" stroke="currentColor" stroke-width="2.5" fill="none"/>`;
+    [4000, 3000, 2000, 1500, 1000, 500].forEach(n => { g += `<path d="M${f(X(n))} ${y0}v6" stroke="currentColor" stroke-width="2"/>` + T(X(n), y0 + 22, String(n), { size: 12 }); });
+    g += T(x0 + w / 2, y0 + 48, 'Wavenumber (cm⁻¹)', { size: 13 }) + T(x0 + 10, y0 - hgt - 10, 'Transmittance (%)', { size: 13, a: 'start' });
+    const pts = []; for (let n = 4000; n >= 500; n -= 10) { let t = 92; t -= 62 * Math.exp(-(((n - 3000) / 300) ** 2)); t -= 80 * Math.exp(-(((n - 1715) / 25) ** 2)); t -= 40 * Math.exp(-(((n - 1250) / 30) ** 2)); if (n < 1500) t -= 22 * Math.abs(Math.sin(n / 23)) * Math.exp(-(((n - 1000) / 500) ** 2)); pts.push((pts.length ? 'L' : 'M') + f(X(n)) + ' ' + f(Y(Math.max(4, t)))); }
+    g += `<rect x="${f(X(1500))}" y="${y0 - hgt}" width="${f(X(500) - X(1500))}" height="${hgt}" fill="#e0a64a" opacity=".1"/><path d="${pts.join('')}" stroke="#3f7fd6" stroke-width="2.5" fill="none"/>`;
+    g += T(X(3000), Y(20), 'O–H (carboxylic acid)', { size: 12, w: 700 }) + T(X(3000), Y(20) + 16, 'very broad, 2500–3300', { size: 12 });
+    g += T(X(1715) + 10, Y(6), 'C=O, sharp, 1630–1820', { size: 12, w: 700, a: 'start' });
+    g += T(X(1000), y0 - hgt + 18, 'fingerprint region (below 1500)', { size: 12 }) + T(X(1000), y0 - hgt + 34, 'unique to each compound', { size: 12 });
+    g += T(490, 30, 'Infrared spectrum of ethanoic acid', { size: 15, w: 700 });
+    g += T(490, 400, 'an alcohol O–H is broad at 3200–3600; an aldehyde or ketone has C=O but no O–H', { size: 12 });
+    return wrap(W, H, o.aria || 'Infrared spectrum of ethanoic acid with the broad O–H and sharp C=O absorptions labelled', '', g);
+  }
+
+  /* ---------- transition metal complex colours ---------- */
+  function tmColours(o = {}) {
+    const W = 980, H = 420;
+    let g = T(490, 22, 'Ligand substitution changes the colour', { size: 15, w: 700 });
+    const tb = (x, c, f1, f2, n) => tubeC(x, 90, 190, c, 0.7) + T(x, 312, f1, { size: 12, w: 700 }) + T(x, 328, f2, { size: 12 }) + T(x, 346, n, { size: 11 });
+    g += tb(110, '#8cc4f0', '[Cu(H₂O)₆]²⁺', 'pale blue', 'octahedral') + tb(330, '#1d3fb0', '[Cu(NH₃)₄(H₂O)₂]²⁺', 'deep blue', 'octahedral') + tb(550, '#e8d24a', '[CuCl₄]²⁻', 'yellow', 'tetrahedral');
+    g += arrow(150, 180, 290, 180, 'currentColor', 2.5) + T(220, 168, 'excess NH₃(aq)', { size: 12 }) + `<path d="M120 84Q330 40 540 84" stroke="currentColor" stroke-width="2" fill="none"/>` + arrow(530, 80, 545, 88, 'currentColor', 2, 9) + T(330, 56, 'conc. HCl', { size: 12 });
+    g += tb(720, '#f2a7b9', '[Co(H₂O)₆]²⁺', 'pink', 'octahedral') + tb(890, '#3a52d6', '[CoCl₄]²⁻', 'blue', 'tetrahedral') + arrow(760, 180, 850, 180, 'currentColor', 2.5) + T(805, 168, 'conc. HCl', { size: 12 });
+    g += T(490, 392, 'Cl⁻ is larger than H₂O, so only four fit: the shape changes from octahedral to tetrahedral', { size: 12 });
+    return wrap(W, H, o.aria || 'Colours of copper and cobalt complex ions before and after ligand substitution', '', g);
+  }
+
+  const add = { anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
