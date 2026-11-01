@@ -1,0 +1,238 @@
+[
+ {
+  "file": "practical-young-modulus",
+  "figure": "youngModulus",
+  "options": {},
+  "topic": "Practical skills",
+  "description": "Young modulus: long wire, pulley, marker and fixed scale"
+ },
+ {
+  "file": "practical-emf-internal-resistance",
+  "figure": "emfInternal",
+  "options": {},
+  "topic": "Practical skills",
+  "description": "E.m.f. and internal resistance: circuit and V against I graph"
+ },
+ {
+  "file": "practical-specific-heat-capacity",
+  "figure": "shcPractical",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Specific heat capacity: heater and thermometer in an insulated block"
+ },
+ {
+  "file": "practical-specific-latent-heat",
+  "figure": "latentHeat",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Specific latent heat of fusion with a control funnel"
+ },
+ {
+  "file": "practical-resistivity",
+  "figure": "resistanceWire",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Resistance of a wire against length (resistivity)"
+ },
+ {
+  "file": "practical-iv-characteristics",
+  "figure": "ivCharacteristic",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "I\u2013V characteristics: resistor, filament lamp and diode"
+ },
+ {
+  "file": "practical-density",
+  "figure": "densityPractical",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Density of regular and irregular solids"
+ },
+ {
+  "file": "practical-stationary-waves",
+  "figure": "wavesPractical",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Ripple tank and stationary waves on a string"
+ },
+ {
+  "file": "motion-stopping-distances",
+  "figure": "stopping",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Thinking and braking distances"
+ },
+ {
+  "file": "forces-springs-hookes-law",
+  "figure": "springHooke",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Spring extension and force\u2013extension graph"
+ },
+ {
+  "file": "forces-pressure-in-a-liquid",
+  "figure": "liquidPressure",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Pressure increases with depth: p = h\u03c1g"
+ },
+ {
+  "file": "electricity-series-parallel",
+  "figure": "seriesParallel",
+  "options": {},
+  "topic": "Electricity",
+  "description": "Series and parallel circuits"
+ },
+ {
+  "file": "electricity-capacitor-charge-discharge",
+  "figure": "capacitorRC",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Capacitor charging and discharging through a resistor"
+ },
+ {
+  "file": "fields-charged-particles-e-and-b",
+  "figure": "chargedBeams",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Electron beam in uniform electric and magnetic fields"
+ },
+ {
+  "file": "fields-wire-and-grip-rule",
+  "figure": "wireField",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Magnetic field around a current-carrying wire"
+ },
+ {
+  "file": "fields-magnet-and-solenoid",
+  "figure": "magField",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Field patterns of a bar magnet and a solenoid"
+ },
+ {
+  "file": "fields-transformer",
+  "figure": "transformer",
+  "options": {
+   "np": 6,
+   "ns": 12
+  },
+  "topic": "Electricity and fields",
+  "description": "Transformer: primary and secondary coils on an iron core"
+ },
+ {
+  "file": "waves-double-slit-and-grating",
+  "figure": "doubleSlit",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Young's double slit and the diffraction grating"
+ },
+ {
+  "file": "waves-progressive-transverse-longitudinal",
+  "figure": "waves",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Transverse and longitudinal waves"
+ },
+ {
+  "file": "waves-electromagnetic-spectrum",
+  "figure": "emSpectrum",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "The electromagnetic spectrum"
+ },
+ {
+  "file": "waves-refraction-glass-block",
+  "figure": "glassBlock",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Refraction through a glass block"
+ },
+ {
+  "file": "quantum-photoelectric-and-leds",
+  "figure": "photoelectric",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Photoelectric effect and the Planck constant from LEDs"
+ },
+ {
+  "file": "thermal-heating-curve",
+  "figure": "heatingCurve",
+  "options": {},
+  "topic": "Thermal physics",
+  "description": "Heating curve: latent heat at the melting and boiling points"
+ },
+ {
+  "file": "thermal-gas-pressure",
+  "figure": "gasPressure",
+  "options": {},
+  "topic": "Thermal physics",
+  "description": "Gas particles and pressure at two temperatures"
+ },
+ {
+  "file": "thermal-states-of-matter",
+  "figure": "states",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Thermal physics",
+  "description": "Particles in solids, liquids and gases"
+ },
+ {
+  "file": "nuclear-rutherford-scattering",
+  "figure": "rutherford",
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "Rutherford alpha-particle scattering"
+ },
+ {
+  "file": "nuclear-models-of-the-atom",
+  "figure": "atomModels",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Nuclear and particle physics",
+  "description": "Models of the atom"
+ },
+ {
+  "file": "nuclear-radiation-penetration",
+  "figure": "penetration",
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "Alpha, beta and gamma penetration"
+ },
+ {
+  "file": "nuclear-fission-chain-reaction",
+  "figure": "fission",
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "Induced fission and a chain reaction"
+ },
+ {
+  "file": "gravitation-orbits",
+  "figure": "orbit",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Circular orbit: gravity provides the centripetal force"
+ },
+ {
+  "file": "astro-life-cycle-of-stars",
+  "figure": "starLife",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Life cycles of low-mass and massive stars"
+ }
+]
