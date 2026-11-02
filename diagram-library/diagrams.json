@@ -283,5 +283,201 @@
   "options": {},
   "topic": "Medical imaging",
   "description": "Ultrasound transducer and A-scan"
+ },
+ {
+  "file": "forces-free-body-diagrams",
+  "figure": "freeBody",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Free-body diagrams: book on a table, box on a rough slope"
+ },
+ {
+  "file": "forces-terminal-velocity",
+  "figure": "terminalVelocity",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Skydiver forces and terminal velocity"
+ },
+ {
+  "file": "forces-centre-of-mass-stability",
+  "figure": "centreOfMass",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Finding the centre of mass, and stability"
+ },
+ {
+  "file": "forces-triangle-of-forces",
+  "figure": "triangleForces",
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Three forces in equilibrium and the triangle of forces"
+ },
+ {
+  "file": "materials-stress-strain",
+  "figure": "stressStrain",
+  "options": {},
+  "topic": "Materials",
+  "description": "Stress\u2013strain graphs: ductile, brittle and polymeric"
+ },
+ {
+  "file": "momentum-collisions",
+  "figure": "collisions",
+  "options": {},
+  "topic": "Momentum",
+  "description": "Conservation of momentum in a collision"
+ },
+ {
+  "file": "momentum-impulse-force-time",
+  "figure": "forceTime",
+  "options": {},
+  "topic": "Momentum",
+  "description": "Impulse and force\u2013time graphs"
+ },
+ {
+  "file": "electricity-potential-divider",
+  "figure": "potentialDivider",
+  "options": {},
+  "topic": "Electricity",
+  "description": "Potential divider and sensing circuit"
+ },
+ {
+  "file": "electricity-capacitor-model",
+  "figure": "capModel",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Iterative model of capacitor discharge"
+ },
+ {
+  "file": "fields-radial-uniform",
+  "figure": "fieldLines",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Radial and uniform fields with equipotentials"
+ },
+ {
+  "file": "fields-potential",
+  "figure": "potentialGraph",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Gravitational potential against distance"
+ },
+ {
+  "file": "fields-induction",
+  "figure": "induction",
+  "options": {},
+  "topic": "Electricity and fields",
+  "description": "Electromagnetic induction: magnet and coil"
+ },
+ {
+  "file": "waves-diffraction-gap",
+  "figure": "waveDiffraction",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Diffraction through narrow and wide gaps"
+ },
+ {
+  "file": "quantum-electron-diffraction",
+  "figure": "electronDiffraction",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Electron diffraction tube"
+ },
+ {
+  "file": "quantum-energy-levels-spectra",
+  "figure": "lineSpectra",
+  "options": {},
+  "topic": "Waves and quantum",
+  "description": "Energy levels and line spectra"
+ },
+ {
+  "file": "thermal-maxwell-boltzmann",
+  "figure": "boltzmannCurve",
+  "options": {},
+  "topic": "Thermal physics",
+  "description": "Maxwell\u2013Boltzmann distribution"
+ },
+ {
+  "file": "circular-motion",
+  "figure": "circularMotion",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Circular motion: velocity and centripetal force"
+ },
+ {
+  "file": "astro-hr-diagram",
+  "figure": "hrDiagram",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Hertzsprung\u2013Russell diagram"
+ },
+ {
+  "file": "astro-black-body",
+  "figure": "blackBody",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Black-body radiation curves"
+ },
+ {
+  "file": "astro-redshift-hubble",
+  "figure": "redshiftHubble",
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Redshift and Hubble\u2019s law"
+ },
+ {
+  "file": "nuclear-binding-energy",
+  "figure": "bindingEnergy",
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "Binding energy per nucleon"
+ },
+ {
+  "file": "nuclear-decay-curves",
+  "figure": "decayCurve",
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "Exponential decay and the log graph"
+ },
+ {
+  "file": "nuclear-fusion",
+  "figure": "fusionFig",
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "Fusion of deuterium and tritium"
+ },
+ {
+  "file": "medical-attenuation",
+  "figure": "attenuation",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "X-ray attenuation and contrast media"
+ },
+ {
+  "file": "medical-ct-scanner",
+  "figure": "ctScan",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "CAT scanner"
+ },
+ {
+  "file": "medical-pet-scanner",
+  "figure": "petScan",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "PET scanner"
+ },
+ {
+  "file": "medical-acoustic-impedance",
+  "figure": "acousticImpedance",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "Acoustic impedance and reflection"
+ },
+ {
+  "file": "medical-doppler-ultrasound",
+  "figure": "dopplerUS",
+  "options": {},
+  "topic": "Medical imaging",
+  "description": "Doppler ultrasound"
  }
 ]

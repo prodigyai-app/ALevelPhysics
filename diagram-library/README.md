@@ -1,6 +1,6 @@
 # A level Physics diagram library
 
-38 realistic A level Physics diagrams, exported from the shared figure library used on the prodigyai revision sites
+66 realistic A level Physics diagrams, exported from the shared figure library used on the prodigyai revision sites
 (`ALevelPhysics/platform/client/science-figures.js` and `science-figures-2.js`).
 
 Open `index.html` to browse them.
@@ -54,6 +54,34 @@ File names start with the topic (energy, particle, electricity, magnetism, atomi
 - **Medical imaging**: X-ray tube (`medical-x-ray-tube`)
 - **Medical imaging**: Gamma camera (`medical-gamma-camera`)
 - **Medical imaging**: Ultrasound transducer and A-scan (`medical-ultrasound-a-scan`)
+- **Motion and forces**: Free-body diagrams: book on a table, box on a rough slope (`forces-free-body-diagrams`)
+- **Motion and forces**: Skydiver forces and terminal velocity (`forces-terminal-velocity`)
+- **Motion and forces**: Finding the centre of mass, and stability (`forces-centre-of-mass-stability`)
+- **Motion and forces**: Three forces in equilibrium and the triangle of forces (`forces-triangle-of-forces`)
+- **Materials**: Stress–strain graphs: ductile, brittle and polymeric (`materials-stress-strain`)
+- **Momentum**: Conservation of momentum in a collision (`momentum-collisions`)
+- **Momentum**: Impulse and force–time graphs (`momentum-impulse-force-time`)
+- **Electricity**: Potential divider and sensing circuit (`electricity-potential-divider`)
+- **Electricity and fields**: Iterative model of capacitor discharge (`electricity-capacitor-model`)
+- **Electricity and fields**: Radial and uniform fields with equipotentials (`fields-radial-uniform`)
+- **Gravitation and astrophysics**: Gravitational potential against distance (`fields-potential`)
+- **Electricity and fields**: Electromagnetic induction: magnet and coil (`fields-induction`)
+- **Waves and quantum**: Diffraction through narrow and wide gaps (`waves-diffraction-gap`)
+- **Waves and quantum**: Electron diffraction tube (`quantum-electron-diffraction`)
+- **Waves and quantum**: Energy levels and line spectra (`quantum-energy-levels-spectra`)
+- **Thermal physics**: Maxwell–Boltzmann distribution (`thermal-maxwell-boltzmann`)
+- **Gravitation and astrophysics**: Circular motion: velocity and centripetal force (`circular-motion`)
+- **Gravitation and astrophysics**: Hertzsprung–Russell diagram (`astro-hr-diagram`)
+- **Gravitation and astrophysics**: Black-body radiation curves (`astro-black-body`)
+- **Gravitation and astrophysics**: Redshift and Hubble’s law (`astro-redshift-hubble`)
+- **Nuclear and particle physics**: Binding energy per nucleon (`nuclear-binding-energy`)
+- **Nuclear and particle physics**: Exponential decay and the log graph (`nuclear-decay-curves`)
+- **Nuclear and particle physics**: Fusion of deuterium and tritium (`nuclear-fusion`)
+- **Medical imaging**: X-ray attenuation and contrast media (`medical-attenuation`)
+- **Medical imaging**: CAT scanner (`medical-ct-scanner`)
+- **Medical imaging**: PET scanner (`medical-pet-scanner`)
+- **Medical imaging**: Acoustic impedance and reflection (`medical-acoustic-impedance`)
+- **Medical imaging**: Doppler ultrasound (`medical-doppler-ultrasound`)
 
 ## Making more or changing one
 
