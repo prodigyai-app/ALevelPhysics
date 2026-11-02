@@ -2060,7 +2060,173 @@
     return wrap(W, H, o.aria || t, '', g);
   }
 
-  const add = { redoxTitration, c13Nmr, h1Nmr, labSkills, diffusionFig, foodBurning, changeTypes, foodTests, leverMoments, punnett, dnaExtraction, solarSystem, ks3Investigation, anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 9: KS3 pictures ======================= */
+  /* ---------- moon phases and eclipses ---------- */
+  function moonPhases(o = {}) {
+    const W = 980, H = 440, cx = 300, cy = 230, R = 150;
+    let g = `<defs><radialGradient id="mpE" cx=".4" cy=".4" r=".7"><stop offset="0" stop-color="#6fb2f0"/><stop offset="1" stop-color="#1f5aa8"/></radialGradient></defs>`;
+    g += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="currentColor" stroke-dasharray="5 6" opacity=".5"/><circle cx="${cx}" cy="${cy}" r="30" fill="url(#mpE)"/>` + T(cx, cy + 50, 'Earth', { size: 12 });
+    for (let i = 0; i < 4; i++) g += arrow(40, 90 + i * 90, 100, 90 + i * 90, '#f5c84a', 2.5);
+    g += T(60, 70, 'sunlight', { size: 12, fill: '#f5c84a' });
+    const names = ['Full moon', 'Waning gibbous', 'Third quarter', 'Waning crescent', 'New moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous'];
+    for (let i = 0; i < 8; i++) {
+      const a = i * Math.PI / 4, x = cx + R * Math.cos(a), y = cy - R * Math.sin(a);
+      g += `<circle cx="${f(x)}" cy="${f(y)}" r="16" fill="#2a2f3a"/><path d="M${f(x)} ${f(y - 16)}A16 16 0 0 0 ${f(x)} ${f(y + 16)}Z" fill="#f4f1e6"/>`;
+      // view from Earth: lit fraction
+      const k = Math.cos(i * Math.PI / 4), vx = 640 + (i % 4) * 85, vy = 150 + Math.floor(i / 4) * 140;
+      const lit = (1 + k) / 2, waxing = i > 4;
+      let shape;
+      if (i === 0) shape = `<circle cx="${vx}" cy="${vy}" r="26" fill="#f4f1e6"/>`;
+      else if (i === 4) shape = `<circle cx="${vx}" cy="${vy}" r="26" fill="#2a2f3a" stroke="#555"/>`;
+      else { const side = waxing ? 1 : -1, rx = Math.abs(26 * (2 * lit - 1)); shape = `<circle cx="${vx}" cy="${vy}" r="26" fill="#2a2f3a"/><path d="M${vx} ${vy - 26}A26 26 0 0 ${side > 0 ? 1 : 0} ${vx} ${vy + 26}A${f(rx)} 26 0 0 ${(lit > 0.5) === (side > 0) ? 1 : 0} ${vx} ${vy - 26}Z" fill="#f4f1e6"/>`; }
+      g += shape + T(vx, vy + 46, names[i], { size: 11 });
+    }
+    g += T(767, 70, 'What we see from Earth', { size: 14, w: 700 }) + T(300, 30, 'The Moon orbits Earth every 27 days; half of it is always lit by the Sun', { size: 14, w: 700 }).replace('x="300"', 'x="420"');
+    g += T(767, 404, 'Solar eclipse: Moon between Sun and Earth', { size: 12 }) + T(767, 422, 'Lunar eclipse: Earth between Sun and Moon', { size: 12 });
+    return wrap(W, H, o.aria || 'Phases of the Moon as it orbits Earth and how each phase looks from Earth', '', g);
+  }
+
+  /* ---------- seasons ---------- */
+  function seasons(o = {}) {
+    const W = 960, H = 400;
+    let g = `<defs><radialGradient id="ssn"><stop offset="0" stop-color="#fff3a0"/><stop offset="1" stop-color="#f5a524"/></radialGradient></defs><ellipse cx="480" cy="210" rx="330" ry="110" fill="none" stroke="currentColor" stroke-dasharray="5 6" opacity=".5"/><circle cx="480" cy="210" r="46" fill="url(#ssn)"/>` + T(480, 280, 'Sun', { size: 12 });
+    const earth = (x, y, lbl, sub) => `<g transform="rotate(23 ${x} ${y})"><circle cx="${x}" cy="${y}" r="30" fill="#3f7fd6"/><path d="M${x} ${y - 44}V${y + 44}" stroke="#fff" stroke-width="2"/><path d="M${x - 30} ${y}H${x + 30}" stroke="#9fd4e6" stroke-width="1.5" opacity=".7"/></g>` + T(x, y + 62, lbl, { size: 13, w: 700 }) + T(x, y + 78, sub, { size: 11 });
+    g += earth(150, 210, 'June', 'UK summer: north tilted towards the Sun') + earth(810, 210, 'December', 'UK winter: north tilted away');
+    g += T(480, 36, 'Seasons happen because Earth’s axis is tilted (23°)', { size: 15, w: 700 });
+    g += T(480, 60, 'Summer: Sun higher in the sky, longer days, light more concentrated. Not because Earth is closer!', { size: 12 });
+    g += T(480, 384, 'a day = one spin on the axis (24 hours);  a year = one orbit of the Sun (365¼ days)', { size: 12 });
+    return wrap(W, H, o.aria || 'Earth’s tilted axis at opposite sides of its orbit causing summer and winter', '', g);
+  }
+
+  /* ---------- the ear ---------- */
+  function earFig(o = {}) {
+    const W = 920, H = 420;
+    let g = `<path d="M150 120Q90 120 90 200Q90 270 140 300Q170 315 175 260Q178 230 200 220Z" fill="#e8b89a" stroke="#c48a6a" stroke-width="2"/>`;
+    g += `<path d="M190 200H330" stroke="#c48a6a" stroke-width="30" stroke-linecap="round" opacity=".55"/><path d="M190 200H330" stroke="#3a2a22" stroke-width="18" stroke-linecap="round" opacity=".5"/>`;
+    g += `<path d="M335 170Q345 200 335 230" stroke="#f0d2a0" stroke-width="7" fill="none"/>`;
+    g += `<path d="M345 196L380 186L400 200L418 196" stroke="#f4f1e6" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M418 186V210" stroke="#f4f1e6" stroke-width="7"/>`;
+    g += `<path d="M425 200Q460 140 520 150Q560 160 540 210Q520 250 470 230Q440 220 455 195Q470 180 490 195" fill="none" stroke="#e7a7b9" stroke-width="16"/><path d="M430 140Q480 70 540 110M440 150Q500 100 545 140" stroke="#bfe0ff" stroke-width="7" fill="none"/>`;
+    g += `<path d="M545 200Q600 200 640 230" stroke="#f2d06a" stroke-width="5" fill="none"/>`;
+    for (let i = 0; i < 3; i++) g += `<path d="M${40 + i * 14} ${180 + i * 2}q6 20 0 40" stroke="#5aa9f0" stroke-width="2.5" fill="none"/>`;
+    const labs = [{ x: 120, y: 160, t: 'Outer ear: funnels sound in', side: 'l', ly: 100 }, { x: 260, y: 200, t: 'Ear canal', side: 'l', ly: 330 }, { x: 337, y: 200, t: 'Eardrum vibrates', side: 'r', ly: 100 }, { x: 395, y: 196, t: 'Three tiny bones (ossicles) pass on and amplify the vibrations', side: 'r', ly: 150 }, { x: 500, y: 225, t: 'Cochlea: hair cells turn vibrations into electrical impulses', side: 'r', ly: 250 }, { x: 490, y: 100, t: 'Semicircular canals (balance)', side: 'r', ly: 60 }, { x: 610, y: 216, t: 'Auditory nerve to the brain', side: 'r', ly: 310 }];
+    g += T(400, 400, 'humans hear 20 Hz to 20 000 Hz; loud sounds can damage the hair cells', { size: 12 });
+    return wrap(W, H, o.aria || 'Structure of the human ear from the outer ear to the auditory nerve', '', g + labels(labs, { W, H, lx: 200, rx: 680, size: 13 }));
+  }
+
+  /* ---------- antagonistic muscles and a joint ---------- */
+  function armMuscles(o = {}) {
+    const W = 980, H = 430;
+    let g = panelT(260, 'Antagonistic muscles', 'muscles can only pull, so they work in pairs') + panelT(760, 'A synovial joint', 'the elbow is a hinge joint');
+    g += `<path d="M160 90H190L200 260H170Z" fill="#efece2" stroke="#c9c2ac"/><path d="M190 262L360 300L354 320L180 286Z" fill="#efece2" stroke="#c9c2ac"/><circle cx="186" cy="272" r="14" fill="#efece2" stroke="#c9c2ac"/>`;
+    g += `<path d="M196 110Q260 150 236 260Q232 280 230 290" fill="#e2483a" stroke="#a83020" stroke-width="2"/><path d="M160 110Q120 180 160 270L170 286" fill="#c96a5a" stroke="#8a3a2e" stroke-width="2" opacity=".85"/>`;
+    g += T(270, 160, 'biceps contracts', { size: 13, w: 700, a: 'start', fill: '#ef5b4c' }) + T(270, 178, '(shorter, fatter)', { size: 12, a: 'start' }) + T(110, 150, 'triceps', { size: 13, w: 700, a: 'end' }) + T(110, 168, 'relaxes', { size: 12, a: 'end' }) + arrow(330, 300, 320, 240, 'currentColor', 2) + T(330, 230, 'arm bends', { size: 12, a: 'start' });
+    g += T(260, 360, 'to straighten the arm: triceps contracts, biceps relaxes', { size: 12 }) + T(260, 378, 'tendons join muscle to bone; ligaments join bone to bone', { size: 12 });
+    g += `<path d="M700 90H760V200Q760 220 730 220Q700 220 700 200Z" fill="#efece2" stroke="#c9c2ac"/><path d="M700 260Q700 240 730 240Q760 240 760 260V370H700Z" fill="#efece2" stroke="#c9c2ac"/><path d="M698 196Q730 214 762 196M698 264Q730 246 762 264" stroke="#9fd4e6" stroke-width="6" fill="none"/><rect x="694" y="214" width="72" height="32" fill="#f4e3a0" opacity=".5"/><path d="M690 180V280M770 180V280" stroke="#d9822b" stroke-width="4"/>`;
+    const labs = [{ x: 730, y: 140, t: 'Bone', side: 'r', ly: 120 }, { x: 750, y: 200, t: 'Cartilage: smooth, absorbs shocks', side: 'r', ly: 180 }, { x: 740, y: 230, t: 'Synovial fluid: lubricates', side: 'r', ly: 230 }, { x: 770, y: 270, t: 'Ligament holds the bones together', side: 'r', ly: 290 }];
+    return wrap(W, H, o.aria || 'Biceps and triceps working as an antagonistic pair, and the parts of a synovial joint', '', g + labels(labs, { W, H, lx: 600, rx: 800, size: 12 }));
+  }
+
+  /* ---------- pH scale ---------- */
+  function phScale(o = {}) {
+    const W = 980, H = 300;
+    const cols = ['#d7191c', '#e8432a', '#f07a2a', '#f5a524', '#f7d14a', '#d6e24a', '#8fcf4a', '#3fb27f', '#2a9a9a', '#2a78c8', '#2a50c8', '#3a3ab0', '#5a2aa0', '#6a1a8a', '#4a0a6a'];
+    let g = T(490, 36, 'The pH scale and universal indicator', { size: 16, w: 700 });
+    cols.forEach((c, i) => { g += `<rect x="${60 + i * 58}" y="80" width="58" height="60" fill="${c}"/>` + T(89 + i * 58, 166, String(i), { size: 15, w: 700 }); });
+    g += dbl(60, 196, 460, 196, '#ef5b4c', 2) + T(260, 216, 'acids: lower pH = stronger', { size: 13, w: 700 }) + T(466, 216, 'neutral', { size: 13, w: 700 }) + dbl(524, 196, 930, 196, '#7a5ad6', 2) + T(727, 216, 'alkalis: higher pH = stronger', { size: 13, w: 700 });
+    [[1, 'stomach acid'], [3, 'lemon juice'], [5, 'black coffee'], [7, 'pure water'], [9, 'baking soda'], [12, 'bleach'], [14, 'oven cleaner']].forEach(([p, n]) => { g += T(89 + p * 58, 262, n, { size: 11 }) + `<path d="M${89 + p * 58} 244V250" stroke="currentColor"/>`; });
+    g += T(490, 290, 'acid + alkali → salt + water (neutralisation)', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'The pH scale from 0 to 14 with universal indicator colours and everyday examples', '', g);
+  }
+
+  /* ---------- the rock cycle ---------- */
+  function rockCycle(o = {}) {
+    const W = 960, H = 460;
+    let g = T(480, 32, 'The rock cycle', { size: 16, w: 700 });
+    const box = (x, y, t, c, s) => `<rect x="${x - 90}" y="${y - 34}" width="180" height="68" rx="12" fill="${c}" opacity=".9"/>` + T(x, y - 4, t, { size: 15, w: 700, fill: '#1d2733' }) + T(x, y + 16, s, { size: 11, fill: '#1d2733' });
+    g += box(480, 100, 'Sedimentary', '#e3cf9a', 'layers, may contain fossils') + box(800, 300, 'Metamorphic', '#b8b0d6', 'heat + pressure, no melting') + box(160, 300, 'Igneous', '#d68a6a', 'cooled magma, crystals') + `<ellipse cx="480" cy="400" rx="110" ry="34" fill="#ef5b4c" opacity=".85"/>` + T(480, 405, 'Magma', { size: 15, w: 700, fill: '#fff' });
+    const curved = (x1, y1, x2, y2, bend, t, tx, ty) => { const mx = (x1 + x2) / 2 + bend[0], my = (y1 + y2) / 2 + bend[1]; return `<path d="M${x1} ${y1}Q${mx} ${my} ${x2} ${y2}" stroke="currentColor" stroke-width="2.5" fill="none"/>` + arrow(mx * 0.1 + x2 * 0.9 - (x2 - mx) * 0.05, my * 0.1 + y2 * 0.9 - (y2 - my) * 0.05, x2, y2, 'currentColor', 2.5) + T(tx, ty, t, { size: 12 }); };
+    g += curved(570, 110, 760, 266, [80, -40], 'heat and pressure', 760, 160);
+    g += curved(800, 334, 590, 396, [40, 60], 'melting', 760, 400);
+    g += curved(370, 400, 190, 334, [-40, 60], 'cooling', 200, 400);
+    g += curved(160, 266, 390, 110, [-80, -40], 'weathering, erosion,', 190, 150) + T(190, 166, 'transport, deposition', { size: 12 });
+    g += curved(730, 266, 560, 134, [-60, 10], 'uplift, weathering', 600, 240) + T(600, 256, 'and erosion', { size: 12 }) + curved(250, 300, 710, 300, [0, 40], 'heat and pressure', 480, 345);
+    g += T(480, 444, 'rocks change slowly over millions of years; the atoms are recycled', { size: 12 });
+    return wrap(W, H, o.aria || 'The rock cycle linking sedimentary, metamorphic and igneous rocks and magma', '', g);
+  }
+
+  /* ---------- Sankey diagram ---------- */
+  function sankey(o = {}) {
+    const W = 940, H = 380;
+    let g = T(470, 36, 'Sankey diagram for a filament lamp', { size: 16, w: 700 }) + T(470, 58, 'arrow width shows the amount of energy', { size: 13 });
+    g += `<rect x="60" y="120" width="460" height="100" fill="#e0a64a" opacity=".85"/><path d="M520 120H860L880 125L860 130H520Z" fill="#f5d84a"/><path d="M520 130H560Q650 130 650 220V310H670L605 350L540 310H560V220H520Z" fill="#ef5b4c" opacity=".85"/>`;
+    g += T(290, 176, '100 J electrical energy in', { size: 14, w: 700, fill: '#1d2733' }) + T(870, 110, '10 J light (useful)', { size: 13, w: 700, a: 'end' }) + T(670, 280, '90 J heating the', { size: 13, w: 700, a: 'start' }) + T(670, 298, 'surroundings (wasted)', { size: 13, w: 700, a: 'start' });
+    g += T(470, 372, 'efficiency = useful energy out ÷ total energy in = 10 ÷ 100 = 10%', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Sankey diagram for a filament lamp: 100 J in, 10 J light and 90 J wasted heating', '', g);
+  }
+
+  /* ---------- pressure and area ---------- */
+  function pressureArea(o = {}) {
+    const W = 940, H = 380;
+    let g = T(470, 36, 'Pressure = force ÷ area', { size: 16, w: 700 }) + T(470, 58, 'the same weight on a smaller area gives a bigger pressure', { size: 13 });
+    g += `<rect x="60" y="280" width="820" height="40" fill="#f4f6f7" opacity=".9"/><path d="M60 280H880" stroke="#c9d0d6" stroke-width="2"/>`;
+    g += `<rect x="130" y="170" width="160" height="40" rx="8" fill="#3d4654"/><rect x="120" y="268" width="180" height="14" rx="5" fill="#7d858f"/><path d="M160 210L150 268M260 210L270 268" stroke="#7d858f" stroke-width="5"/>` + arrow(210, 110, 210, 165, '#ef5b4c', 3) + T(210, 100, '600 N', { size: 13, w: 700 });
+    g += T(210, 344, 'snowshoe: area 0.2 m²', { size: 13 }) + T(210, 362, 'pressure = 600 ÷ 0.2 = 3 000 Pa', { size: 13, w: 700 });
+    g += `<path d="M600 280L620 180H700L760 260L720 280Z" fill="#c26b3a"/><path d="M612 280h18V230h-10Z" fill="#3d4654"/><path d="M600 286Q615 300 630 286" fill="#c9d0d6"/>` + arrow(680, 110, 680, 175, '#ef5b4c', 3) + T(680, 100, '600 N', { size: 13, w: 700 });
+    g += T(680, 344, 'stiletto heel: area 0.0001 m²', { size: 13 }) + T(680, 362, 'pressure = 6 000 000 Pa: sinks in', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Pressure equals force divided by area: a snowshoe compared with a stiletto heel', '', g);
+  }
+
+  /* ---------- graph types ---------- */
+  function graphTypes(o = {}) {
+    const W = 980, H = 400;
+    let g = panelT(250, 'Bar chart', 'the independent variable is in categories') + panelT(730, 'Line graph', 'both variables are numbers (continuous)');
+    g += axes(80, 320, 360, 220, 'Type of ball', 'Bounce height (cm)');
+    [['tennis', 150, '#3fb27f'], ['rubber', 190, '#ef5b4c'], ['golf', 120, '#e0a64a'], ['foam', 60, '#3f7fd6']].forEach(([n, h, c], i) => { g += `<rect x="${110 + i * 85}" y="${320 - h}" width="56" height="${h}" fill="${c}" opacity=".85"/>` + T(138 + i * 85, 334, n, { size: 11 }); });
+    g += axes(560, 320, 360, 220, 'Drop height (cm)', 'Bounce height (cm)');
+    const pts = [[40, 20], [80, 44], [120, 62], [160, 86], [200, 104], [240, 128], [280, 146], [320, 172]];
+    g += `<path d="M560 320L${560 + 340} ${320 - 182}" stroke="#3f7fd6" stroke-width="2.5"/>` + pts.map(([x, y], i) => `<path d="M${560 + x - 5} ${320 - y - 5}l10 10M${560 + x + 5} ${320 - y - 5}l-10 10" stroke="currentColor" stroke-width="2"/>`).join('');
+    g += `<path d="M${560 + 200 - 5} ${320 - 150 - 5}l10 10M${560 + 200 + 5} ${320 - 150 - 5}l-10 10" stroke="#ef5b4c" stroke-width="2.5"/>` + T(748, 166, 'anomaly: repeat it', { size: 12, a: 'end', fill: '#ef5b4c' });
+    g += T(740, 384, 'plot with neat crosses; draw a line of best fit, not dot-to-dot', { size: 12 }) + T(260, 384, 'leave gaps between bars; label both axes with units', { size: 12 });
+    return wrap(W, H, o.aria || 'When to use a bar chart and when to use a line graph with a line of best fit', '', g);
+  }
+
+  /* ---------- energy cost ---------- */
+  function powerBill(o = {}) {
+    const W = 960, H = 380;
+    let g = T(480, 36, 'Power, energy and the cost of electricity', { size: 16, w: 700 });
+    const items = [['kettle', '3 000 W', '#cfd5dc'], ['hairdryer', '1 500 W', '#ef8a3a'], ['TV', '100 W', '#3d4654'], ['LED bulb', '10 W', '#f5d84a']];
+    items.forEach(([n, p, c], i) => { const x = 110 + i * 130; g += `<rect x="${x - 40}" y="90" width="80" height="80" rx="12" fill="${c}" opacity=".85"/>` + T(x, 196, n, { size: 13, w: 700 }) + T(x, 214, p, { size: 13 }); });
+    g += T(260, 260, 'power (W) = energy transferred every second', { size: 13 }) + T(260, 282, '1 kW = 1 000 W', { size: 13 });
+    g += `<rect x="620" y="80" width="280" height="180" rx="10" fill="#3d4654"/><rect x="640" y="100" width="240" height="40" rx="4" fill="#9fe0b0"/>` + T(760, 128, '01 234.5 kWh', { size: 18, w: 700, fill: '#163a22' }) + T(760, 170, 'electricity meter', { size: 13, fill: '#e8ecf5' });
+    g += T(760, 210, 'energy (kWh) = power (kW) × time (h)', { size: 12, fill: '#e8ecf5' }) + T(760, 230, 'cost = kWh × price per kWh', { size: 12, fill: '#e8ecf5' });
+    g += T(480, 330, 'Example: a 3 kW kettle used for 0.1 h = 0.3 kWh; at 25p per kWh it costs 7.5p', { size: 13, w: 700 });
+    return wrap(W, H, o.aria || 'Power ratings of appliances and calculating the cost of electricity in kilowatt-hours', '', g);
+  }
+
+  /* ---------- puberty changes ---------- */
+  function pubertyChanges(o = {}) {
+    const W = 960, H = 380;
+    let g = T(480, 36, 'Puberty: hormones cause the body to change', { size: 16, w: 700 }) + T(480, 58, 'usually between about 9 and 16; everyone’s timing is different', { size: 13 });
+    const col = (x, title, hormone, c, items) => `<rect x="${x - 140}" y="80" width="280" height="250" rx="12" fill="${c}" opacity=".15" stroke="${c}"/>` + T(x, 108, title, { size: 15, w: 700 }) + T(x, 128, hormone, { size: 12, fill: c }) + items.map((t, i) => T(x - 120, 160 + i * 24, '• ' + t, { size: 13, a: 'start' })).join('');
+    g += col(170, 'Both', 'hormones from glands', '#3fb27f', ['growth spurt', 'pubic and underarm hair', 'body odour, spots', 'emotional changes']);
+    g += col(480, 'Girls', 'oestrogen (from the ovaries)', '#ef5b9c', ['breasts develop', 'hips widen', 'periods start', 'ovaries release eggs']);
+    g += col(790, 'Boys', 'testosterone (from the testes)', '#3f7fd6', ['voice deepens', 'facial hair grows', 'shoulders widen', 'testes make sperm']);
+    g += T(480, 362, 'these changes prepare the body for reproduction', { size: 12 });
+    return wrap(W, H, o.aria || 'Changes during puberty for everyone, for girls and for boys, and the hormones involved', '', g);
+  }
+
+  /* ---------- conservation of mass ---------- */
+  function massConservation(o = {}) {
+    const W = 920, H = 380;
+    let g = T(460, 36, 'Where does the mass go?', { size: 16, w: 700 });
+    const scale = (x, r) => `<rect x="${x - 90}" y="270" width="180" height="40" rx="6" fill="#d9dee4" stroke="#8e98a3"/><rect x="${x - 40}" y="280" width="80" height="20" rx="3" fill="#9fe0b0"/>` + T(x, 295, r, { size: 13, w: 700, fill: '#163a22' }) + `<rect x="${x - 80}" y="258" width="160" height="12" rx="3" fill="#b7bfc8"/>`;
+    g += T(230, 80, 'Closed flask', { size: 15, w: 700 }) + T(230, 98, 'no gas can escape', { size: 12 }) + conical(230, 130, '#cfe7f2', 0.5) + `<rect x="216" y="122" width="28" height="14" rx="3" fill="#55606c"/>` + scale(230, '152.40 g') + T(230, 340, 'mass stays the same', { size: 13, w: 700 });
+    g += T(690, 80, 'Open flask', { size: 15, w: 700 }) + T(690, 98, 'a gas is given off', { size: 12 }) + conical(690, 130, '#cfe7f2', 0.5) + [0, 1, 2].map(i => `<circle cx="${712 + i * 12}" cy="${128 - i * 10}" r="5" fill="none" stroke="currentColor"/>`).join('') + scale(690, '151.86 g') + T(690, 340, 'mass seems to go down', { size: 13, w: 700 });
+    g += T(460, 368, 'atoms are not created or destroyed: total mass of reactants = total mass of products', { size: 12 });
+    return wrap(W, H, o.aria || 'Conservation of mass in a closed flask compared with an open flask that loses gas', '', g);
+  }
+
+  const add = { moonPhases, seasons, earFig, armMuscles, phScale, rockCycle, sankey, pressureArea, graphTypes, powerBill, pubertyChanges, massConservation, redoxTitration, c13Nmr, h1Nmr, labSkills, diffusionFig, foodBurning, changeTypes, foodTests, leverMoments, punnett, dnaExtraction, solarSystem, ks3Investigation, anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
