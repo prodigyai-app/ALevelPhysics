@@ -2226,7 +2226,151 @@
     return wrap(W, H, o.aria || 'Conservation of mass in a closed flask compared with an open flask that loses gas', '', g);
   }
 
-  const add = { moonPhases, seasons, earFig, armMuscles, phScale, rockCycle, sankey, pressureArea, graphTypes, powerBill, pubertyChanges, massConservation, redoxTitration, c13Nmr, h1Nmr, labSkills, diffusionFig, foodBurning, changeTypes, foodTests, leverMoments, punnett, dnaExtraction, solarSystem, ks3Investigation, anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
+  /* ======================= WAVE 10: last KS3 pictures ======================= */
+  const tile = (x, y, w, h, c, t, s) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${c}" opacity=".18" stroke="${c}"/>` + T(x + w / 2, y + 26, t, { size: 14, w: 700 }) + (s || []).map((l, i) => T(x + w / 2, y + 48 + i * 17, l, { size: 12 })).join('');
+
+  /* ---------- static electricity ---------- */
+  function staticCharge(o = {}) {
+    const W = 960, H = 400;
+    let g = panelT(250, 'Charging by rubbing', 'electrons move from the cloth to the balloon') + panelT(720, 'Charges and forces', 'like charges repel; opposite charges attract');
+    g += `<ellipse cx="200" cy="200" rx="70" ry="86" fill="#ef5b4c"/><path d="M200 286L192 300H208Z" fill="#c0392b"/><path d="M200 300Q190 330 205 360" stroke="#ccc" fill="none"/>` + [[-30, -30], [10, -50], [30, 0], [-20, 20], [20, 40], [-40, 60]].map(([dx, dy]) => T(200 + dx, 206 + dy, '−', { size: 20, w: 700, fill: '#fff' })).join('');
+    g += `<path d="M300 140Q340 200 300 280L360 300Q400 210 360 120Z" fill="#9b7ad6" opacity=".85"/>` + [[340, 170], [350, 230], [335, 270]].map(([x, y]) => T(x, y, '+', { size: 18, w: 700, fill: '#fff' })).join('') + T(350, 330, 'cloth', { size: 12 }) + T(200, 380, 'balloon gains electrons: negative; cloth loses electrons: positive', { size: 12 }).replace('x="200"', 'x="260"');
+    const pair = (y, a, b, rep) => `<circle cx="640" cy="${y}" r="22" fill="${a === '+' ? '#ef5b4c' : '#3f7fd6'}"/><circle cx="800" cy="${y}" r="22" fill="${b === '+' ? '#ef5b4c' : '#3f7fd6'}"/>` + T(640, y + 7, a, { size: 20, w: 700, fill: '#fff' }) + T(800, y + 7, b, { size: 20, w: 700, fill: '#fff' }) + (rep ? arrow(612, y, 572, y, 'currentColor', 2.5) + arrow(828, y, 868, y, 'currentColor', 2.5) + T(720, y + 5, 'repel', { size: 13, w: 700 }) : arrow(668, y, 708, y, 'currentColor', 2.5) + arrow(772, y, 732, y, 'currentColor', 2.5) + T(720, y + 34, 'attract', { size: 13, w: 700 }));
+    g += pair(130, '+', '+', true) + pair(210, '−', '−', true) + pair(290, '+', '−', false);
+    g += T(720, 370, 'a charged object is surrounded by an electric field', { size: 12 });
+    return wrap(W, H, o.aria || 'Charging a balloon by rubbing, and how like and unlike charges repel and attract', '', g);
+  }
+
+  /* ---------- pregnancy ---------- */
+  function pregnancy(o = {}) {
+    const W = 920, H = 425;
+    let g = `<path d="M260 70Q420 40 470 180Q500 300 380 360Q260 400 200 300Q150 200 260 70Z" fill="#f2c9c4" stroke="#c4847e" stroke-width="5"/><path d="M270 100Q400 80 440 190Q460 290 370 330Q270 360 230 290Q190 200 270 100Z" fill="#cfe7f2" opacity=".85"/>`;
+    g += `<path d="M410 120Q450 150 440 200Q420 190 400 160Z" fill="#a8484a"/>`;
+    g += `<path d="M412 168Q380 210 340 220" stroke="#d9a0a8" stroke-width="7" fill="none"/>`;
+    g += `<circle cx="310" cy="190" r="42" fill="#f6d4be" stroke="#d9a080" stroke-width="2"/><path d="M300 228Q280 280 300 310Q330 330 350 300Q370 260 340 226Z" fill="#f6d4be" stroke="#d9a080" stroke-width="2"/><path d="M296 300Q270 300 280 320" stroke="#d9a080" stroke-width="10" fill="none" stroke-linecap="round"/>`;
+    g += `<path d="M340 340Q330 380 310 400H350Q360 380 350 350Z" fill="#c4847e" opacity=".6"/>`;
+    const labs = [{ x: 330, y: 70, t: 'Uterus wall (muscle): pushes the baby out at birth', side: 'r', ly: 60 }, { x: 425, y: 165, t: 'Placenta: oxygen and nutrients pass from mother to fetus; waste passes back', side: 'r', ly: 140 }, { x: 375, y: 200, t: 'Umbilical cord', side: 'r', ly: 220 }, { x: 420, y: 260, t: 'Amniotic fluid protects the fetus from bumps', side: 'r', ly: 280 }, { x: 330, y: 380, t: 'Cervix', side: 'r', ly: 360 }, { x: 290, y: 180, t: 'Fetus', side: 'l', ly: 180 }];
+    g += T(330, 30, 'Pregnancy: about 40 weeks (9 months)', { size: 15, w: 700 }).replace('x="330"', 'x="460"');
+    g += T(330, 412, 'harmful substances (alcohol, nicotine) can cross the placenta', { size: 12 });
+    return wrap(W, H, o.aria || 'A fetus in the uterus with the placenta, umbilical cord and amniotic fluid', '', g + labels(labs, { W, H, lx: 180, rx: 560, size: 13 }));
+  }
+
+  /* ---------- germination ---------- */
+  function germination(o = {}) {
+    const W = 960, H = 400;
+    let g = panelT(220, 'Inside a seed', 'a bean seed cut open') + panelT(700, 'Germination', 'needs water, oxygen and warmth (not light)');
+    g += `<ellipse cx="220" cy="210" rx="120" ry="80" fill="#c99a5a" stroke="#8a5a30" stroke-width="4"/><ellipse cx="220" cy="210" rx="108" ry="68" fill="#f2e3a8"/><path d="M150 190Q170 170 190 186Q180 200 160 204Z" fill="#9bd06a"/><path d="M190 194Q200 220 186 240" stroke="#c9d88a" stroke-width="6" fill="none"/>`;
+    const labs = [{ x: 120, y: 160, t: 'Seed coat (testa) protects', side: 'l', ly: 130 }, { x: 170, y: 190, t: 'Embryo shoot', side: 'l', ly: 190 }, { x: 188, y: 236, t: 'Embryo root', side: 'l', ly: 250 }, { x: 270, y: 220, t: 'Food store (starch)', side: 'r', ly: 300 }];
+    g += bench(500, 900, 330) + `<path d="M520 330H880" stroke="#6b4a2f" stroke-width="40" opacity=".5"/>`;
+    [[560, 0], [670, 1], [790, 2]].forEach(([x, k]) => { g += `<ellipse cx="${x}" cy="320" rx="20" ry="13" fill="#c99a5a"/>`; if (k > 0) g += `<path d="M${x} 330Q${x - 6} 350 ${x + 4} 370" stroke="#f4f1e6" stroke-width="4" fill="none"/>`; if (k > 1) g += `<path d="M${x} 308Q${x + 4} 260 ${x} 220" stroke="#4fa84a" stroke-width="5" fill="none"/><path d="M${x} 230Q${x - 30} 210 ${x - 34} 230Q${x - 14} 240 ${x} 230M${x} 230Q${x + 30} 210 ${x + 34} 230Q${x + 14} 240 ${x} 230" fill="#6abf4a"/>`; g += T(x, 396, ['day 1', 'day 3: root', 'day 7: shoot'][k], { size: 12 }); });
+    g += T(700, 120, 'the seed uses its food store until', { size: 12 }) + T(700, 136, 'its leaves can photosynthesise', { size: 12 });
+    return wrap(W, H, o.aria || 'Parts of a bean seed and the stages of germination', '', g + labels(labs, { W, H, lx: 90, rx: 380, size: 12 }));
+  }
+
+  /* ---------- fair tests and variables ---------- */
+  function fairTest(o = {}) {
+    const W = 980, H = 420;
+    let g = T(490, 30, 'Planning a fair test: does ramp height change how far a toy car rolls?', { size: 15, w: 700 });
+    g += `<path d="M60 250L300 160V250Z" fill="${WOOD}" opacity=".85"/><rect x="40" y="250" width="440" height="10" fill="#7d858f"/><rect x="250" y="160" width="40" height="18" rx="4" fill="#ef5b4c" transform="rotate(-20 270 170)"/>` + dbl(310, 160, 310, 250, 'currentColor', 1.6) + T(318, 210, 'height', { size: 12, a: 'start' }) + dbl(300, 280, 460, 280, 'currentColor', 1.6) + T(380, 300, 'distance', { size: 12 });
+    g += tile(40, 320, 140, 80, '#e0a64a', 'Independent', ['what I change:', 'ramp height']) + tile(195, 320, 140, 80, '#3f7fd6', 'Dependent', ['what I measure:', 'distance rolled']) + tile(350, 320, 140, 80, '#3fb27f', 'Control', ['kept the same:', 'car, surface, start']);
+    g += T(740, 70, 'Results table', { size: 14, w: 700 });
+    const rows = [['Height (cm)', 'Distance (cm)', '', '', 'Mean'], ['', '1', '2', '3', ''], ['10', '42', '40', '44', '42'], ['20', '81', '79', '95', '80'], ['30', '120', '118', '122', '120']];
+    rows.forEach((r, i) => r.forEach((c, j) => { const x = 560 + j * 76, y = 90 + i * 34; g += `<rect x="${x}" y="${y}" width="76" height="34" fill="${i < 2 ? '#3f7fd6' : 'none'}" fill-opacity=".15" stroke="currentColor" stroke-opacity=".35"/>` + T(x + 38, y + 22, c, { size: 12, w: i < 2 ? 700 : 400, fill: c === '95' ? '#ef5b4c' : undefined }); }));
+    g += T(740, 290, '95 is an anomaly: leave it out of the mean', { size: 12, fill: '#ef5b4c' }) + T(740, 314, 'repeat readings to check they are repeatable', { size: 12 }) + T(740, 334, 'units go in the column headings, not the boxes', { size: 12 }) + T(740, 354, 'evaluate: what errors happened? how could it be improved?', { size: 12 });
+    return wrap(W, H, o.aria || 'A fair test with independent, dependent and control variables and a results table with an anomaly', '', g);
+  }
+
+  /* ---------- dissolving ---------- */
+  function dissolving(o = {}) {
+    const W = 940, H = 380;
+    let g = T(470, 32, 'Dissolving: solute + solvent → solution', { size: 15, w: 700 });
+    const rnd = S._rnd(5);
+    const water = (x, n) => Array.from({ length: n }, () => `<circle cx="${f(x - 70 + rnd() * 140)}" cy="${f(130 + rnd() * 150)}" r="7" fill="#7fc3e0" opacity=".8"/>`).join('');
+    g += `<rect x="70" y="160" width="80" height="80" fill="#fff"/>${Array.from({ length: 16 }, (_, i) => `<circle cx="${80 + (i % 4) * 20}" cy="${170 + Math.floor(i / 4) * 20}" r="7" fill="#e0e4ea" stroke="#9aa3ad"/>`).join('')}` + T(110, 270, 'solute (salt)', { size: 13, w: 700 }) + T(110, 288, '10 g', { size: 12 });
+    g += T(200, 210, '+', { size: 28, w: 700 }) + beaker(250, 110, 180, 180, 0.95, WATER, 0.15) + water(340, 70) + T(340, 320, 'solvent (water)', { size: 13, w: 700 }) + T(340, 338, '100 g', { size: 12 });
+    g += T(480, 210, '→', { size: 28, w: 700 }) + beaker(530, 110, 180, 180, 0.95, WATER, 0.15) + water(620, 70) + Array.from({ length: 16 }, () => `<circle cx="${f(560 + rnd() * 120)}" cy="${f(140 + rnd() * 140)}" r="6" fill="#e0e4ea" stroke="#9aa3ad"/>`).join('') + T(620, 320, 'solution', { size: 13, w: 700 }) + T(620, 338, '110 g: no mass is lost', { size: 12 });
+    g += T(830, 160, 'the solute particles', { size: 12 }) + T(830, 176, 'spread out between the', { size: 12 }) + T(830, 192, 'water particles', { size: 12 }) + T(830, 230, 'soluble: dissolves', { size: 12 }) + T(830, 246, 'insoluble: does not', { size: 12 }) + T(830, 280, 'saturated: no more', { size: 12 }) + T(830, 296, 'will dissolve', { size: 12 });
+    return wrap(W, H, o.aria || 'Particles of salt dissolving in water to make a solution with no loss of mass', '', g);
+  }
+
+  /* ---------- energy stores ---------- */
+  function energyStores(o = {}) {
+    const W = 980, H = 380;
+    let g = T(490, 32, 'Energy stores', { size: 16, w: 700 }) + T(490, 54, 'energy is transferred between stores by heating, by forces, by electricity or by light and sound', { size: 12 });
+    const S8 = [['Kinetic', 'moving objects', '#3f7fd6'], ['Gravitational', 'objects raised up', '#3fb27f'], ['Elastic', 'stretched or squashed', '#e0a64a'], ['Thermal', 'hot objects', '#ef5b4c'], ['Chemical', 'food, fuels, batteries', '#9b7ad6'], ['Nuclear', 'atomic nuclei', '#d6c24a'], ['Magnetic', 'magnets attracting', '#5aa9f0'], ['Electrostatic', 'charges attracting', '#e07ab0']];
+    S8.forEach(([t, s, c], i) => { g += tile(40 + (i % 4) * 230, 80 + Math.floor(i / 4) * 130, 210, 110, c, t, [s]); });
+    g += T(490, 364, 'example: a battery-powered toy car: chemical store → kinetic store (some wasted to thermal)', { size: 12, w: 700 });
+    return wrap(W, H, o.aria || 'The eight energy stores with examples', '', g);
+  }
+
+  /* ---------- energy resources ---------- */
+  function energyResources(o = {}) {
+    const W = 980, H = 400;
+    let g = panelT(250, 'Non-renewable', 'will run out; fossil fuels release carbon dioxide') + panelT(730, 'Renewable', 'will not run out; may depend on the weather');
+    [['Coal', '#3d4654'], ['Oil', '#1f2227'], ['Natural gas', '#5aa9f0'], ['Nuclear', '#d6c24a']].forEach(([t, c], i) => { g += tile(60 + (i % 2) * 200, 90 + Math.floor(i / 2) * 120, 180, 100, c, t, [i < 3 ? 'burned in power stations' : 'no CO₂, radioactive waste']); });
+    [['Solar', '#f5c84a'], ['Wind', '#9fd4e6'], ['Hydroelectric', '#3f7fd6'], ['Tidal and wave', '#2a9a9a'], ['Geothermal', '#ef5b4c'], ['Biofuel', '#3fb27f']].forEach(([t, c], i) => { g += tile(530 + (i % 3) * 140, 90 + Math.floor(i / 3) * 120, 130, 100, c, t, []); });
+    g += T(490, 370, 'most electricity is made by turning a turbine, which turns a generator', { size: 12, w: 700 });
+    return wrap(W, H, o.aria || 'Renewable and non-renewable energy resources', '', g);
+  }
+
+  /* ---------- variation ---------- */
+  function variationGraphs(o = {}) {
+    const W = 980, H = 395;
+    let g = panelT(250, 'Continuous variation', 'any value in a range: height, mass') + panelT(730, 'Discontinuous variation', 'separate groups: blood group, eye colour');
+    g += axes(80, 320, 360, 210, 'Height (cm)', 'Number of pupils');
+    [10, 24, 46, 70, 90, 72, 44, 22, 8].forEach((v, i) => { g += `<rect x="${92 + i * 38}" y="${320 - v * 2}" width="38" height="${v * 2}" fill="#3f7fd6" opacity=".8" stroke="#1f5aa8"/>`; });
+    g += T(260, 382, 'bars touch; often a bell-shaped curve', { size: 12 });
+    g += axes(560, 320, 360, 210, 'Blood group', 'Number of people');
+    [['O', 88], ['A', 76], ['B', 18], ['AB', 6]].forEach(([n, v], i) => { g += `<rect x="${590 + i * 85}" y="${320 - v * 2}" width="54" height="${v * 2}" fill="#ef5b4c" opacity=".8"/>` + T(617 + i * 85, 336, n, { size: 12, w: 700 }); });
+    g += T(740, 382, 'bars have gaps', { size: 12 });
+    return wrap(W, H, o.aria || 'Graphs of continuous variation (height) and discontinuous variation (blood group)', '', g);
+  }
+
+  /* ---------- adaptations ---------- */
+  function adaptations(o = {}) {
+    const W = 960, H = 400;
+    let g = T(480, 32, 'Adaptations help organisms survive where they live', { size: 15, w: 700 });
+    g += `<rect x="180" y="330" width="200" height="16" fill="#e3cf9a"/><path d="M260 330V160Q260 120 280 120Q300 120 300 160V330Z" fill="#4f9a4a"/><path d="M260 240H220V200Q220 180 236 180Q248 180 248 200V220H260Z" fill="#4f9a4a"/>${Array.from({ length: 10 }, (_, i) => `<path d="M${i % 2 ? 300 : 260} ${150 + i * 18}l${i % 2 ? 10 : -10} -4" stroke="#f4f1e6" stroke-width="2"/>`).join('')}<path d="M270 346Q200 370 140 360M290 346Q360 372 420 360M280 346V390" stroke="#c9a06a" stroke-width="3" fill="none"/>`;
+    const labs = [{ x: 300, y: 168, t: 'Spines, not leaves: less water lost', side: 'r', ly: 130 }, { x: 290, y: 250, t: 'Thick stem stores water', side: 'r', ly: 230 }, { x: 400, y: 360, t: 'Long, wide roots collect water', side: 'r', ly: 330 }];
+    g += T(280, 380, 'cactus (desert)', { size: 13, w: 700 }).replace('y="380"', 'y="392"');
+    g += tile(660, 80, 270, 130, '#9fd4e6', 'Polar bear (Arctic)', ['thick fur and fat for insulation', 'white fur for camouflage', 'small ears: less heat lost']) + tile(660, 230, 270, 130, '#e0a64a', 'Camel (desert)', ['stores fat in its hump', 'wide feet for walking on sand', 'long eyelashes keep out sand']);
+    return wrap(W, H, o.aria || 'Adaptations of a cactus, a polar bear and a camel', '', g + labels(labs, { W, H, lx: 120, rx: 420, size: 12 }));
+  }
+
+  /* ---------- mass and weight ---------- */
+  function massWeight(o = {}) {
+    const W = 920, H = 430;
+    let g = T(460, 32, 'Mass and weight', { size: 16, w: 700 }) + T(460, 54, 'mass (kg) is the amount of matter; weight (N) is the force of gravity on it', { size: 13 });
+    const pl = (x, c, n, gv, wt) => `<circle cx="${x}" cy="330" r="95" fill="${c}" opacity=".9"/><rect x="${x - 30}" y="140" width="60" height="60" rx="8" fill="#55606c"/>` + T(x, 176, '60 kg', { size: 14, w: 700, fill: '#fff' }) + arrow(x, 202, x, gv === 10 ? 280 : 228, '#ef5b4c', 3) + T(x + 14, 222, `weight ${wt} N`, { size: 14, w: 700, a: 'start', fill: '#ef5b4c' }) + T(x, 110, `${n}: g = ${gv} N/kg`, { size: 14, w: 700 });
+    g += pl(230, '#3f7fd6', 'Earth', 10, 600) + pl(690, '#b8b0a6', 'Moon', 1.6, 96);
+    g += T(460, 210, 'weight = mass × g', { size: 16, w: 700 }) + T(460, 236, 'same mass everywhere;', { size: 12 }) + T(460, 252, 'weight changes', { size: 12 });
+    return wrap(W, H, o.aria || 'A 60 kg mass weighs 600 N on Earth and 96 N on the Moon', '', g);
+  }
+
+  /* ---------- aerobic and anaerobic respiration ---------- */
+  function respirationCompare(o = {}) {
+    const W = 980, H = 380;
+    let g = T(490, 32, 'Aerobic and anaerobic respiration', { size: 16, w: 700 });
+    g += tile(40, 60, 420, 120, '#3fb27f', 'Aerobic (with oxygen)', ['glucose + oxygen → carbon dioxide + water', 'releases lots of energy', 'happens in mitochondria all the time']);
+    g += tile(520, 60, 420, 120, '#ef5b4c', 'Anaerobic in muscles (no oxygen)', ['glucose → lactic acid', 'releases less energy; causes cramp', 'during hard exercise: oxygen debt afterwards']);
+    g += tile(520, 200, 420, 120, '#e0a64a', 'Anaerobic in yeast (fermentation)', ['glucose → ethanol + carbon dioxide', 'used to make bread and beer', 'the carbon dioxide makes bread rise']);
+    g += tile(40, 200, 420, 120, '#3f7fd6', 'Breathing is not respiration', ['breathing moves air in and out of the lungs', 'respiration is a chemical reaction', 'in every living cell']);
+    g += T(490, 360, 'respiration releases energy for movement, keeping warm and building molecules', { size: 12 });
+    return wrap(W, H, o.aria || 'Comparison of aerobic respiration and anaerobic respiration in muscles and in yeast', '', g);
+  }
+
+  /* ---------- recycling metals ---------- */
+  function recycleMetals(o = {}) {
+    const W = 920, H = 380;
+    let g = T(460, 32, 'Why recycle aluminium cans?', { size: 16, w: 700 }) + T(460, 54, 'energy needed to make 1 kg of aluminium', { size: 13 });
+    g += `<rect x="160" y="100" width="560" height="60" rx="6" fill="#ef5b4c" opacity=".85"/>` + T(170, 136, 'from bauxite ore (mining + electrolysis): about 200 MJ', { size: 13, w: 700, a: 'start', fill: '#fff' });
+    g += `<rect x="160" y="180" width="28" height="60" rx="6" fill="#3fb27f"/>` + T(200, 216, 'recycled cans: about 10 MJ, 95% less energy', { size: 13, w: 700, a: 'start' });
+    g += T(460, 290, 'Recycling also: saves the ore (a finite resource), means less mining and quarrying,', { size: 12 }) + T(460, 308, 'produces less carbon dioxide and sends less waste to landfill.', { size: 12 });
+    g += T(460, 340, 'Problems: collecting and sorting the metals takes energy and money.', { size: 12, w: 700 });
+    return wrap(W, H, o.aria || 'Energy needed to make aluminium from ore compared with recycling cans', '', g);
+  }
+
+  const add = { staticCharge, pregnancy, germination, fairTest, dissolving, energyStores, energyResources, variationGraphs, adaptations, massWeight, respirationCompare, recycleMetals, moonPhases, seasons, earFig, armMuscles, phScale, rockCycle, sankey, pressureArea, graphTypes, powerBill, pubertyChanges, massConservation, redoxTitration, c13Nmr, h1Nmr, labSkills, diffusionFig, foodBurning, changeTypes, foodTests, leverMoments, punnett, dnaExtraction, solarSystem, ks3Investigation, anionTests, displacementMetal, halogenColours, chemicalCell, shmPractical, resonanceCurves, boylesLaw, xrayTube, gammaCamera, ultrasoundScan, resonanceTube, massSpectrum, irSpectrum, tmColours, youngModulus, emfInternal, doubleSlit, capacitorRC, photoelectric, chargedBeams, rutherford, refluxDistil, purification, electrochemCell, phCurves, combustionCal, osmosisPractical, enzymePractical, pondweedPractical, samplingPractical, culturePractical, decayPractical, shcPractical, insulationPractical, resistanceWire, ivCharacteristic, densityPractical, accelerationPractical, wavesPractical, irPractical, latentHeat, saltPrep, electrolysisAq, ratesPractical, calorimeter, seriesParallel, acdc, heatingCurve, resultantForce, springHooke, dtGraph, liquidPressure, fission, wireField, orbit, separation, cracking, polymerisation, gasTests, flameTests, rusting, atmospherePie, microscope, villus, meiosis, evoTree, limitingFactors, phagocytosis, mitosis, bloodVessels, bloodCells, brain, skin, endocrine, carbonCycle, tropism, biomassPyramid, membrane, menstrualCycle, plasmidGE, fracDist, electrolysis, chromatography, titration, greenhouse, haber, periodicTable, collision, alkanes, reactionProfile, house, plug, grid, transformer, penetration, waves, emSpectrum, glassBlock, lenses, magField, stopping, starLife, gasPressure };
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
