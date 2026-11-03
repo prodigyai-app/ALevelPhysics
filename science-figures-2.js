@@ -1925,16 +1925,16 @@
 
   /* ---------- Bunsen burner and reading a measuring cylinder ---------- */
   function labSkills(o = {}) {
-    const W = 980, H = 420;
-    let g = panelT(170, 'Safety flame', 'air hole closed') + panelT(400, 'Roaring flame', 'air hole open: hottest') + panelT(760, 'Reading a measuring cylinder', 'eye level with the bottom of the curve');
+    const flames = o.only === 'flames', W = flames ? 580 : 980, H = 420;
+    let g = panelT(170, 'Safety flame', 'air hole closed') + panelT(400, 'Roaring flame', 'air hole open: hottest') + (flames ? '' : panelT(760, 'Reading a measuring cylinder', 'eye level with the bottom of the curve'));
     const bun = (x, open) => `<rect x="${x - 40}" y="350" width="80" height="12" rx="3" fill="#55606c"/><rect x="${x - 9}" y="230" width="18" height="122" fill="${METAL}"/><rect x="${x - 13}" y="300" width="26" height="14" fill="#55606c"/><rect x="${x - 4}" y="303" width="8" height="8" fill="${open ? '#1f2227' : METAL}"/><path d="M${x + 13} 340H${x + 60}" stroke="#ef8a3a" stroke-width="6"/>` +
       (open ? `<path d="M${x - 9} 230Q${x - 14} 180 ${x} 120Q${x + 14} 180 ${x + 9} 230Z" fill="#4f9bff" opacity=".8"/><path d="M${x - 5} 230Q${x - 6} 200 ${x} 172Q${x + 6} 200 ${x + 5} 230Z" fill="#bfe0ff"/>` : `<path d="M${x - 9} 230Q${x - 26} 150 ${x - 4} 80Q${x + 4} 120 ${x + 16} 110Q${x + 22} 170 ${x + 9} 230Z" fill="#ffb03a" opacity=".9"/><path d="M${x - 4} 230Q${x - 10} 180 ${x} 140Q${x + 8} 180 ${x + 4} 230Z" fill="#ffe680"/>`);
     g += bun(170, false) + bun(400, true) + T(170, 390, 'easy to see; use when not heating', { size: 12 }) + T(400, 390, 'blue and almost invisible', { size: 12 });
     g += T(250, 412, 'tie hair back, wear goggles, light with the air hole closed', { size: 12, w: 700 }).replace('x="250"', 'x="290"');
-    g += `<path d="M700 100V350Q700 360 710 360H790Q800 360 800 350V100" fill="none" stroke="${GL}" stroke-width="3"/><path d="M702 220Q750 236 798 220V358H702Z" fill="${WATER}" fill-opacity=".5"/>${Array.from({ length: 12 }, (_, i) => `<path d="M800 ${120 + i * 18}h-${i % 5 ? 10 : 18}" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
-    g += T(806, 125, '50', { size: 11, a: 'start' }) + T(806, 215, '40', { size: 11, a: 'start' }) + `<path d="M620 228H700" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4"/><circle cx="606" cy="228" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="609" cy="228" r="4" fill="currentColor"/>`;
-    g += T(750, 270, 'meniscus', { size: 12 }) + T(760, 390, 'read 39 cm³ here, not at the edges', { size: 12 });
-    return wrap(W, H, o.aria || 'Bunsen burner safety flame and roaring flame, and reading the meniscus at eye level', '', g);
+    if (!flames) g += `<path d="M700 100V350Q700 360 710 360H790Q800 360 800 350V100" fill="none" stroke="${GL}" stroke-width="3"/><path d="M702 220Q750 236 798 220V358H702Z" fill="${WATER}" fill-opacity=".5"/>${Array.from({ length: 12 }, (_, i) => `<path d="M800 ${120 + i * 18}h-${i % 5 ? 10 : 18}" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
+    if (!flames) g += T(806, 125, '50', { size: 11, a: 'start' }) + T(806, 215, '40', { size: 11, a: 'start' }) + `<path d="M620 228H700" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4"/><circle cx="606" cy="228" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="609" cy="228" r="4" fill="currentColor"/>`;
+    if (!flames) g += T(750, 270, 'meniscus', { size: 12 }) + T(760, 390, 'read 38 cm³ here, not at the edges', { size: 12 });
+    return wrap(W, H, o.aria || (flames ? 'Bunsen burner safety flame and roaring flame' : 'Bunsen burner safety flame and roaring flame, and reading the meniscus at eye level'), '', g);
   }
 
   /* ---------- diffusion ---------- */
