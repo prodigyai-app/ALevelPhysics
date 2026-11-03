@@ -1356,7 +1356,7 @@
     const W = 980, H = 450;
     let g = bench(40, 620, 360);
     // lamp
-    g += `<rect x="70" y="340" width="70" height="20" rx="4" fill="#55606c"/><path d="M105 340V230" stroke="#55606c" stroke-width="6"/><path d="M80 200H140L130 240H90Z" fill="#3d4654"/><circle cx="110" cy="246" r="12" fill="#fff6c8"/>`;
+    g += benchLamp(100, 360, id('lp'));
     for (let i = 0; i < 4; i++) g += `<path d="M${130 + i * 6} ${240 + i * 2}L${250} ${226 + i * 14}" stroke="#ffe680" stroke-width="2" opacity=".55" stroke-dasharray="6 5"/>`;
     // ruler
     g += `<rect x="110" y="372" width="400" height="14" fill="#f1d58a" stroke="#c9a94a"/>${Array.from({ length: 21 }, (_, i) => `<path d="M${110 + i * 20} 372v${i % 5 ? 5 : 10}" stroke="#7a5f1f" stroke-width="1.3"/>`).join('')}` + dbl(110, 404, 400, 404, 'currentColor', 1.6) + T(255, 424, 'distance d (cm)', { size: 13 });
@@ -3497,6 +3497,173 @@
     return wrap(W, H, o.aria || 'Renewable and non-renewable energy resources', '', g);
   }
   add.energyResources = energyResources2;
+  /* ---------- wave 14: remaining simple biology / KS3 figures redrawn with shading ---------- */
+  const rbc3 = (x, y, k, s = 1) => `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(11 * s)}" ry="${f(7.5 * s)}" fill="url(#${k}rbc)" stroke="#8e1a1a" stroke-width=".8"/><ellipse cx="${f(x)}" cy="${f(y + .5)}" rx="${f(4.5 * s)}" ry="${f(2.8 * s)}" fill="#9e1e1e" opacity=".55"/><ellipse cx="${f(x - 4 * s)}" cy="${f(y - 3 * s)}" rx="${f(3 * s)}" ry="${f(1.5 * s)}" fill="#fff" opacity=".35"/>`;
+  const rbcDefs = k => rg(k + 'rbc', '#ff7a6a', '#b51f1f', .4, .35, .8);
+
+  function bloodVessels2(o = {}) {
+    const W = 960, H = 380, cy = 170, k = id('bv');
+    let g = `<defs>${rbcDefs(k)}${rg(k + 'aw', '#f2a090', '#b8483c', .4, .35, .75)}${rg(k + 'am', '#f6c8b8', '#d8836e', .4, .35, .8)}${rg(k + 'bl', '#e04a3a', '#7a1414', .4, .4, .8)}${rg(k + 'vw', '#b9c6ec', '#5a6fb0', .4, .35, .8)}${rg(k + 'vb', '#a8445a', '#4a1426', .4, .4, .8)}${lg(k + 'cp', '#f7c8c0', '#e08a80')}</defs>`;
+    // artery: thick layered wall, narrow lumen
+    g += shadow(160, cy + 106, 96, 8, .25) + `<circle cx="160" cy="${cy}" r="100" fill="url(#${k}aw)" stroke="#8e2f28" stroke-width="2"/><circle cx="160" cy="${cy}" r="82" fill="url(#${k}am)"/>`;
+    for (let i = 0; i < 28; i++) { const a = i * Math.PI / 14; g += `<path d="M${f(160 + Math.cos(a) * 70)} ${f(cy + Math.sin(a) * 70)}Q${f(160 + Math.cos(a + .1) * 76)} ${f(cy + Math.sin(a + .1) * 76)} ${f(160 + Math.cos(a + .2) * 72)} ${f(cy + Math.sin(a + .2) * 72)}" stroke="#c2604e" stroke-width="1.5" fill="none" opacity=".6"/>`; }
+    g += `<circle cx="160" cy="${cy}" r="66" fill="none" stroke="#e8b0a0" stroke-width="5" opacity=".7"/><circle cx="160" cy="${cy}" r="34" fill="#f8e0d8"/><circle cx="160" cy="${cy}" r="30" fill="url(#${k}bl)"/>` + rbc3(152, cy - 6, k) + rbc3(168, cy + 8, k);
+    // vein: thin wall, wide lumen, valve flaps
+    g += shadow(480, cy + 86, 108, 8, .25) + `<ellipse cx="480" cy="${cy}" rx="110" ry="80" fill="url(#${k}vw)" stroke="#3f4f8a" stroke-width="2"/><ellipse cx="480" cy="${cy}" rx="96" ry="66" fill="url(#${k}vb)"/><path d="M400 ${cy - 52}Q440 ${cy} 480 ${cy - 4}Q444 ${cy - 10} 410 ${cy - 46}Z M560 ${cy - 52}Q520 ${cy} 480 ${cy - 4}Q516 ${cy - 10} 550 ${cy - 46}Z" fill="#e6ebf8" stroke="#a9b6dc" stroke-width="1.5"/>` + rbc3(450, cy + 20, k) + rbc3(510, cy + 30, k) + rbc3(480, cy + 42, k);
+    // capillary: tube one cell thick with endothelial cells
+    g += `<rect x="700" y="${cy - 26}" width="220" height="52" rx="26" fill="url(#${k}cp)" stroke="#c8685e" stroke-width="2"/>${[0, 1, 2, 3, 4].map(i => `<ellipse cx="${730 + i * 42}" cy="${cy - 22}" rx="18" ry="4" fill="#e9a49a" stroke="#c8685e" stroke-width=".8"/><circle cx="${730 + i * 42}" cy="${cy - 22}" r="2.2" fill="#9a4a5a"/><ellipse cx="${740 + i * 42}" cy="${cy + 22}" rx="18" ry="4" fill="#e9a49a" stroke="#c8685e" stroke-width=".8"/><circle cx="${740 + i * 42}" cy="${cy + 22}" r="2.2" fill="#9a4a5a"/>`).join('')}<rect x="708" y="${cy - 16}" width="204" height="32" rx="16" fill="#f9e4de"/>` + [740, 790, 840, 880].map(x => rbc3(x, cy, k, .95)).join('');
+    g += `<path d="M720 ${cy - 26}v-30M860 ${cy + 26}v30" stroke="#ffd84a" stroke-width="2"/>` + arrow(720, cy - 40, 720, cy - 70, '#ffd84a', 2, 8) + arrow(860, cy + 40, 860, cy + 70, '#ffd84a', 2, 8) + T(728, cy - 72, 'O₂', { size: 12, a: 'start' }) + T(868, cy + 74, 'CO₂', { size: 12, a: 'start' });
+    const lab = (x, t, a) => T(x, 300, t, { size: 16, w: 700 }) + a.map((s, i) => T(x, 322 + i * 18, s, { size: 13 })).join('');
+    g += lab(160, 'Artery', ['thick muscular, elastic wall', 'narrow lumen; high pressure', 'carries blood away from the heart']) + lab(480, 'Vein', ['thin wall, large lumen', 'valves stop blood flowing backwards', 'carries blood back to the heart']) + lab(810, 'Capillary', ['wall one cell thick', 'short diffusion distance', 'substances exchanged with cells']);
+    g += T(160, 56, 'elastic fibres and muscle', { size: 12 }) + T(480, 82, 'valve', { size: 12 });
+    return wrap(W, H, o.aria || 'Cross-sections of an artery, a vein and a capillary', '', g);
+  }
+
+  const bact3 = (x, y, a, k) => `<g transform="rotate(${a} ${f(x)} ${f(y)})"><path d="M${f(x + 16)} ${f(y)}q12 -4 18 4t16 0" stroke="#7a5a2a" stroke-width="1.2" fill="none"/><rect x="${f(x - 17)}" y="${f(y - 8.5)}" width="34" height="17" rx="8.5" fill="url(#${k}bac)" stroke="#5a4218" stroke-width="1"/><rect x="${f(x - 12)}" y="${f(y - 6)}" width="20" height="4" rx="2" fill="#fff" opacity=".3"/></g>`;
+  const antibody = (x, y, a, c = '#e0a64a') => `<g transform="rotate(${a} ${f(x)} ${f(y)})"><path d="M${f(x)} ${f(y + 14)}V${f(y)}l-9 -12M${f(x)} ${f(y)}l9 -12" stroke="#8a5a10" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M${f(x)} ${f(y + 14)}V${f(y)}l-9 -12M${f(x)} ${f(y)}l9 -12" stroke="${c}" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>`;
+  function phagocytosis2(o = {}) {
+    const W = 980, H = 380, k = id('ph');
+    let g = `<defs>${rg(k + 'cy', '#ffffff', '#d6cfe8', .4, .35, .85)}${rg(k + 'nu', '#a77ee0', '#4e2490', .35, .3, .8)}${rg(k + 'bac', '#c9a466', '#7a5a2a', .4, .35, .8)}${rg(k + 'ly', '#ffffff', '#cfd8ec', .4, .35, .85)}</defs>`;
+    g += shadow(190, 236, 110, 8, .2) + `<path d="M150 120C220 90 300 120 300 190C300 220 280 230 250 220C230 214 230 180 210 180C190 180 190 214 170 220C130 236 80 220 80 180C80 140 110 130 150 120Z" fill="url(#${k}cy)" stroke="#9e95bc" stroke-width="2.5"/><path d="M128 160q8 -26 30 -14q14 -18 28 -2q16 4 8 22q-10 18 -28 8q-22 12 -34 -4q-10 -6 -4 -10z" fill="url(#${k}nu)"/>${[[110, 200], [140, 214], [262, 150], [276, 176], [230, 140]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#c9b8e8" opacity=".8"/>`).join('')}` + bact3(210, 205, 0, k) + `<circle cx="250" cy="160" r="24" fill="#e8e0f4" stroke="#c9a06a" stroke-dasharray="4 4"/>` + bact3(250, 160, 30, k);
+    g += T(190, 290, '1. Phagocytosis', { size: 15, w: 700 }) + T(190, 310, 'white blood cells engulf', { size: 12 }) + T(190, 326, 'and digest pathogens', { size: 12 });
+    g += shadow(470, 244, 56, 6, .2) + `<circle cx="470" cy="180" r="56" fill="url(#${k}ly)" stroke="#9e95bc" stroke-width="2.5"/><circle cx="470" cy="180" r="40" fill="url(#${k}nu)"/><ellipse cx="456" cy="166" rx="12" ry="7" fill="#fff" opacity=".18"/>`;
+    for (let i = 0; i < 5; i++) { const a = -1 + i * 0.5; g += antibody(470 + Math.cos(a) * 90, 180 + Math.sin(a) * 90, f(a * 57 + 90)); }
+    g += T(470, 290, '2. Antibodies', { size: 15, w: 700 }) + T(470, 310, 'lymphocytes make antibodies that', { size: 12 }) + T(470, 326, 'fit the antigens on one pathogen', { size: 12 });
+    for (let i = 0; i < 4; i++) g += bact3(720 + (i % 2) * 40, 150 + Math.floor(i / 2) * 40, i * 30, k);
+    g += [[740, 170], [760, 150], [740, 130], [760, 190]].map(([x, y]) => antibody(x, y, 0)).join('');
+    g += T(750, 290, '3. Antibodies clump pathogens', { size: 15, w: 700 }) + T(750, 310, 'together; antitoxins neutralise', { size: 12 }) + T(750, 326, 'the toxins pathogens release', { size: 12 });
+    g += T(490, 40, 'How white blood cells defend the body', { size: 17, w: 700 });
+    return wrap(W, H, o.aria || 'Phagocytosis, antibody production and clumping of pathogens', '', g);
+  }
+
+  function earFig2(o = {}) {
+    const W = 920, H = 420, k = id('ea');
+    let g = `<defs>${rg(k + 'sk', '#f6d2b8', '#c98a68', .35, .35, .9)}${lg(k + 'cn', '#7a4a3a', '#3a2018')}${rg(k + 'bn', '#ffffff', '#d9cfae', .35, .3, .8)}${rg(k + 'co', '#f6c4d4', '#c8607e', .4, .4, .8)}${lg(k + 'sc', '#d6ecff', '#7fb2e0')}</defs>`;
+        g += `<path d="M150 120Q90 120 90 200Q90 270 140 300Q170 315 175 260Q178 230 200 220Z" fill="url(#${k}sk)" stroke="#a8684a" stroke-width="2"/><path d="M140 140Q108 150 110 200Q112 250 142 276" stroke="#a8684a" stroke-width="2" fill="none" opacity=".6"/>`;
+    g += `<path d="M188 186H332V214H188Z" fill="url(#${k}cn)"/><path d="M188 186H332M188 214H332" stroke="#a8684a" stroke-width="3"/>`;
+    g += `<ellipse cx="336" cy="200" rx="5" ry="30" fill="#f6e2bc" stroke="#c9a46a" stroke-width="1.5"/>`;
+    g += `<path d="M341 196Q356 182 372 190L384 198" stroke="#c9b88a" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M341 196Q356 182 372 190L384 198" stroke="url(#${k}bn)" stroke-width="6.5" fill="none" stroke-linecap="round"/><path d="M384 196Q396 184 406 194Q404 206 398 210" stroke="#c9b88a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M384 196Q396 184 406 194Q404 206 398 210" stroke="url(#${k}bn)" stroke-width="5.5" fill="none" stroke-linecap="round"/><path d="M406 200H418M410 188V212M422 188V212" stroke="#c9b88a" stroke-width="5"/><path d="M406 200H418M410 188V212M422 188V212" stroke="#f4ecd8" stroke-width="2.5"/>`;
+    g += `<path d="M430 140Q480 70 540 110M440 150Q500 100 545 140M455 132Q470 76 510 86" stroke="#4f86c4" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M430 140Q480 70 540 110M440 150Q500 100 545 140M455 132Q470 76 510 86" stroke="url(#${k}sc)" stroke-width="6" fill="none" stroke-linecap="round"/>`;
+    g += `<path d="M425 200Q460 140 520 150Q560 160 540 210Q520 250 470 230Q440 220 455 195Q470 180 490 195Q500 208 486 214" fill="none" stroke="#a84a66" stroke-width="20" stroke-linecap="round"/><path d="M425 200Q460 140 520 150Q560 160 540 210Q520 250 470 230Q440 220 455 195Q470 180 490 195Q500 208 486 214" fill="none" stroke="url(#${k}co)" stroke-width="15" stroke-linecap="round"/><path d="M450 170Q480 150 512 156" stroke="#fff" stroke-width="2.5" fill="none" opacity=".45"/>`;
+    g += `<path d="M545 200Q600 200 640 230" stroke="#c9a030" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M545 200Q600 200 640 230" stroke="#f6d870" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    for (let i = 0; i < 3; i++) g += `<path d="M${40 + i * 14} ${180 + i * 2}q6 20 0 40" stroke="#5aa9f0" stroke-width="2.5" fill="none"/>`;
+    const labs = [{ x: 120, y: 160, t: 'Outer ear: funnels sound in', side: 'l', ly: 100 }, { x: 260, y: 200, t: 'Ear canal', side: 'l', ly: 330 }, { x: 337, y: 200, t: 'Eardrum vibrates', side: 'r', ly: 100 }, { x: 395, y: 196, t: 'Three tiny bones (ossicles) pass on and amplify the vibrations', side: 'r', ly: 150 }, { x: 500, y: 225, t: 'Cochlea: hair cells turn vibrations into electrical impulses', side: 'r', ly: 250 }, { x: 490, y: 100, t: 'Semicircular canals (balance)', side: 'r', ly: 60 }, { x: 610, y: 216, t: 'Auditory nerve to the brain', side: 'r', ly: 310 }];
+    g += T(400, 400, 'humans hear 20 Hz to 20 000 Hz; loud sounds can damage the hair cells', { size: 12 });
+    return wrap(W, H, o.aria || 'Structure of the human ear from the outer ear to the auditory nerve', '', g + labels(labs, { W, H, lx: 200, rx: 680, size: 13 }));
+  }
+
+  function armMuscles2(o = {}) {
+    const W = 980, H = 430, k = id('am');
+    let g = panelT(260, 'Antagonistic muscles', 'muscles can only pull, so they work in pairs') + panelT(760, 'A synovial joint', 'the elbow is a hinge joint');
+    g += `<defs>${lg(k + 'b', '#d9d2bc', '#fbf8ee', false, '#ffffff')}${lg(k + 'bi', '#ff8a7a', '#b8302a', false)}${lg(k + 'tr', '#d98a7a', '#8a3a2e', false)}${lg(k + 'cg', '#e8f6ff', '#9fd4e6')}</defs>`;
+    g += `<path d="M160 90H190L200 260H170Z" fill="url(#${k}b)" stroke="#b9b29a" stroke-width="1.5"/><path d="M190 262L360 300L354 320L180 286Z" fill="url(#${k}b)" stroke="#b9b29a" stroke-width="1.5"/><circle cx="186" cy="272" r="15" fill="#f6f2e4" stroke="#b9b29a" stroke-width="1.5"/><ellipse cx="182" cy="268" rx="5" ry="3" fill="#fff"/>`;
+    g += `<path d="M196 110Q260 150 236 260Q232 280 230 290" fill="url(#${k}bi)" stroke="#8e2018" stroke-width="2"/>${[0, 1, 2, 3, 4].map(i => `<path d="M${206 + i * 6} ${130 + i * 4}Q${238 + i * 2} ${190} ${222 + i * 2} ${250}" stroke="#ffb0a4" stroke-width="1" fill="none" opacity=".6"/>`).join('')}<path d="M196 104L192 92M232 288L236 300" stroke="#f4ecd8" stroke-width="4" stroke-linecap="round"/>`;
+    g += `<path d="M160 110Q120 180 160 270L170 286" fill="url(#${k}tr)" stroke="#6e2a20" stroke-width="2" opacity=".95"/>${[0, 1, 2].map(i => `<path d="M${152 - i * 6} ${130 + i * 10}Q${132 - i * 2} 190 ${156 - i * 2} 254" stroke="#e8a090" stroke-width="1" fill="none" opacity=".6"/>`).join('')}`;
+    g += T(270, 160, 'biceps contracts', { size: 13, w: 700, a: 'start', fill: '#ef5b4c' }) + T(270, 178, '(shorter, fatter)', { size: 12, a: 'start' }) + T(110, 150, 'triceps', { size: 13, w: 700, a: 'end' }) + T(110, 168, 'relaxes', { size: 12, a: 'end' }) + arrow(330, 300, 320, 240, 'currentColor', 2) + T(330, 230, 'arm bends', { size: 12, a: 'start' });
+    g += T(260, 360, 'to straighten the arm: triceps contracts, biceps relaxes', { size: 12 }) + T(260, 378, 'tendons join muscle to bone; ligaments join bone to bone', { size: 12 });
+    g += `<path d="M700 90H760V200Q760 220 730 220Q700 220 700 200Z" fill="url(#${k}b)" stroke="#b9b29a" stroke-width="1.5"/><path d="M700 260Q700 240 730 240Q760 240 760 260V370H700Z" fill="url(#${k}b)" stroke="#b9b29a" stroke-width="1.5"/><path d="M714 110V190M714 270V350" stroke="#e6dfc8" stroke-width="3" opacity=".8"/>`;
+    g += `<path d="M688 180V280H772V180" fill="url(#${k}cg)" opacity=".55"/><rect x="694" y="214" width="72" height="32" fill="#f4e3a0" opacity=".55"/><path d="M698 196Q730 214 762 196M698 264Q730 246 762 264" stroke="#7fc0de" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M698 196Q730 214 762 196M698 264Q730 246 762 264" stroke="#d6f0fb" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    g += `<path d="M690 180V280M770 180V280" stroke="#b8681e" stroke-width="5" stroke-linecap="round"/><path d="M690 180V280M770 180V280" stroke="#f0a050" stroke-width="2.5" stroke-linecap="round"/>`;
+    const labs = [{ x: 730, y: 140, t: 'Bone', side: 'r', ly: 120 }, { x: 750, y: 200, t: 'Cartilage: smooth, absorbs shocks', side: 'r', ly: 180 }, { x: 740, y: 230, t: 'Synovial fluid: lubricates', side: 'r', ly: 230 }, { x: 770, y: 270, t: 'Ligament holds the bones together', side: 'r', ly: 290 }];
+    return wrap(W, H, o.aria || 'Biceps and triceps working as an antagonistic pair, and the parts of a synovial joint', '', g + labels(labs, { W, H, lx: 600, rx: 800, size: 12 }));
+  }
+
+  const polarBear = (x, y, k) => `<defs>${rg(k + 'pb', '#ffffff', '#c9d2dc', .4, .3, .9)}</defs>` + shadow(x, y + 44, 70, 6, .2) + `<path d="M${x - 70} ${y + 10}Q${x - 70} ${y - 30} ${x - 20} ${y - 30}H${x + 30}Q${x + 50} ${y - 50} ${x + 70} ${y - 34}Q${x + 86} ${y - 26} ${x + 80} ${y - 14}Q${x + 60} ${y - 6} ${x + 50} ${y + 6}V${y + 40}H${x + 36}V${y + 14}H${x - 40}V${y + 40}H${x - 56}V${y + 18}Q${x - 70} ${y + 18} ${x - 70} ${y + 10}Z" fill="url(#${k}pb)" stroke="#9aa6b3" stroke-width="1.5"/><circle cx="${x + 64}" cy="${y - 34}" r="2.5" fill="#1d2733"/><circle cx="${x + 80}" cy="${y - 18}" r="3" fill="#1d2733"/><circle cx="${x + 50}" cy="${y - 44}" r="5" fill="#eef1f4" stroke="#9aa6b3"/>`;
+  const camel = (x, y, k) => `<defs>${lg(k + 'cm', '#e6be84', '#b07a3a')}</defs>` + shadow(x, y + 44, 70, 6, .2) + `<path d="M${x - 66} ${y}Q${x - 70} ${y - 16} ${x - 50} ${y - 16}Q${x - 36} ${y - 54} ${x - 14} ${y - 22}Q${x + 4} ${y - 56} ${x + 26} ${y - 20}Q${x + 44} ${y - 20} ${x + 50} ${y - 40}L${x + 58} ${y - 66}Q${x + 64} ${y - 76} ${x + 76} ${y - 70}L${x + 80} ${y - 62}L${x + 66} ${y - 58}L${x + 60} ${y - 28}Q${x + 54} ${y + 2} ${x + 36} ${y + 2}V${y + 40}H${x + 28}V${y + 6}H${x - 40}V${y + 40}H${x - 48}V${y + 4}Q${x - 62} ${y + 6} ${x - 66} ${y}Z" fill="url(#${k}cm)" stroke="#7a5020" stroke-width="1.5"/><circle cx="${x + 70}" cy="${y - 66}" r="2" fill="#1d2733"/>`;
+  function adaptations2(o = {}) {
+    const W = 960, H = 400, k = id('ad');
+    let g = T(480, 32, 'Adaptations help organisms survive where they live', { size: 15, w: 700 });
+    g += `<defs>${lg(k + 'ca', '#2f7a2a', '#7cc46a', false, '#5aa84a')}${lg(k + 'sd', '#f2dca6', '#c9a466')}</defs>`;
+    g += `<path d="M140 330Q280 318 420 330V352H140Z" fill="url(#${k}sd)"/><path d="M270 346Q200 370 140 360M290 346Q360 372 420 360M280 346V390" stroke="#a8804a" stroke-width="3" fill="none"/>`;
+    g += `<path d="M260 330V160Q260 120 280 120Q300 120 300 160V330Z" fill="url(#${k}ca)" stroke="#1f5a1c" stroke-width="1.5"/><path d="M260 240H220V200Q220 180 236 180Q248 180 248 200V220H260Z" fill="url(#${k}ca)" stroke="#1f5a1c" stroke-width="1.5"/><path d="M270 130V328M280 122V328M290 130V328" stroke="#1f5a1c" stroke-width="1.2" opacity=".55"/><path d="M228 190V220" stroke="#1f5a1c" stroke-width="1.2" opacity=".55"/>`;
+    g += Array.from({ length: 16 }, (_, i) => { const y = 140 + i * 11, x = i % 2 ? 300 : 260; return `<path d="M${x} ${y}l${i % 2 ? 9 : -9} -4M${x} ${y}l${i % 2 ? 9 : -9} 3" stroke="#fbf6e4" stroke-width="1.6"/>`; }).join('') + `<circle cx="280" cy="118" r="7" fill="#f26ca0"/><circle cx="280" cy="118" r="3" fill="#ffd84a"/>`;
+    const labs = [{ x: 300, y: 168, t: 'Spines, not leaves: less water lost', side: 'r', ly: 130 }, { x: 290, y: 250, t: 'Thick stem stores water', side: 'r', ly: 230 }, { x: 400, y: 360, t: 'Long, wide roots collect water', side: 'r', ly: 330 }];
+    g += T(280, 392, 'cactus (desert)', { size: 13, w: 700 });
+    const tl = (x, y, c, t, s, pic) => `<rect x="${x}" y="${y}" width="270" height="130" rx="10" fill="${c}" opacity=".16" stroke="${c}"/>` + pic + T(x + 190, y + 28, t, { size: 13, w: 700 }) + s.map((l, i) => T(x + 190, y + 52 + i * 18, l, { size: 11 })).join('');
+    g += tl(660, 80, '#9fd4e6', 'Polar bear (Arctic)', ['thick fur and fat', 'for insulation', 'white fur: camouflage', 'small ears: less heat lost'], `<g transform="translate(${660 + 62} ${80 + 72}) scale(.62) translate(${-660 - 62} ${-80 - 72})">${polarBear(722, 152, k + 'p')}</g>`);
+    g += tl(660, 230, '#e0a64a', 'Camel (desert)', ['stores fat in its hump', 'wide feet for sand', 'long eyelashes', 'keep out sand'], `<g transform="translate(${660 + 62} ${230 + 76}) scale(.62) translate(${-660 - 62} ${-230 - 76})">${camel(716, 306, k + 'c')}</g>`);
+    return wrap(W, H, o.aria || 'Adaptations of a cactus, a polar bear and a camel', '', g + labels(labs, { W, H, lx: 120, rx: 420, size: 12 }));
+  }
+
+  function germination2(o = {}) {
+    const W = 960, H = 400, k = id('ge');
+    let g = panelT(220, 'Inside a seed', 'a bean seed cut open') + panelT(700, 'Germination', 'needs water, oxygen and warmth (not light)');
+    g += `<defs>${rg(k + 'sc', '#e2b47a', '#8a5a30', .4, .35, .9)}${rg(k + 'fs', '#fbf2cc', '#e2cc84', .45, .4, .8)}${lg(k + 'so', '#8a6a4a', '#4a3020')}${lg(k + 'lf', '#9be07a', '#3f8f2a')}</defs>`;
+    g += shadow(220, 296, 116, 8, .25) + `<ellipse cx="220" cy="210" rx="120" ry="80" fill="url(#${k}sc)" stroke="#6e4220" stroke-width="3"/><ellipse cx="220" cy="210" rx="108" ry="68" fill="url(#${k}fs)"/>${[[250, 190], [280, 230], [230, 250], [300, 200]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#e0c870" opacity=".7"/>`).join('')}<path d="M150 190Q170 170 190 186Q180 200 160 204Z" fill="url(#${k}lf)" stroke="#3f7a2a"/><path d="M190 194Q200 220 186 240" stroke="#a8b860" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M190 194Q200 220 186 240" stroke="#e2eaa0" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    const labs = [{ x: 120, y: 160, t: 'Seed coat (testa) protects', side: 'l', ly: 130 }, { x: 170, y: 190, t: 'Embryo shoot', side: 'l', ly: 190 }, { x: 188, y: 236, t: 'Embryo root', side: 'l', ly: 250 }, { x: 270, y: 220, t: 'Food store (starch)', side: 'r', ly: 300 }];
+    g += `<rect x="500" y="310" width="400" height="66" rx="6" fill="url(#${k}so)"/>${Array.from({ length: 40 }, (_, i) => `<circle cx="${510 + (i * 47) % 380}" cy="${322 + (i * 13) % 48}" r="1.6" fill="#b89a74" opacity=".7"/>`).join('')}<path d="M500 312H900" stroke="#a8875e" stroke-width="3"/>`;
+    [[560, 0], [670, 1], [790, 2]].forEach(([x, i]) => {
+      g += `<ellipse cx="${x}" cy="320" rx="20" ry="13" fill="url(#${k}sc)" stroke="#6e4220" stroke-width="1.2"/>`;
+      if (i > 0) g += `<path d="M${x} 330Q${x - 6} 350 ${x + 4} 370" stroke="#e8dcc0" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M${x - 2} 350l-8 4M${x + 2} 362l8 2" stroke="#e8dcc0" stroke-width="1.5"/>`;
+      if (i > 1) g += `<path d="M${x} 308Q${x + 4} 260 ${x} 220" stroke="#3f8f2a" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M${x} 230Q${x - 30} 210 ${x - 34} 230Q${x - 14} 240 ${x} 230M${x} 230Q${x + 30} 210 ${x + 34} 230Q${x + 14} 240 ${x} 230" fill="url(#${k}lf)" stroke="#2f6a1c"/>`;
+      g += T(x, 396, ['day 1', 'day 3: root', 'day 7: shoot'][i], { size: 12 });
+    });
+    g += T(700, 120, 'the seed uses its food store until', { size: 12 }) + T(700, 136, 'its leaves can photosynthesise', { size: 12 });
+    return wrap(W, H, o.aria || 'Parts of a bean seed and the stages of germination', '', g + labels(labs, { W, H, lx: 90, rx: 380, size: 12 }));
+  }
+
+  function tropism2(o = {}) {
+    const W = 900, H = 440, r = S._rnd(4), k = id('tr');
+    let g = `<defs>${lg(k + 'so', '#8a6a4a', '#4a3020')}${lg(k + 'st', '#3f8f2a', '#8ad06a', false)}${lg(k + 'lf', '#9be07a', '#3f8f2a')}${rg(k + 'sd', '#e2b47a', '#8a5a30', .4, .35, .9)}</defs>`;
+    g += `<rect x="60" y="330" width="360" height="40" rx="4" fill="url(#${k}so)"/><rect x="480" y="330" width="360" height="40" rx="4" fill="url(#${k}so)"/>`;
+    g += sun3(80, 90, 30, k + 'sun') + [0, 1, 2].map(i => arrow(120, 100 + i * 20, 180, 130 + i * 20, '#ffcc33', 2.5, 10)).join('');
+    g += `<path d="M290 330C290 240 286 180 236 130" stroke="#2f6a1c" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M290 330C290 240 286 180 236 130" stroke="url(#${k}st)" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M236 130Q206 112 196 126Q214 140 236 130Z" fill="url(#${k}lf)" stroke="#2f6a1c"/><path d="M262 170Q236 150 230 168Q248 178 262 170Z M286 240Q314 222 322 238Q304 250 286 240Z" fill="url(#${k}lf)" stroke="#2f6a1c"/>`;
+    for (let i = 0; i < 10; i++) g += `<circle cx="${f(296 + r() * 6)}" cy="${f(170 + r() * 120)}" r="3.8" fill="#e0533f" stroke="#8e2418" stroke-width=".6"/>`;
+    g += `<circle cx="340" cy="300" r="4" fill="#e0533f"/>` + T(348, 304, 'auxin', { size: 11, a: 'start' });
+    g += T(240, 40, 'Phototropism: shoot grows towards light', { size: 16, w: 700 }) + T(240, 400, 'Auxin collects on the shaded side;', { size: 13 }) + T(240, 418, 'cells there elongate more, so the shoot bends', { size: 13 });
+    g += `<path d="M560 200C620 200 660 210 690 230" stroke="#2f6a1c" stroke-width="14" fill="none"/><path d="M560 200C620 200 660 210 690 230" stroke="url(#${k}st)" stroke-width="10" fill="none"/><ellipse cx="560" cy="200" rx="24" ry="15" fill="url(#${k}sd)" stroke="#6e4220"/>`;
+    g += `<path d="M690 230C720 250 730 290 732 380" stroke="#b8a882" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M690 230C720 250 730 290 732 380" stroke="#f0e6cc" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M712 272l-10 6M728 312l10 4M730 344l-10 4" stroke="#e0d4b0" stroke-width="2"/>`;
+    g += `<path d="M690 230C710 210 740 170 742 120" stroke="#2f6a1c" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M690 230C710 210 740 170 742 120" stroke="url(#${k}st)" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M742 120Q722 100 712 112Q728 126 742 120Z M742 120Q762 100 772 112Q756 126 742 120Z" fill="url(#${k}lf)" stroke="#2f6a1c"/>`;
+    g += arrow(820, 160, 820, 260, 'currentColor', 3) + T(830, 210, 'gravity', { size: 13, a: 'start' });
+    g += T(660, 40, 'Gravitropism: roots grow down, shoots grow up', { size: 16, w: 700 }) + T(660, 400, 'In roots, auxin on the lower side', { size: 13 }) + T(660, 418, 'slows growth, so the root bends downwards', { size: 13 });
+    return wrap(W, H, o.aria || 'Phototropism in a shoot and gravitropism in a germinating seed', '', g);
+  }
+
+  // shaded bench lamp: base at (x, by), shade pointing right
+  const benchLamp = (x, by, k) => `<defs>${rg(k + 'gl', '#fffbe0', '#ffd84a', .5, .5, .6)}<radialGradient id="${k}gw"><stop offset="0" stop-color="#fff2a8" stop-opacity=".7"/><stop offset="1" stop-color="#fff2a8" stop-opacity="0"/></radialGradient></defs>` + lgShadow(x, by + 1, 44, 4) + `<rect x="${x - 36}" y="${by - 14}" width="72" height="14" rx="5" fill="url(#LGiron)"/><rect x="${x - 3}" y="${by - 120}" width="6" height="108" rx="2" fill="url(#LGsteel)"/><circle cx="${x}" cy="${by - 120}" r="5" fill="url(#LGiron)"/><path d="M${x - 30} ${by - 150}H${x + 30}L${x + 22} ${by - 108}H${x - 22}Z" fill="url(#LGiron)" transform="rotate(-24 ${x} ${by - 128})"/><circle cx="${x + 8}" cy="${by - 104}" r="34" fill="url(#${k}gw)"/><circle cx="${x + 8}" cy="${by - 104}" r="11" fill="url(#${k}gl)"/>`;
+
+  // small round icon tile pictures for the text-only comparison figures
+  const icoMito = (x, y, k) => `<defs>${rg(k, '#ffb6a0', '#d0604a', .4, .35, .85)}</defs><ellipse cx="${x}" cy="${y}" rx="34" ry="18" fill="url(#${k})" stroke="#8e2f28" stroke-width="1.5"/><path d="M${x - 26} ${y}q6 -12 10 0t10 0t10 0t10 0t10 0" stroke="#fbe0d8" stroke-width="2.5" fill="none"/>`;
+  const icoMuscle = (x, y, k) => `<defs>${lg(k, '#ff8a7a', '#b8302a', false)}</defs><path d="M${x - 34} ${y}Q${x - 10} ${y - 24} ${x + 14} ${y - 10}Q${x + 34} ${y} ${x + 34} ${y + 14}Q${x + 10} ${y + 22} ${x - 34} ${y + 10}Z" fill="url(#${k})" stroke="#8e2018"/><path d="M${x - 24} ${y + 2}Q${x} ${y - 10} ${x + 24} ${y + 6}" stroke="#ffb0a4" stroke-width="1.4" fill="none"/>`;
+  const icoYeast = (x, y, k) => `<defs>${rg(k, '#fff4d8', '#d9b46a', .4, .35, .85)}</defs>${[[-14, 4, 14], [10, -4, 16], [24, 12, 8]].map(([a, b, r]) => `<ellipse cx="${x + a}" cy="${y + b}" rx="${r}" ry="${r * .82}" fill="url(#${k})" stroke="#a8804a" stroke-width="1.2"/>`).join('')}${[[-8, -14], [4, -20], [14, -16]].map(([a, b]) => `<circle cx="${x + a}" cy="${y + b}" r="3" fill="none" stroke="#9aa3ad"/>`).join('')}`;
+  const icoLungs = (x, y, k) => `<defs>${rg(k, '#ffc4c4', '#d06a7a', .4, .35, .9)}</defs><path d="M${x} ${y - 26}V${y - 6}" stroke="#c9d0d6" stroke-width="5"/><path d="M${x - 4} ${y - 8}Q${x - 30} ${y - 24} ${x - 30} ${y + 8}Q${x - 28} ${y + 26} ${x - 6} ${y + 20}Z" fill="url(#${k})" stroke="#9a3a4a"/><path d="M${x + 4} ${y - 8}Q${x + 30} ${y - 24} ${x + 30} ${y + 8}Q${x + 28} ${y + 26} ${x + 6} ${y + 20}Z" fill="url(#${k})" stroke="#9a3a4a"/>`;
+  const iconTile = (x, y, w, h, c, t, s, ico) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${c}" opacity=".16" stroke="${c}"/>` + ico + T(x + 70 + (w - 70) / 2, y + 26, t, { size: 14, w: 700 }) + s.map((l, i) => T(x + 70 + (w - 70) / 2, y + 48 + i * 17, l, { size: 12 })).join('');
+  function respirationCompare2(o = {}) {
+    const W = 980, H = 380, k = id('rc');
+    let g = T(490, 32, 'Aerobic and anaerobic respiration', { size: 16, w: 700 });
+    g += iconTile(40, 60, 420, 120, '#3fb27f', 'Aerobic (with oxygen)', ['glucose + oxygen → carbon dioxide + water', 'releases lots of energy', 'happens in mitochondria all the time'], icoMito(82, 120, k + 'a'));
+    g += iconTile(520, 60, 420, 120, '#ef5b4c', 'Anaerobic in muscles (no oxygen)', ['glucose → lactic acid', 'releases less energy; causes cramp', 'during hard exercise: oxygen debt afterwards'], icoMuscle(562, 118, k + 'b'));
+    g += iconTile(520, 200, 420, 120, '#e0a64a', 'Anaerobic in yeast (fermentation)', ['glucose → ethanol + carbon dioxide', 'used to make bread and beer', 'the carbon dioxide makes bread rise'], icoYeast(560, 264, k + 'c'));
+    g += iconTile(40, 200, 420, 120, '#3f7fd6', 'Breathing is not respiration', ['breathing moves air in and out of the lungs', 'respiration is a chemical reaction', 'in every living cell'], icoLungs(82, 262, k + 'd'));
+    g += T(490, 360, 'respiration releases energy for movement, keeping warm and building molecules', { size: 12 });
+    return wrap(W, H, o.aria || 'Comparison of aerobic respiration and anaerobic respiration in muscles and in yeast', '', g);
+  }
+  function pubertyChanges2(o = {}) {
+    const W = 960, H = 380, k = id('pu');
+    let g = T(480, 36, 'Puberty: hormones cause the body to change', { size: 16, w: 700 }) + T(480, 58, 'usually between about 9 and 16; everyone’s timing is different', { size: 13 });
+    const badge = (x, c, sym, kk) => `<defs>${rg(kk, '#ffffff', c, .35, .3, .9)}</defs><circle cx="${x + 104}" cy="104" r="20" fill="url(#${kk})" stroke="${c}"/>` + T(x + 104, 111, sym, { size: 20, w: 700, fill: '#1d2733' });
+    const col = (x, title, hormone, c, items, sym, kk) => `<rect x="${x - 140}" y="80" width="280" height="250" rx="12" fill="${c}" opacity=".15" stroke="${c}"/>` + badge(x, c, sym, kk) + T(x, 108, title, { size: 15, w: 700 }) + T(x, 128, hormone, { size: 12, fill: c }) + items.map((t, i) => T(x - 120, 160 + i * 24, '• ' + t, { size: 13, a: 'start' })).join('');
+    g += col(170, 'Both', 'hormones from glands', '#3fb27f', ['growth spurt', 'pubic and underarm hair', 'body odour, spots', 'emotional changes'], '↕', k + 'a');
+    g += col(480, 'Girls', 'oestrogen (from the ovaries)', '#ef5b9c', ['breasts develop', 'hips widen', 'periods start', 'ovaries release eggs'], '♀', k + 'b');
+    g += col(790, 'Boys', 'testosterone (from the testes)', '#3f7fd6', ['voice deepens', 'facial hair grows', 'shoulders widen', 'testes make sperm'], '♂', k + 'c');
+    g += T(480, 362, 'these changes prepare the body for reproduction', { size: 12 });
+    return wrap(W, H, o.aria || 'Changes during puberty for everyone, for girls and for boys, and the hormones involved', '', g);
+  }
+  function recycleMetals2(o = {}) {
+    const W = 920, H = 380, k = id('rm');
+    let g = T(460, 32, 'Why recycle aluminium cans?', { size: 16, w: 700 }) + T(460, 54, 'energy needed to make 1 kg of aluminium', { size: 13 });
+    g += `<defs>${lg(k + 'can', '#8e979e', '#7d868c', false, '#f4f7f9')}${rg(k + 'ore', '#d98a5a', '#7a3a1c', .4, .35, .9)}${lg(k + 'r', '#ff8a7a', '#c8372a')}${lg(k + 'gr', '#7ad6a4', '#2a8a5a')}</defs>`;
+    g += `<path d="M66 150l12 -26 22 -6 18 14 4 22 -18 14 -30 -2z" fill="url(#${k}ore)" stroke="#5a2410"/><path d="M80 132l8 -4M98 140l6 6" stroke="#f0b090" stroke-width="2"/>` + T(96, 182, 'bauxite', { size: 11 });
+    g += `<rect x="160" y="100" width="560" height="60" rx="6" fill="url(#${k}r)"/><rect x="164" y="103" width="552" height="8" rx="4" fill="#fff" opacity=".2"/>` + T(170, 136, 'from bauxite ore (mining + electrolysis): about 200 MJ', { size: 13, w: 700, a: 'start', fill: '#fff' });
+    g += shadow(96, 252, 18, 3) + `<path d="M80 200Q80 194 86 194H106Q112 194 112 200V244Q112 250 106 250H86Q80 250 80 244Z" fill="url(#${k}can)" stroke="#55606c"/><rect x="80" y="210" width="32" height="24" fill="#d0342c"/><path d="M84 214H108" stroke="#fff" stroke-width="2" opacity=".7"/><ellipse cx="96" cy="196" rx="14" ry="3" fill="#c9ced4" stroke="#7d858f"/>` + T(96, 272, 'cans', { size: 11 });
+    g += `<rect x="160" y="180" width="28" height="60" rx="6" fill="url(#${k}gr)"/>` + T(200, 216, 'recycled cans: about 10 MJ, 95% less energy', { size: 13, w: 700, a: 'start' });
+    g += [0, 1, 2].map(n => { const a0 = n * 120 - 80, a1 = a0 + 95, R = 30, P = a => [800 + R * Math.cos(a * Math.PI / 180), 200 + R * Math.sin(a * Math.PI / 180)]; const [x0, y0] = P(a0), [x1, y1] = P(a1), t = (a1 + 90) * Math.PI / 180; return `<path d="M${f(x0)} ${f(y0)}A${R} ${R} 0 0 1 ${f(x1)} ${f(y1)}" stroke="#3fb27f" stroke-width="7" fill="none"/><path d="M${f(x1 + Math.cos(t) * 12)} ${f(y1 + Math.sin(t) * 12)}L${f(x1 + Math.cos(t - 2.3) * 9)} ${f(y1 + Math.sin(t - 2.3) * 9)}L${f(x1 + Math.cos(t + 2.3) * 9)} ${f(y1 + Math.sin(t + 2.3) * 9)}Z" fill="#3fb27f"/>`; }).join('') + T(800, 250, 'recycle', { size: 11 });
+    g += T(460, 290, 'Recycling also: saves the ore (a finite resource), means less mining and quarrying,', { size: 12 }) + T(460, 308, 'produces less carbon dioxide and sends less waste to landfill.', { size: 12 });
+    g += T(460, 340, 'Problems: collecting and sorting the metals takes energy and money.', { size: 12, w: 700 });
+    return wrap(W, H, o.aria || 'Energy needed to make aluminium from ore compared with recycling cans', '', g);
+  }
+
+  Object.assign(add, { bloodVessels: bloodVessels2, phagocytosis: phagocytosis2, earFig: earFig2, armMuscles: armMuscles2, adaptations: adaptations2, germination: germination2, tropism: tropism2, respirationCompare: respirationCompare2, pubertyChanges: pubertyChanges2, recycleMetals: recycleMetals2 });
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);
