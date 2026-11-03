@@ -3664,6 +3664,92 @@
   }
 
   Object.assign(add, { bloodVessels: bloodVessels2, phagocytosis: phagocytosis2, earFig: earFig2, armMuscles: armMuscles2, adaptations: adaptations2, germination: germination2, tropism: tropism2, respirationCompare: respirationCompare2, pubertyChanges: pubertyChanges2, recycleMetals: recycleMetals2 });
+  /* ---------- wave 15: AI-illustrated backdrops (science-figures-img.js) with vector labels and arrows ---------- */
+  const IMG = n => (root.SciFigImg || {})[n];
+  const pic = (n, x, y, w, h, k, r = 12) => `<defs><clipPath id="${k}c"><rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${r}"/></clipPath></defs><image href="${IMG(n)}" x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${k}c)"/>`;
+  const HT = (x, y, s, o = {}) => `<text x="${f(x)}" y="${f(y)}" font-size="${o.size || 14}" text-anchor="${o.a || 'middle'}"${o.w ? ` font-weight="${o.w}"` : ''} style="fill:${o.fill || '#1d2733'};paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round">${esc(s)}</text>`;
+  const lead = (x1, y1, x2, y2, c = '#1d2733') => `<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" stroke="#ffffff" stroke-width="3.5" opacity=".8"/><path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" stroke="${c}" stroke-width="1.4"/><circle cx="${f(x2)}" cy="${f(y2)}" r="3.4" fill="${c}" stroke="#fff" stroke-width="1.2"/>`;
+
+  const wireFieldPrev = add.wireField || wireField;
+  function wireField3(o = {}) {
+    if (!IMG('grip')) return wireFieldPrev(o);
+    const W = 880, H = 491, k = id('wf'), cx = 438, B = '#1f5fc8';
+    let g = pic('grip', 0, 0, W, H, k);
+    g += `<defs><linearGradient id="${k}cu" x1="0" x2="1"><stop offset="0" stop-color="#9a4a26"/><stop offset=".45" stop-color="#f0a77a"/><stop offset="1" stop-color="#7a3a1c"/></linearGradient></defs>`;
+    const loop = (cy, rx) => {
+      const ry = rx * 0.28;
+      let s = `<path d="M${cx - rx} ${cy}A${rx} ${ry} 0 0 1 ${cx + rx} ${cy}" fill="none" stroke="${B}" stroke-width="3" opacity=".55"/>`;
+      s += `<rect x="${cx - 7}" y="${f(cy - ry - 3)}" width="14" height="${f(ry + 3)}" fill="url(#${k}cu)"/>`;
+      s += `<path d="M${cx - rx} ${cy}A${rx} ${ry} 0 0 0 ${cx + rx} ${cy}" fill="none" stroke="${B}" stroke-width="3.2"/>`;
+      const head = (th, op) => { const px = cx + rx * Math.sin(th), py = cy + ry * Math.cos(th), dx = rx * Math.cos(th), dy = -ry * Math.sin(th), L = Math.hypot(dx, dy); return arrow(px - dx / L * 2, py - dy / L * 2, px + dx / L * 12, py + dy / L * 12, B, 0, 13).replace('<path d="M', `<path opacity="${op}" d="M`); };
+      return s + head(0.75, 1) + head(Math.PI + 0.75, 0.7);
+    };
+    g += loop(420, 60) + loop(420, 100) + loop(420, 142) + loop(34, 54) + loop(34, 92);
+    g += arrow(416, 172, 416, 86, '#e8792a', 5, 16) + HT(404, 128, 'current', { size: 15, w: 700, a: 'end', fill: '#c2551c' });
+    g += HT(592, 424, 'magnetic field', { size: 15, w: 700, a: 'start', fill: B }) + HT(592, 442, 'circles round the wire', { size: 12, a: 'start', fill: B });
+    g += HT(40, 236, 'Right-hand grip rule', { size: 18, w: 700, a: 'start' }) + HT(40, 262, 'thumb: direction of the current', { size: 14, a: 'start' }) + HT(40, 284, 'curled fingers: direction', { size: 14, a: 'start' }) + HT(40, 302, 'of the magnetic field', { size: 14, a: 'start' });
+    g += HT(40, 476, 'field is stronger close to the wire and with a bigger current', { size: 12, a: 'start' });
+    return wrap(W, H, o.aria || 'A right hand gripping a current-carrying wire: the thumb points along the current and the curled fingers show the direction of the circular magnetic field', '', g);
+  }
+
+  const tvPrev = add.terminalVelocity || terminalVelocity2;
+  function terminalVelocity3(o = {}) {
+    if (!IMG('skydiver')) return tvPrev(o);
+    const W = 980, H = 390, k = id('tv');
+    const sd = (x, y) => `<image href="${IMG('skydiver')}" x="${x - 62}" y="${y - 24}" width="124" height="46"/>`;
+    const dv = (x, y, wl, dl, t) => sd(x, y) + arrow(x, y + 24, x, y + 24 + wl, '#ef5b4c', 3.5) + (dl ? arrow(x, y - 26, x, y - 26 - dl, '#3fb27f', 3.5) : '') + T(x, 320, t, { size: 12 });
+    let g = `<rect x="20" y="70" width="400" height="260" rx="12" fill="#5aa9f0" opacity=".14"/>` + dv(90, 175, 80, 0, 'just jumped') + dv(210, 175, 80, 40, 'speeding up') + dv(330, 175, 80, 80, 'terminal velocity');
+    g += T(210, 40, 'weight (red) and air resistance (green)', { size: 13, w: 700 }) + T(210, 354, 'drag increases with speed until', { size: 12 }) + T(210, 370, 'drag = weight: resultant force zero', { size: 12 });
+    const x0 = 470, y0 = 330;
+    g += axes(x0, y0, 440, 250, 'Time', 'Velocity');
+    g += `<path d="${curveP(t => t < 0.45 ? 0.8 * (1 - Math.exp(-t * 7)) : t < 0.5 ? 0.8 - (t - 0.45) * 12 : 0.2 + 0.0 * t, x0, y0, 440, 250, 120)}" stroke="#3f7fd6" stroke-width="3" fill="none"/>`;
+    g += T(x0 + 120, y0 - 216, 'terminal velocity', { size: 12 }) + T(x0 + 240, y0 - 150, 'parachute opens', { size: 12, a: 'start' }) + T(x0 + 330, y0 - 64, 'lower terminal velocity', { size: 12 });
+    return wrap(W, H, o.aria || 'Forces on a skydiver and a velocity–time graph showing terminal velocity', '', g);
+  }
+
+  const earPrev = add.earFig || earFig2;
+  function earFig3(o = {}) {
+    if (!IMG('ear')) return earPrev(o);
+    const W = 920, H = 610, k = id('ea'), s = 880 / 1210, P = (X, Y) => [20 + (X - 90) * s, 40 + (Y - 50) * s];
+    let g = pic('ear', 20, 40, 880, 487, k);
+    for (let i = 0; i < 3; i++) g += `<path d="M${30 + i * 13} ${262 + i}q8 22 0 44" stroke="#2f7fd0" stroke-width="2.5" fill="none" opacity=".8"/>`;
+    const L = (tx, ty, X, Y, t, a = 'middle', t2) => { const [px, py] = P(X, Y); return lead(tx, ty + (ty < 300 ? 6 : -16), px, py) + HT(tx, ty, t, { size: 13, w: 700, a }) + (t2 ? HT(tx, ty + 16, t2, { size: 12, a }) : ''); };
+    g += L(110, 560, 215, 330, 'Outer ear (pinna)', 'middle', 'funnels sound in');
+    g += L(290, 560, 470, 405, 'Ear canal');
+    g += L(470, 560, 735, 420, 'Eardrum', 'middle', 'vibrates');
+    g += L(400, 22, 760, 320, 'Ossicles: three tiny bones', 'middle', 'pass on and amplify vibrations');
+    g += L(680, 22, 890, 205, 'Semicircular canals', 'middle', 'balance');
+    g += L(720, 560, 1000, 430, 'Cochlea', 'middle', 'hair cells make electrical impulses');
+    g += L(860, 96, 1190, 290, 'Auditory nerve', 'middle', 'to the brain');
+    g += T(460, 604, 'humans hear 20 Hz to 20 000 Hz; loud sounds can damage the hair cells', { size: 12 });
+    return wrap(W, H, o.aria || 'Cross-section of the human ear: outer ear, ear canal, eardrum, ossicles, semicircular canals, cochlea and auditory nerve', '', g);
+  }
+
+  const armPrev = add.armMuscles || armMuscles2;
+  function armMuscles3(o = {}) {
+    if (!IMG('armBent')) return armPrev(o);
+    const W = 980, H = 490, k = id('am'), RED = '#d63a2c', BLU = '#2f6fd0';
+    let g = panelT(260, 'Antagonistic muscles', 'muscles can only pull, so they work in pairs');
+    g += `<rect x="18" y="78" width="484" height="402" rx="12" fill="#ffffff"/>` + pic('armBent', 30, 92, 300, 258, k + 'b', 0) + pic('armStraight', 380, 84, 100, 326, k + 's', 0);
+    g += HT(180, 372, 'Arm bending', { size: 14, w: 700 }) + HT(180, 392, 'biceps contracts (shorter, fatter)', { size: 12, fill: RED }) + HT(180, 410, 'triceps relaxes', { size: 12, fill: BLU });
+    g += HT(430, 436, 'Arm straightening', { size: 14, w: 700 }) + HT(430, 456, 'triceps contracts', { size: 12, fill: BLU }) + HT(430, 474, 'biceps relaxes', { size: 12, fill: RED });
+    const old = armPrev(o), inner = old.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+    g += `<svg x="520" y="0" width="460" height="430" viewBox="520 0 460 430">${inner}</svg>`;
+    return wrap(W, H, o.aria || 'Biceps and triceps working as an antagonistic pair as the arm bends and straightens, and the parts of a synovial joint', '', g);
+  }
+
+  const adaptPrev = add.adaptations || adaptations2;
+  function adaptations3(o = {}) {
+    if (!IMG('bear')) return adaptPrev(o);
+    const W = 960, H = 440, k = id('ad');
+    let g = T(480, 30, 'Adaptations help organisms survive where they live', { size: 15, w: 700 });
+    const col = (cx, n, w, title, c, lines) => pic(n, cx - w / 2, 50, w, 230, k + n, 10) + `<rect x="${cx - 150}" y="292" width="300" height="${36 + lines.length * 20}" rx="10" fill="${c}" opacity=".14" stroke="${c}"/>` + T(cx, 314, title, { size: 14, w: 700 }) + lines.map((l, i) => T(cx, 338 + i * 20, l, { size: 12 })).join('');
+    g += col(165, 'bear', 224, 'Polar bear (Arctic)', '#5aa9f0', ['thick fur and a layer of fat: insulation', 'white fur: camouflage on snow', 'small ears: less heat lost', 'large furry feet: grip on ice']);
+    g += col(480, 'camel', 279, 'Camel (desert)', '#e0a64a', ['hump stores fat for energy', 'wide feet: do not sink into sand', 'long eyelashes keep out sand', 'loses very little water in urine']);
+    g += col(795, 'cactus', 148, 'Cactus (desert)', '#3fb27f', ['spines instead of leaves: less water lost', 'thick stem stores water', 'long, wide roots collect water', 'waxy surface cuts evaporation']);
+    return wrap(W, H, o.aria || 'Adaptations of a polar bear, a camel and a cactus', '', g);
+  }
+  Object.assign(add, { wireField: wireField3, terminalVelocity: terminalVelocity3, earFig: earFig3, armMuscles: armMuscles3, adaptations: adaptations3 });
   for (const k of Object.keys(add)) S.register(k, add[k]);
   S._more = { T, arrow, dbl, wavy, id };
 })(typeof window === 'undefined' ? globalThis : window);

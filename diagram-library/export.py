@@ -75,7 +75,7 @@ async def m():
   async with async_playwright() as p:
     b=await p.chromium.launch(); pg=await b.new_page(viewport={'width':1700,'height':1200},device_scale_factor=2)
     await pg.set_content('<html><body style="margin:0"></body></html>')
-    for f in ['science-figures.js','science-figures-2.js']: await pg.add_script_tag(path=C+f)
+    for f in ['science-figures.js','science-figures-2.js','science-figures-img.js']: await pg.add_script_tag(path=C+f)
     meta=[]
     for name,fig,o,topic,desc in FIGS:
       for theme,bg,ink,panel in [('light','#ffffff','#1d2733','#ffffff'),('dark','#0f1620','#e8ecf5','#0f1620')]:
