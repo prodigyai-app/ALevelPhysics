@@ -5,7 +5,29 @@
   'use strict';
   const S = root.SciFig;
   if (!S) return;
-  const labels = S._labels, wrap = S._wrap, f = S._f, esc = S._esc;
+  const labels = S._labels, wrap0 = S._wrap, f = S._f, esc = S._esc;
+  /* shared lab gradients: helpers write url(#LGname); wrap() swaps in ids unique to each figure */
+  const LGD = (u, n) => ({
+    glass: `<linearGradient id="${u}glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".5"/><stop offset=".14" stop-color="#d9eef8" stop-opacity=".2"/><stop offset=".5" stop-color="#e8f5fb" stop-opacity=".07"/><stop offset=".84" stop-color="#d9eef8" stop-opacity=".16"/><stop offset="1" stop-color="#ffffff" stop-opacity=".4"/></linearGradient>`,
+    liq: `<linearGradient id="${u}liq" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".22" stop-color="#fff" stop-opacity=".22"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset=".85" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient>`,
+    steel: `<linearGradient id="${u}steel" x1="0" x2="1"><stop offset="0" stop-color="#5f6770"/><stop offset=".35" stop-color="#eef1f4"/><stop offset=".6" stop-color="#a8b0b8"/><stop offset="1" stop-color="#4f5760"/></linearGradient>`,
+    steelV: `<linearGradient id="${u}steelV" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#eef1f4"/><stop offset=".5" stop-color="#a8b0b8"/><stop offset="1" stop-color="#5f6770"/></linearGradient>`,
+    iron: `<linearGradient id="${u}iron" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6a7482"/><stop offset="1" stop-color="#22262e"/></linearGradient>`,
+    wood: `<linearGradient id="${u}wood" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e2bd86"/><stop offset=".45" stop-color="#c99a5e"/><stop offset="1" stop-color="#8e6334"/></linearGradient>`,
+    flame: `<linearGradient id="${u}flame" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9cc8ff" stop-opacity=".55"/><stop offset=".55" stop-color="#3f86f0" stop-opacity=".9"/><stop offset="1" stop-color="#2456c8"/></linearGradient>`,
+    graph: `<linearGradient id="${u}graph" x1="0" x2="1"><stop offset="0" stop-color="#1c2026"/><stop offset=".4" stop-color="#5d6672"/><stop offset=".7" stop-color="#383e47"/><stop offset="1" stop-color="#15181d"/></linearGradient>`,
+    copper: `<linearGradient id="${u}copper" x1="0" x2="1"><stop offset="0" stop-color="#7a3a1c"/><stop offset=".35" stop-color="#f0a77a"/><stop offset=".6" stop-color="#c46a3c"/><stop offset="1" stop-color="#6e3317"/></linearGradient>`,
+    zinc: `<linearGradient id="${u}zinc" x1="0" x2="1"><stop offset="0" stop-color="#6f7780"/><stop offset=".35" stop-color="#e2e7ec"/><stop offset=".6" stop-color="#a9b2bb"/><stop offset="1" stop-color="#5f6770"/></linearGradient>`,
+    bath: `<linearGradient id="${u}bath" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f4f7f9"/><stop offset="1" stop-color="#b9c2ca"/></linearGradient>`,
+    shadow: `<radialGradient id="${u}shadow"><stop offset="0" stop-color="#000" stop-opacity=".38"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>`
+  })[n] || '';
+  const wrap = (W, H, aria, defs, body) => {
+    if (body.indexOf('url(#LG') < 0) return wrap0(W, H, aria, defs, body);
+    const u = id('L'), used = new Set();
+    body = body.replace(/url\(#LG([A-Za-z]+)\)/g, (m, n) => { used.add(n); return `url(#${u}${n})`; });
+    return wrap0(W, H, aria, (defs || '') + [...used].map(n => LGD(u, n)).join(''), body);
+  };
+  const lgShadow = (x, y, rx, ry = 5) => `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(rx)}" ry="${f(ry)}" fill="url(#LGshadow)"/>`;
   let uid = 0;
   const id = p => 'sg' + p + (++uid);
   /* helpers */
@@ -326,8 +348,8 @@
   /* ---------- electrolysis cell ---------- */
   function electrolysis(o = {}) {
     const W = 900, H = 500, cat = o.cation || 'Pb²⁺', an = o.anion || 'Br⁻', name = o.name || 'Molten lead bromide';
-    let g = `<path d="M240 170V420Q240 450 270 450H630Q660 450 660 420V170" fill="${o.aqueous ? '#9fd4e6' : '#e0a64a'}" fill-opacity=".35" stroke="#cfe0ea" stroke-width="5"/>`;
-    g += `<rect x="330" y="120" width="34" height="270" rx="4" fill="#3a3f47"/><rect x="536" y="120" width="34" height="270" rx="4" fill="#3a3f47"/>`;
+    let g = `<path d="M240 170V420Q240 450 270 450H630Q660 450 660 420V170" fill="${o.aqueous ? '#9fd4e6' : '#e0a64a'}" fill-opacity=".35" stroke="#cfe0ea" stroke-width="5"/><path d="M240 170V420Q240 450 270 450H630Q660 450 660 420V170Z" fill="url(#LGliq)"/><path d="M252 180V430" stroke="#fff" stroke-width="4" opacity=".35"/>` + lgShadow(450, 454, 220, 7);
+    g += `<rect x="330" y="120" width="34" height="270" rx="4" fill="url(#LGgraph)"/><rect x="536" y="120" width="34" height="270" rx="4" fill="url(#LGgraph)"/>`;
     g += `<path d="M347 120V70H420M553 120V70H480" stroke="currentColor" stroke-width="3" fill="none"/><path d="M420 50V90M434 60V80" stroke="currentColor" stroke-width="3"/><path d="M466 50V90M480 60V80" stroke="currentColor" stroke-width="3" opacity="0"/>`;
     g += `<path d="M434 70H480" stroke="currentColor" stroke-width="3"/>` + T(420, 44, '−', { size: 18, w: 700 }) + T(440, 44, '+', { size: 18, w: 700 }) + T(450, 106, 'd.c. power supply', { size: 13 });
     [[405, 200], [405, 260], [405, 320], [405, 380]].forEach(([x, y]) => { g += `<circle cx="${x}" cy="${y}" r="15" fill="#e0533f"/>` + T(x, y + 5, cat, { size: 11, w: 700, fill: '#fff' }) + arrow(x - 19, y, x - 44, y, '#e0533f', 2.5, 9); });
@@ -341,8 +363,8 @@
   /* ---------- paper chromatography ---------- */
   function chromatography(o = {}) {
     const W = 960, H = 520, x0 = 330, pw = 200, base = 410, front = 110;
-    let g = `<path d="M280 150V470Q280 490 300 490H580Q600 490 600 470V150" fill="none" stroke="#cfe0ea" stroke-width="5"/><rect x="284" y="430" width="312" height="56" fill="#9fd4e6" opacity=".45"/>`;
-    g += `<rect x="${x0}" y="70" width="${pw}" height="390" fill="#f4f1e6"/><rect x="${x0}" y="${front}" width="${pw}" height="${460 - front}" fill="#9fd4e6" opacity=".25"/><path d="M290 70H570" stroke="#777" stroke-width="5"/>`;
+    let g = `<path d="M280 150V470Q280 490 300 490H580Q600 490 600 470V150" fill="url(#LGglass)" stroke="#cfe0ea" stroke-width="5"/><rect x="284" y="430" width="312" height="56" fill="#9fd4e6" opacity=".45"/><rect x="284" y="430" width="312" height="56" fill="url(#LGliq)"/><path d="M292 160V470" stroke="#fff" stroke-width="4" opacity=".35"/>`;
+    g += `<rect x="${x0}" y="70" width="${pw}" height="390" fill="#f4f1e6"/><rect x="${x0}" y="${front}" width="${pw}" height="${460 - front}" fill="#9fd4e6" opacity=".25"/><rect x="290" y="66" width="280" height="8" rx="3" fill="url(#LGsteelV)"/>`;
     g += `<path d="M${x0} ${base}H${x0 + pw}" stroke="#555" stroke-width="2" stroke-dasharray="6 4"/><path d="M${x0} ${front}H${x0 + pw}" stroke="#3f8fd6" stroke-width="2" stroke-dasharray="3 4"/>`;
     const spots = [[x0 + 50, ['#e0453a', 300], ['#3f7fd6', 180]], [x0 + 100, ['#2e9e5b', 240]], [x0 + 150, ['#e0453a', 300], ['#2e9e5b', 240], ['#8e4bd6', 360]]];
     spots.forEach(([x, ...ss]) => { g += `<circle cx="${x}" cy="${base}" r="4" fill="#555"/>`; ss.forEach(([c, y]) => g += `<ellipse cx="${x}" cy="${y}" rx="11" ry="8" fill="${c}" opacity=".85"/>`); });
@@ -358,11 +380,11 @@
   /* ---------- titration ---------- */
   function titration(o = {}) {
     const W = 860, H = 600, bx = 430;
-    let g = `<rect x="200" y="560" width="300" height="16" rx="4" fill="#6b5a48"/><rect x="230" y="60" width="12" height="500" fill="#8a8f98"/><rect x="236" y="150" width="${bx - 236}" height="10" fill="#8a8f98"/><rect x="${bx - 22}" y="140" width="44" height="30" rx="6" fill="#5a6070"/>`;
-    g += `<rect x="${bx - 12}" y="40" width="24" height="380" rx="6" fill="#e8f3f8" fill-opacity=".25" stroke="#cfe0ea" stroke-width="3"/><rect x="${bx - 9}" y="120" width="18" height="298" fill="#9fd4e6" opacity=".55"/>`;
+    let g = `<rect x="160" y="574" width="380" height="14" rx="3" fill="url(#LGwood)"/>` + lgShadow(250, 572, 70, 5) + `<rect x="200" y="558" width="120" height="16" rx="4" fill="url(#LGiron)"/><rect x="230" y="60" width="12" height="500" rx="2" fill="url(#LGsteel)"/><rect x="236" y="150" width="${bx - 236}" height="10" rx="2" fill="url(#LGsteelV)"/><rect x="226" y="145" width="20" height="20" rx="3" fill="url(#LGiron)"/><rect x="${bx - 22}" y="140" width="44" height="30" rx="6" fill="url(#LGiron)"/>`;
+    g += `<rect x="${bx - 12}" y="40" width="24" height="380" rx="6" fill="url(#LGglass)" stroke="#cfe0ea" stroke-width="3"/><rect x="${bx - 9}" y="120" width="18" height="298" fill="#9fd4e6" opacity=".55"/><rect x="${bx - 9}" y="120" width="18" height="298" fill="url(#LGliq)"/><path d="M${bx - 6} 50V410" stroke="#fff" stroke-width="2.5" opacity=".45"/>`;
     for (let i = 0; i <= 25; i++) g += `<path d="M${bx - 12} ${f(60 + i * 13.5)}h${i % 5 ? 7 : 12}" stroke="currentColor" stroke-width="1.2"/>` + (i % 5 ? '' : T(bx + 22, 64 + i * 13.5, String(i * 2), { size: 11, a: 'start' }));
-    g += `<rect x="${bx - 22}" y="420" width="44" height="12" rx="4" fill="#3a3f47"/><path d="M${bx} 432V452" stroke="#cfe0ea" stroke-width="4"/><circle cx="${bx}" cy="462" r="3" fill="#9fd4e6"/>`;
-    g += `<rect x="${bx - 90}" y="548" width="180" height="12" fill="#f5f5f5"/><path d="M${bx - 20} 470V500L${bx - 70} 548H${bx + 70}L${bx + 20} 500V470" fill="#f2a1c4" fill-opacity=".55" stroke="#cfe0ea" stroke-width="3"/><path d="M${bx - 36} 516L${bx - 70} 548H${bx + 70}L${bx + 36} 516Z" fill="#e874a8" opacity=".55"/>`;
+    g += `<rect x="${bx - 22}" y="420" width="44" height="12" rx="4" fill="url(#LGiron)"/><rect x="${bx + 18}" y="416" width="12" height="20" rx="2" fill="#2b6a3c"/><path d="M${bx} 432V452" stroke="#cfe0ea" stroke-width="4"/><circle cx="${bx}" cy="462" r="3" fill="#9fd4e6"/>`;
+    g += `` + lgShadow(bx, 560, 96, 4) + `<rect x="${bx - 90}" y="548" width="180" height="12" rx="2" fill="#f5f5f5" stroke="#d6d9de"/><path d="M${bx - 20} 470V500L${bx - 70} 548H${bx + 70}L${bx + 20} 500V470" fill="url(#LGglass)" stroke="#cfe0ea" stroke-width="3"/><path d="M${bx - 36} 516L${bx - 68} 546H${bx + 68}L${bx + 36} 516Z" fill="#e874a8" opacity=".6"/><path d="M${bx - 36} 516L${bx - 68} 546H${bx + 68}L${bx + 36} 516Z" fill="url(#LGliq)"/><path d="M${bx - 36} 516H${bx + 36}" stroke="#fff" stroke-width="1.5" opacity=".5"/><path d="M${bx - 30} 500L${bx - 58} 540" stroke="#fff" stroke-width="3" opacity=".4" stroke-linecap="round"/>`;
     const labs = [{ x: bx + 12, y: 100, t: 'Burette: add acid a few drops at a time near the end point', side: 'r', ly: 90 }, { x: bx + 12, y: 200, t: 'Read the volume at the bottom of the meniscus, at eye level', side: 'r', ly: 190 },
       { x: bx + 10, y: 426, t: 'Tap', side: 'r', ly: 420 }, { x: bx + 40, y: 520, t: 'Conical flask: alkali measured with a pipette, plus indicator', side: 'r', ly: 500 }, { x: bx + 80, y: 554, t: 'White tile: makes the colour change easy to see', side: 'r', ly: 560 },
       { x: 236, y: 300, t: 'Clamp stand', side: 'l', ly: 300 }];
@@ -878,7 +900,7 @@
     ions.forEach(([n, c, col], i) => { const x = 110 + i * 190;
       g += `<radialGradient id="${k}${i}" cx=".5" cy=".75" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="${col}"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></radialGradient>`;
       g += `<path d="M${x} 90C${x - 50} 160 ${x - 40} 230 ${x} 250C${x + 40} 230 ${x + 50} 160 ${x} 90Z" fill="url(#${k}${i})"/><path d="M${x} 190C${x - 16} 220 ${x - 14} 244 ${x} 252C${x + 14} 244 ${x + 16} 220 ${x} 190Z" fill="#4f9bff" opacity=".8"/>`;
-      g += `<rect x="${x - 16}" y="252" width="32" height="70" fill="#8a8f98"/><path d="M${x + 60} 150L${x + 6} 200" stroke="#c9ccd2" stroke-width="3"/><circle cx="${x + 4}" cy="202" r="5" fill="none" stroke="#c9ccd2" stroke-width="2"/>`;
+      g += `` + lgShadow(x, 324, 36, 4) + `<rect x="${x - 9}" y="252" width="18" height="62" rx="2" fill="url(#LGsteel)"/><rect x="${x - 12}" y="284" width="24" height="9" rx="2" fill="url(#LGiron)"/><rect x="${x - 4}" y="286" width="8" height="5" fill="#0e1116"/><rect x="${x - 28}" y="312" width="56" height="11" rx="3" fill="url(#LGiron)"/><path d="M${x + 24} 318h14" stroke="#d9822b" stroke-width="5" stroke-linecap="round"/><path d="M${x + 60} 150L${x + 6} 200" stroke="#c9ccd2" stroke-width="3"/><circle cx="${x + 4}" cy="202" r="5" fill="none" stroke="#c9ccd2" stroke-width="2"/>`;
       g += T(x, 346, n, { size: 14, w: 700 }) + T(x, 366, c + ' flame', { size: 13, fill: col }); });
     return wrap(W, H, o.aria || 'Flame test colours for lithium, sodium, potassium, calcium and copper ions', '', g);
   }
@@ -999,17 +1021,19 @@
   const wire = d => `<path d="${d}" stroke="${WIRE}" stroke-width="2.5" fill="none" stroke-linejoin="round"/>`;
   // glass beaker: x,y = top-left; lvl = fraction filled
   const beaker = (x, y, w, h, lvl = 0.6, liq = WATER, op = 0.45) => {
-    const ly = y + h * (1 - lvl);
-    return (lvl > 0 ? `<path d="M${x + 2} ${f(ly)}H${x + w - 2}V${y + h - 8}Q${x + w - 2} ${y + h - 2} ${x + w - 8} ${y + h - 2}H${x + 8}Q${x + 2} ${y + h - 2} ${x + 2} ${y + h - 8}Z" fill="${liq}" fill-opacity="${op}"/>` : '') +
-      `<path d="M${x - 6} ${y - 4}Q${x} ${y} ${x} ${y + 6}V${y + h - 8}Q${x} ${y + h} ${x + 8} ${y + h}H${x + w - 8}Q${x + w} ${y + h} ${x + w} ${y + h - 8}V${y}" fill="none" stroke="${GL}" stroke-width="3"/>`;
+    const ly = y + h * (1 - lvl), body = `M${x} ${y + 2}V${y + h - 8}Q${x} ${y + h} ${x + 8} ${y + h}H${x + w - 8}Q${x + w} ${y + h} ${x + w} ${y + h - 8}V${y + 2}Z`;
+    const lq = `M${x + 2} ${f(ly)}H${x + w - 2}V${y + h - 8}Q${x + w - 2} ${y + h - 2} ${x + w - 8} ${y + h - 2}H${x + 8}Q${x + 2} ${y + h - 2} ${x + 2} ${y + h - 8}Z`;
+    let ticks = ''; for (let i = 1; i <= 4; i++) { const ty = y + h - (h - 14) * i / 5; ticks += `<path d="M${x + w - 4} ${f(ty)}h${i % 2 ? -10 : -6}" stroke="#7d95a3" stroke-width="1.2" opacity=".75"/>`; }
+    return lgShadow(x + w / 2, y + h + 3, w * .6, 5) + `<path d="${body}" fill="url(#LGglass)"/>` + (lvl > 0 ? `<path d="${lq}" fill="${liq}" fill-opacity="${op}"/><path d="${lq}" fill="url(#LGliq)"/><path d="M${x + 3} ${f(ly)}H${x + w - 3}" stroke="#fff" stroke-width="1.6" opacity=".55"/>` : '') + ticks +
+      `<path d="M${x - 6} ${y - 4}Q${x} ${y} ${x} ${y + 6}V${y + h - 8}Q${x} ${y + h} ${x + 8} ${y + h}H${x + w - 8}Q${x + w} ${y + h} ${x + w} ${y + h - 8}V${y}" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x} ${y}H${x + w}" stroke="${GL}" stroke-width="1.4" opacity=".7"/><path d="M${x + 6} ${y + 10}V${y + h - 14}" stroke="#fff" stroke-width="3" opacity=".4" stroke-linecap="round"/>`;
   };
   const thermo = (x, y1, y2, lvl = 0.55) => `<rect x="${x - 4}" y="${y1}" width="8" height="${y2 - y1}" rx="4" fill="#f4f7f9" stroke="#8fa3b0" stroke-width="1.5"/><rect x="${x - 1.6}" y="${f(y1 + (y2 - y1) * (1 - lvl))}" width="3.2" height="${f((y2 - y1) * lvl)}" fill="#e2483a"/><circle cx="${x}" cy="${y2}" r="6" fill="#e2483a" stroke="#8fa3b0" stroke-width="1.5"/>`;
   const psu = (x, y, w = 110, h = 64, t = 'power supply') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#3d4654" stroke="#22262e" stroke-width="2"/><rect x="${x + 10}" y="${y + 10}" width="${w - 20}" height="18" rx="3" fill="#9fe0b0" opacity=".85"/><circle cx="${x + 26}" cy="${y + 46}" r="7" fill="#e2483a"/><circle cx="${x + w - 26}" cy="${y + 46}" r="7" fill="#22262e" stroke="#777"/><circle cx="${x + w / 2}" cy="${y + 46}" r="8" fill="#cfd5dc" stroke="#777"/>` + T(x + w / 2, y + h + 18, t, { size: 13 });
   const stopwatch = (x, y) => `<circle cx="${x}" cy="${y}" r="20" fill="#f4f7f9" stroke="#55606c" stroke-width="3"/><rect x="${x - 5}" y="${y - 30}" width="10" height="8" fill="#55606c"/><path d="M${x} ${y}V${y - 13}M${x} ${y}L${x + 9} ${y + 5}" stroke="#22262e" stroke-width="2.5" stroke-linecap="round"/>`;
-  const stand = (x, by, h, ay, ax2) => `<rect x="${x - 40}" y="${by - 10}" width="90" height="10" rx="2" fill="#55606c"/><rect x="${x - 3}" y="${by - h}" width="6" height="${h - 10}" fill="${METAL}"/><rect x="${x - 7}" y="${ay - 7}" width="14" height="14" fill="#55606c"/><rect x="${Math.min(x, ax2)}" y="${ay - 3}" width="${Math.abs(ax2 - x)}" height="6" fill="${METAL}"/>`;
-  const bunsen = (x, by, flame = true) => `<rect x="${x - 22}" y="${by - 8}" width="44" height="8" rx="2" fill="#55606c"/><rect x="${x - 6}" y="${by - 52}" width="12" height="44" fill="${METAL}"/><rect x="${x - 8}" y="${by - 30}" width="16" height="6" fill="#55606c"/>` + (flame ? `<path d="M${x - 7} ${by - 52}Q${x - 9} ${by - 70} ${x} ${by - 92}Q${x + 9} ${by - 70} ${x + 7} ${by - 52}Z" fill="#4f9bff" opacity=".9"/><path d="M${x - 3} ${by - 52}Q${x - 4} ${by - 62} ${x} ${by - 72}Q${x + 4} ${by - 62} ${x + 3} ${by - 52}Z" fill="#bfe0ff"/>` : '');
-  const tripod = (x, ty, h = 70, w = 90) => `<rect x="${x - w / 2}" y="${ty}" width="${w}" height="6" fill="#7d858f"/><path d="M${x - w / 2 + 10} ${ty + 6}L${x - w / 2 - 6} ${ty + h}M${x + w / 2 - 10} ${ty + 6}L${x + w / 2 + 6} ${ty + h}M${x} ${ty + 6}V${ty + h}" stroke="#7d858f" stroke-width="5"/>`;
-  const bench = (x1, x2, y) => `<rect x="${x1}" y="${y}" width="${x2 - x1}" height="12" rx="3" fill="${WOOD}" opacity=".85"/>`;
+  const stand = (x, by, h, ay, ax2) => lgShadow(x + 5, by + 1, 52, 4) + `<rect x="${x - 40}" y="${by - 10}" width="90" height="10" rx="3" fill="url(#LGiron)"/><rect x="${x - 38}" y="${by - 10}" width="86" height="2" fill="#fff" opacity=".18"/><rect x="${x - 3.5}" y="${by - h}" width="7" height="${h - 10}" rx="2" fill="url(#LGsteel)"/><rect x="${Math.min(x, ax2)}" y="${ay - 3.5}" width="${Math.abs(ax2 - x)}" height="7" rx="2" fill="url(#LGsteelV)"/><rect x="${x - 8}" y="${ay - 8}" width="16" height="16" rx="3" fill="url(#LGiron)"/><circle cx="${x}" cy="${ay}" r="2.5" fill="#c9ced4"/>`;
+  const bunsen = (x, by, flame = true) => lgShadow(x, by + 1, 30, 4) + `<rect x="${x - 22}" y="${by - 9}" width="44" height="9" rx="3" fill="url(#LGiron)"/><path d="M${x + 18} ${by - 5}h14" stroke="#d9822b" stroke-width="5" stroke-linecap="round"/><rect x="${x - 6}" y="${by - 54}" width="12" height="46" rx="2" fill="url(#LGsteel)"/><rect x="${x - 8.5}" y="${by - 32}" width="17" height="8" rx="2" fill="url(#LGiron)"/><rect x="${x - 3}" y="${by - 30}" width="6" height="4" fill="#0e1116"/>` + (flame ? `<path d="M${x - 7} ${by - 54}Q${x - 10} ${by - 72} ${x} ${by - 96}Q${x + 10} ${by - 72} ${x + 7} ${by - 54}Z" fill="url(#LGflame)"/><path d="M${x - 3.5} ${by - 54}Q${x - 4.5} ${by - 64} ${x} ${by - 76}Q${x + 4.5} ${by - 64} ${x + 3.5} ${by - 54}Z" fill="#d6ecff"/>` : '');
+  const tripod = (x, ty, h = 70, w = 90) => `<path d="M${x - w / 2 + 10} ${ty + 6}L${x - w / 2 - 6} ${ty + h}M${x + w / 2 - 10} ${ty + 6}L${x + w / 2 + 6} ${ty + h}M${x} ${ty + 6}V${ty + h}" stroke="#4f5760" stroke-width="5.5" stroke-linecap="round"/><path d="M${x - w / 2 + 9} ${ty + 8}L${x - w / 2 - 6} ${ty + h - 2}M${x + w / 2 - 11} ${ty + 8}L${x + w / 2 + 4} ${ty + h - 2}M${x - 1.5} ${ty + 8}V${ty + h - 2}" stroke="#c9ced4" stroke-width="1.4" opacity=".8"/><rect x="${x - w / 2}" y="${ty}" width="${w}" height="7" rx="2" fill="url(#LGsteelV)"/>`;
+  const bench = (x1, x2, y) => `<rect x="${x1}" y="${y}" width="${x2 - x1}" height="13" rx="3" fill="url(#LGwood)"/><path d="M${x1 + 3} ${y + 1.5}H${x2 - 3}" stroke="#f6deb0" stroke-width="1.5" opacity=".8"/>` + Array.from({ length: Math.max(1, Math.floor((x2 - x1) / 120)) }, (_, i) => `<path d="M${x1 + 30 + i * 120} ${y + 6}q30 3 60 0" stroke="#8e6334" stroke-width="1" fill="none" opacity=".45"/>`).join('');
   const box = (x, y, w, h, t, sub) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#3d4654" stroke="#22262e" stroke-width="2"/><rect x="${x + 8}" y="${y + 8}" width="${w - 16}" height="${Math.min(22, h - 16)}" rx="3" fill="#9fe0b0" opacity=".85"/>` + (t ? T(x + w / 2, y + h + 18, t, { size: 13 }) : '') + (sub ? T(x + w / 2, y + 24, sub, { size: 12, w: 700, fill: '#163a22' }) : '');
   const panelT = (x, t, s) => T(x, 40, t, { size: 16, w: 700 }) + (s ? T(x, 60, s, { size: 12 }) : '');
 
@@ -1206,7 +1230,7 @@
     g += tripod(170, 280) + bunsen(170, 380) + beaker(120, 180, 100, 100, 0.55, '#56a0e0', 0.55) + `<path d="M126 274q20 -6 40 0t48 0" stroke="#1f2227" stroke-width="7" fill="none"/>` + `<path d="M190 150L230 120" stroke="${METAL}" stroke-width="5"/><ellipse cx="190" cy="152" rx="10" ry="4" fill="#1f2227"/>`;
     g += T(170, 40, '1  React', { size: 16, w: 700 }) + T(170, 60, 'add copper oxide to warm', { size: 12 }) + T(170, 76, 'dilute sulfuric acid until', { size: 12 }) + T(170, 92, 'some is left over (excess)', { size: 12 });
     // step 2: filter
-    g += `<path d="M450 170L510 170L486 220H474Z" fill="#f4f1e6" stroke="${GL}" stroke-width="3"/><path d="M458 175L502 175L483 212H477Z" fill="#1f2227" opacity=".85"/><path d="M480 220V250" stroke="${GL}" stroke-width="3"/>` + stand(560, 390, 260, 190, 500) + `<path d="M430 270V360Q430 380 450 380H510Q530 380 530 360V270" fill="none" stroke="${GL}" stroke-width="3"/><path d="M432 320H528V378H432Z" fill="#56a0e0" fill-opacity=".55"/>`;
+    g += `<path d="M446 166L514 166L486 222H474Z" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/><path d="M452 170L508 170L484 214H476Z" fill="#f4f1e6"/><path d="M458 175L502 175L483 212H477Z" fill="#1f2227" opacity=".85"/><path d="M480 220V250" stroke="${GL}" stroke-width="3"/>` + stand(560, 390, 260, 190, 500) + `` + beaker(430, 270, 100, 110, .53, "#56a0e0", .55) + ``;
     g += T(490, 40, '2  Filter', { size: 16, w: 700 }) + T(490, 60, 'remove the excess solid;', { size: 12 }) + T(490, 76, 'the filtrate is copper', { size: 12 }) + T(490, 92, 'sulfate solution', { size: 12 });
     // step 3: evaporate on a water bath, then crystallise
     g += tripod(790, 300) + bunsen(790, 400) + beaker(735, 240, 110, 60, 0.6, WATER) + `<path d="M745 236Q790 268 835 236" fill="#56a0e0" fill-opacity=".6" stroke="${GL}" stroke-width="3"/><path d="M742 236H838" stroke="${GL}" stroke-width="3"/>`;
@@ -1224,11 +1248,11 @@
     const W = 960, H = 460;
     const cat = o.cathode || 'hydrogen', an = o.anode || 'chlorine';
     let g = psu(410, 40, 140, 64, ' ') + T(560, 76, 'd.c. power supply', { size: 13, a: 'start' });
-    g += `<path d="M300 200V400Q300 420 320 420H640Q660 420 660 400V200" fill="none" stroke="${GL}" stroke-width="3"/><path d="M302 240H658V418H302Z" fill="#9ad6c8" fill-opacity=".35"/>`;
+    g += `` + lgShadow(480, 424, 200, 6) + `<path d="M300 200V400Q300 420 320 420H640Q660 420 660 400V200" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/><path d="M302 240H658V418H302Z" fill="#9ad6c8" fill-opacity=".35"/><path d="M302 240H658V418H302Z" fill="url(#LGliq)"/><path d="M303 240H657" stroke="#fff" stroke-width="1.6" opacity=".5"/><path d="M308 216V404" stroke="#fff" stroke-width="3" opacity=".35"/>`;
     // electrodes
-    g += `<rect x="382" y="200" width="16" height="190" fill="#3a3f47"/><rect x="562" y="200" width="16" height="190" fill="#3a3f47"/>`;
+    g += `<rect x="382" y="200" width="16" height="190" fill="url(#LGgraph)"/><rect x="562" y="200" width="16" height="190" fill="url(#LGgraph)"/>`;
     // inverted test tubes
-    const tube = (x, gasH, col) => `<path d="M${x - 24} 400V250Q${x - 24} 222 ${x} 222Q${x + 24} 222 ${x + 24} 250V400" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x - 22} ${250 + gasH}V250Q${x - 22} 224 ${x} 224Q${x + 22} 224 ${x + 22} 250V${250 + gasH}Z" fill="${col}" fill-opacity=".35"/>` + [0, 1, 2, 3].map(i => `<circle cx="${x - 8 + (i % 2) * 14}" cy="${380 - i * 26}" r="4" fill="none" stroke="#fff" stroke-width="1.5"/>`).join('');
+    const tube = (x, gasH, col) => `<path d="M${x - 24} 400V250Q${x - 24} 222 ${x} 222Q${x + 24} 222 ${x + 24} 250V400" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/><path d="M${x - 22} ${250 + gasH}V250Q${x - 22} 224 ${x} 224Q${x + 22} 224 ${x + 22} 250V${250 + gasH}Z" fill="${col}" fill-opacity=".35"/>` + [0, 1, 2, 3].map(i => `<circle cx="${x - 8 + (i % 2) * 14}" cy="${380 - i * 26}" r="4" fill="none" stroke="#fff" stroke-width="1.5"/>`).join('');
     g += tube(390, 80, '#ffffff') + tube(570, 50, an === 'chlorine' ? '#d6f08a' : '#ffffff');
     g += wire('M436 92V140H390V200') + wire('M524 92V140H570V200');
     g += T(390, 132, '−', { size: 20, w: 700 }).replace('x="390"', 'x="372"') + T(570, 132, '+', { size: 20, w: 700 }).replace('x="570"', 'x="588"');
@@ -1267,10 +1291,10 @@
     const W = 920, H = 440;
     let g = bench(80, 460, 380);
     g += beaker(150, 210, 200, 170, 0);
-    g += `<path d="M180 190L200 360H300L320 190Z" fill="#f7f7f2" stroke="#d6d6cc" stroke-width="2"/><path d="M190 260L200 356H300L310 260Z" fill="${WATER}" fill-opacity=".45"/><rect x="172" y="180" width="156" height="12" rx="4" fill="#f0f0e8" stroke="#d6d6cc"/>`;
+    g += `<path d="M180 190L200 360H300L320 190Z" fill="#f7f7f2" stroke="#d6d6cc" stroke-width="2"/><path d="M186 196L204 352" stroke="#fff" stroke-width="4" opacity=".8"/><path d="M314 196L296 352" stroke="#d9d9cf" stroke-width="4" opacity=".7"/><path d="M190 260L200 356H300L310 260Z" fill="${WATER}" fill-opacity=".45"/><rect x="172" y="180" width="156" height="12" rx="4" fill="#f0f0e8" stroke="#d6d6cc"/>`;
     g += thermo(270, 90, 330, 0.62);
     g += `<path d="M110 40L150 30L170 170L150 176Z" fill="none" stroke="${GL}" stroke-width="2.5" opacity="0"/>`;
-    g += `<path d="M380 110V200Q380 210 390 210H420Q430 210 430 200V110" fill="none" stroke="${GL}" stroke-width="3"/><path d="M382 150H428V208H382Z" fill="#e8b3d6" fill-opacity=".45"/>`;
+    g += `` + beaker(380, 110, 50, 100, .58, "#e8b3d6", .5) + ``;
     g += axes(560, 360, 320, 240, 'Volume of acid added (cm³)', 'Max temperature (°C)');
     g += `<path d="M562 320L720 160L878 230" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="M720 160V360" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4"/>` + T(726, 150, 'neutralisation complete', { size: 12, a: 'start' });
     g += T(460, 40, 'Temperature change in a reaction', { size: 16, w: 700 }).replace('x="460"', 'x="300"');
@@ -1280,18 +1304,18 @@
   }
 
   /* ======================= WAVE 5: biology practical apparatus ======================= */
-  const tubeV = (x, y, h, liq, lvl = 0.7, op = 0.5) => { const ly = y + h * (1 - lvl); return `<path d="M${x - 14} ${f(ly)}H${x + 14}V${y + h - 14}Q${x + 14} ${y + h} ${x} ${y + h}Q${x - 14} ${y + h} ${x - 14} ${y + h - 14}Z" fill="${liq}" fill-opacity="${op}"/><path d="M${x - 16} ${y}V${y + h - 14}Q${x - 16} ${y + h + 2} ${x} ${y + h + 2}Q${x + 16} ${y + h + 2} ${x + 16} ${y + h - 14}V${y}" fill="none" stroke="${GL}" stroke-width="2.5"/>`; };
+  const tubeV = (x, y, h, liq, lvl = 0.7, op = 0.5) => { const ly = y + h * (1 - lvl), lq = `M${x - 14} ${f(ly)}H${x + 14}V${y + h - 14}Q${x + 14} ${y + h} ${x} ${y + h}Q${x - 14} ${y + h} ${x - 14} ${y + h - 14}Z`, bd = `M${x - 16} ${y}V${y + h - 14}Q${x - 16} ${y + h + 2} ${x} ${y + h + 2}Q${x + 16} ${y + h + 2} ${x + 16} ${y + h - 14}V${y}Z`; return `<path d="${bd}" fill="url(#LGglass)"/>` + (lvl > 0 ? `<path d="${lq}" fill="${liq}" fill-opacity="${op}"/><path d="${lq}" fill="url(#LGliq)"/><path d="M${x - 13} ${f(ly)}H${x + 13}" stroke="#fff" stroke-width="1.3" opacity=".5"/>` : '') + `<path d="M${x - 16} ${y}V${y + h - 14}Q${x - 16} ${y + h + 2} ${x} ${y + h + 2}Q${x + 16} ${y + h + 2} ${x + 16} ${y + h - 14}V${y}" fill="none" stroke="${GL}" stroke-width="2.5"/><path d="M${x - 19} ${y}H${x + 19}" stroke="${GL}" stroke-width="3" stroke-linecap="round"/><path d="M${x - 10} ${y + 8}V${y + h - 16}" stroke="#fff" stroke-width="2.5" opacity=".4" stroke-linecap="round"/>`; };
 
   /* ---------- osmosis in potato ---------- */
   function osmosisPractical(o = {}) {
     const W = 980, H = 470;
     const conc = ['0.0', '0.2', '0.4', '0.6', '0.8'];
-    let g = `<rect x="60" y="250" width="420" height="16" rx="3" fill="${WOOD}"/><rect x="60" y="330" width="420" height="10" rx="3" fill="${WOOD}"/><path d="M70 266V380M470 266V380" stroke="${WOOD}" stroke-width="8"/>`;
+    let g = `` + lgShadow(270, 382, 230, 6) + `<rect x="60" y="250" width="420" height="16" rx="3" fill="url(#LGwood)"/><rect x="60" y="330" width="420" height="10" rx="3" fill="url(#LGwood)"/><path d="M70 266V380M470 266V380" stroke="#a87a45" stroke-width="8"/>`;
     conc.forEach((c, i) => { const x = 110 + i * 80, len = [62, 56, 50, 44, 40][i], wid = [15, 14, 12, 11, 10][i];
       g += tubeV(x, 170, 200, '#cfe7f2', 0.75, 0.45) + `<rect x="${x - wid / 2}" y="${300 - len / 2}" width="${wid}" height="${len}" rx="3" fill="#f2e3a8" stroke="#c9b06a" stroke-width="1.5"/>` + T(x, 400, c, { size: 14, w: 700 }); });
     g += T(270, 424, 'sucrose concentration (mol/dm³)', { size: 13 });
     g += T(270, 40, 'Osmosis in potato cylinders', { size: 16, w: 700 }) + T(270, 62, 'same length cylinders (cork borer), blotted dry and weighed', { size: 13 }) + T(270, 80, 'before and after 24 hours in each solution', { size: 13 });
-    g += `<rect x="60" y="110" width="70" height="40" rx="5" fill="#d9dee4" stroke="#8e98a3"/><rect x="72" y="122" width="46" height="16" rx="2" fill="#9fe0b0"/>` + T(95, 135, '2.41 g', { size: 11, w: 700, fill: '#163a22' }) + T(95, 168, 'balance', { size: 12 });
+    g += `` + lgShadow(95, 152, 40, 4) + `<rect x="60" y="110" width="70" height="40" rx="5" fill="url(#LGbath)" stroke="#8e98a3"/><rect x="64" y="104" width="62" height="8" rx="2" fill="url(#LGsteelV)"/><rect x="72" y="122" width="46" height="16" rx="2" fill="#9fe0b0"/>` + T(95, 135, '2.41 g', { size: 11, w: 700, fill: '#163a22' }) + T(95, 168, 'balance', { size: 12 });
     // graph
     const x0 = 600, y0 = 250;
     g += `<path d="M${x0} 110V400M${x0} ${y0}H${x0 + 320}" stroke="currentColor" stroke-width="2.5"/>` + arrow(x0 + 310, y0, x0 + 326, y0, 'currentColor', 2.5, 10) + arrow(x0, 120, x0, 104, 'currentColor', 2.5, 10);
@@ -1308,13 +1332,13 @@
     const W = 980, H = 460;
     let g = '';
     // water bath
-    g += `<rect x="60" y="200" width="220" height="150" rx="8" fill="#d9dee4" stroke="#8e98a3" stroke-width="2"/><rect x="70" y="230" width="200" height="110" fill="${WATER}" fill-opacity=".45"/><rect x="70" y="208" width="60" height="18" rx="3" fill="#9fe0b0"/>` + T(100, 222, '35 °C', { size: 11, w: 700, fill: '#163a22' });
+    g += `` + lgShadow(170, 352, 120, 6) + `<rect x="60" y="200" width="220" height="150" rx="8" fill="url(#LGbath)" stroke="#8e98a3" stroke-width="2"/><rect x="70" y="230" width="200" height="110" fill="${WATER}" fill-opacity=".55"/><rect x="70" y="230" width="200" height="110" fill="url(#LGliq)"/><path d="M70 230H270" stroke="#fff" stroke-width="2" opacity=".5"/><rect x="70" y="208" width="60" height="18" rx="3" fill="#9fe0b0"/>` + T(100, 222, '35 °C', { size: 11, w: 700, fill: '#163a22' });
     g += tubeV(150, 130, 180, '#f2eecf', 0.55) + tubeV(210, 130, 180, '#e7f0f2', 0.55) + T(150, 120, 'starch', { size: 12 }) + T(210, 120, 'amylase', { size: 12 });
     g += T(170, 376, 'water bath: keeps the temperature constant', { size: 12 });
     // spotting tile
-    g += `<rect x="360" y="226" width="280" height="146" rx="8" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/>`;
+    g += `` + lgShadow(500, 374, 150, 6) + `<rect x="360" y="226" width="280" height="146" rx="8" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><rect x="364" y="229" width="272" height="6" rx="3" fill="#fff"/>`;
     const cols = ['#1e2440', '#1e2440', '#2b2a4a', '#5a4630', '#b57a2a', '#c9892f', '#c9892f', '#c9892f'];
-    cols.forEach((c, i) => { const x = 395 + (i % 4) * 70, y = 265 + Math.floor(i / 4) * 60; g += `<circle cx="${x}" cy="${y}" r="20" fill="#dfe4e8"/><circle cx="${x}" cy="${y}" r="14" fill="${c}"/>` + T(x, y + 36, `${(i + 1) * 30} s`, { size: 11, fill: '#55606c' }); });
+    cols.forEach((c, i) => { const x = 395 + (i % 4) * 70, y = 265 + Math.floor(i / 4) * 60; g += `<circle cx="${x}" cy="${y}" r="20" fill="#dfe4e8"/><circle cx="${x}" cy="${y + 1}" r="18" fill="#c9d0d6"/><circle cx="${x}" cy="${y}" r="14" fill="${c}"/><ellipse cx="${x - 4}" cy="${y - 5}" rx="5" ry="3" fill="#fff" opacity=".35"/>` + T(x, y + 36, `${(i + 1) * 30} s`, { size: 11, fill: '#55606c' }); });
     g += `<path d="M560 150V200" stroke="${GL}" stroke-width="5"/><path d="M552 140H568V150H552Z" fill="#e0a64a"/><circle cx="560" cy="212" r="4" fill="${WATER}"/>` + T(600, 160, 'pipette', { size: 12, a: 'start' });
     g += T(500, 390, 'a drop of mixture into iodine every 30 s:', { size: 12 }) + T(500, 406, 'blue-black → orange-brown when the starch has gone', { size: 12 });
     g += T(330, 40, 'Effect of pH on amylase', { size: 16, w: 700 }) + T(330, 62, 'repeat with buffer solutions of different pH; record the time for starch to be digested', { size: 13 });
@@ -1404,7 +1428,7 @@
     const W = 980, H = 440;
     let g = '';
     [[150, '20 °C', '#f39ac9'], [330, '30 °C', '#f6c4de'], [510, '40 °C', '#fbf2f6']].forEach(([x, t, c]) => {
-      g += `<rect x="${x - 70}" y="200" width="140" height="150" rx="8" fill="#d9dee4" stroke="#8e98a3" stroke-width="2"/><rect x="${x - 60}" y="232" width="120" height="108" fill="${WATER}" fill-opacity=".45"/><rect x="${x - 60}" y="208" width="48" height="16" rx="3" fill="#9fe0b0"/>` + T(x - 36, 221, t, { size: 10, w: 700, fill: '#163a22' });
+      g += `` + lgShadow(x, 352, 80, 5) + `<rect x="${x - 70}" y="200" width="140" height="150" rx="8" fill="url(#LGbath)" stroke="#8e98a3" stroke-width="2"/><rect x="${x - 60}" y="232" width="120" height="108" fill="${WATER}" fill-opacity=".55"/><rect x="${x - 60}" y="232" width="120" height="108" fill="url(#LGliq)"/><path d="M${x - 60} 232H${x + 60}" stroke="#fff" stroke-width="2" opacity=".5"/><rect x="${x - 60}" y="208" width="48" height="16" rx="3" fill="#9fe0b0"/>` + T(x - 36, 221, t, { size: 10, w: 700, fill: '#163a22' });
       g += tubeV(x + 18, 130, 180, c, 0.6, 0.95) + thermo(x - 20, 150, 300, 0.4);
     });
     g += T(150, 376, 'still pink', { size: 13 }) + T(330, 376, 'paler', { size: 13 }) + T(510, 376, 'colourless first', { size: 13 });
@@ -1419,10 +1443,10 @@
   /* ======================= WAVE 6: A-level practical apparatus ======================= */
   const res = (x, y, vert) => vert ? `<rect x="${x - 9}" y="${y - 22}" width="18" height="44" fill="var(--panel,#121a33)" stroke="currentColor" stroke-width="2.5"/>` : `<rect x="${x - 22}" y="${y - 9}" width="44" height="18" fill="var(--panel,#121a33)" stroke="currentColor" stroke-width="2.5"/>`;
   const capS = (x, y, vert) => vert ? `<rect x="${x - 16}" y="${y - 8}" width="32" height="16" fill="var(--panel,#121a33)"/><path d="M${x - 14} ${y - 5}H${x + 14}M${x - 14} ${y + 5}H${x + 14}" stroke="currentColor" stroke-width="3"/>` : `<rect x="${x - 8}" y="${y - 16}" width="16" height="32" fill="var(--panel,#121a33)"/><path d="M${x - 5} ${y - 14}V${y + 14}M${x + 5} ${y - 14}V${y + 14}" stroke="currentColor" stroke-width="3"/>`;
-  const rbFlask = (x, y, r, liq) => `<path d="M${x - 9} ${y - r - 40}V${y - r + 4}A${r} ${r} 0 1 0 ${x + 9} ${y - r + 4}V${y - r - 40}" fill="none" stroke="${GL}" stroke-width="3"/>` + (liq ? `<path d="M${x - r * 0.8} ${y + r * 0.2}A${r * 0.98} ${r * 0.98} 0 0 0 ${x + r * 0.8} ${y + r * 0.2}Z" fill="${liq}" fill-opacity=".5"/>` : '');
+  const rbFlask = (x, y, r, liq) => { const bd = `M${x - 9} ${y - r - 40}V${y - r + 4}A${r} ${r} 0 1 0 ${x + 9} ${y - r + 4}V${y - r - 40}Z`, lq = `M${x - r * 0.8} ${y + r * 0.2}A${r * 0.98} ${r * 0.98} 0 0 0 ${x + r * 0.8} ${y + r * 0.2}Z`; return `<path d="${bd}" fill="url(#LGglass)"/>` + (liq ? `<path d="${lq}" fill="${liq}" fill-opacity=".55"/><path d="${lq}" fill="url(#LGliq)"/><path d="M${f(x - r * .8)} ${f(y + r * .2)}H${f(x + r * .8)}" stroke="#fff" stroke-width="1.4" opacity=".5"/>` : '') + `<path d="M${x - 9} ${y - r - 40}V${y - r + 4}A${r} ${r} 0 1 0 ${x + 9} ${y - r + 4}V${y - r - 40}" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${f(x - r * .62)} ${f(y - r * .42)}A${r * .78} ${r * .78} 0 0 0 ${f(x - r * .72)} ${f(y + r * .3)}" stroke="#fff" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/><path d="M${x - 4} ${y - r - 36}V${y - r - 4}" stroke="#fff" stroke-width="2" opacity=".4"/>`; };
   const condenser = (x1, y1, x2, y2) => { const a = Math.atan2(y2 - y1, x2 - x1), nx = -Math.sin(a) * 14, ny = Math.cos(a) * 14;
     return `<path d="M${f(x1 + nx)} ${f(y1 + ny)}L${f(x2 + nx)} ${f(y2 + ny)}L${f(x2 - nx)} ${f(y2 - ny)}L${f(x1 - nx)} ${f(y1 - ny)}Z" fill="${WATER}" fill-opacity=".3" stroke="${GL}" stroke-width="2.5"/><path d="M${f(x1 - Math.cos(a) * 16)} ${f(y1 - Math.sin(a) * 16)}L${f(x2 + Math.cos(a) * 16)} ${f(y2 + Math.sin(a) * 16)}" stroke="${GL}" stroke-width="5"/>`; };
-  const heater = (x, y) => `<rect x="${x - 50}" y="${y}" width="100" height="40" rx="6" fill="#55606c"/><path d="M${x - 40} ${y + 4}Q${x} ${y - 14} ${x + 40} ${y + 4}" fill="#3d4654"/><circle cx="${x + 30}" cy="${y + 24}" r="6" fill="#ef5b4c"/>`;
+  const heater = (x, y) => lgShadow(x, y + 41, 58, 4) + `<rect x="${x - 50}" y="${y}" width="100" height="40" rx="6" fill="url(#LGiron)"/><rect x="${x - 44}" y="${y - 4}" width="88" height="7" rx="2" fill="url(#LGsteelV)"/><circle cx="${x + 30}" cy="${y + 24}" r="7" fill="#ef5b4c" stroke="#8e2418"/><circle cx="${x - 28}" cy="${y + 24}" r="8" fill="url(#LGsteelV)" stroke="#22262e"/><path d="M${x - 28} ${y + 17}v6" stroke="#22262e" stroke-width="2"/>`;
 
   /* ---------- Young modulus ---------- */
   function youngModulus(o = {}) {
@@ -1580,11 +1604,11 @@
     const W = 1000, H = 460;
     let g = panelT(140, 'Separating funnel', 'remove the aqueous layer') + panelT(390, 'Drying', 'anhydrous MgSO₄ or CaCl₂') + panelT(640, 'Vacuum filtration', 'Büchner funnel and flask') + panelT(880, 'Melting point', 'pure: sharp, matches data');
     g += `<path d="M104 170Q98 194 106 215H174Q182 194 176 170Z" fill="#e8d17a" fill-opacity=".5"/><path d="M106 215Q116 246 132 262H148Q164 246 174 215Z" fill="${WATER}" fill-opacity=".55"/>`;
-    g += `<path d="M132 96V122C92 150 92 232 132 262L136 280V340M144 340V280L148 262C188 232 188 150 148 122V96" fill="none" stroke="${GL}" stroke-width="3"/><rect x="130" y="86" width="20" height="12" rx="3" fill="#55606c"/><rect x="126" y="296" width="28" height="10" rx="2" fill="#55606c"/>`;
+    g += `<path d="M132 96V122C92 150 92 232 132 262L136 280V340M144 340V280L148 262C188 232 188 150 148 122V96" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/><rect x="130" y="86" width="20" height="12" rx="3" fill="#55606c"/><rect x="126" y="296" width="28" height="10" rx="2" fill="#55606c"/>`;
     g += T(200, 200, 'organic', { size: 12, a: 'start' }) + T(200, 246, 'aqueous', { size: 12, a: 'start' }) + T(140, 360, 'shake, release pressure,', { size: 12 }) + T(140, 376, 'run off the lower layer', { size: 12 });
-    g += `<path d="M350 170V280Q350 290 360 290H420Q430 290 430 280V170" fill="none" stroke="${GL}" stroke-width="3"/><path d="M352 200H428V288H352Z" fill="#e8d17a" fill-opacity=".45"/>${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${360 + i * 11}" y="${276 - (i % 2) * 6}" width="8" height="8" fill="#fff"/>`).join('')}` + T(390, 330, 'swirl until the liquid', { size: 12 }) + T(390, 346, 'turns clear; then filter', { size: 12 });
-    g += `<path d="M622 250V272L572 368Q566 380 580 380H700Q714 380 708 368L658 272V250" fill="#e8f3f8" fill-opacity=".1" stroke="${GL}" stroke-width="3"/><path d="M582 368H698L690 352H590Z" fill="#e8d17a" fill-opacity=".45"/><path d="M664 286H730" stroke="${GL}" stroke-width="5"/><rect x="618" y="240" width="44" height="14" rx="3" fill="#55606c"/><rect x="600" y="190" width="80" height="34" rx="4" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><path d="M632 224V262H648V224" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><rect x="606" y="182" width="68" height="8" fill="#fff8e0"/>` + T(734, 290, 'to vacuum', { size: 11, a: 'start' }) + T(640, 410, 'wash crystals with a little', { size: 12 }) + T(640, 426, 'cold solvent', { size: 12 });
-    g += `<rect x="830" y="160" width="100" height="150" rx="8" fill="#3d4654"/><rect x="842" y="174" width="76" height="22" rx="3" fill="#9fe0b0"/>` + T(880, 190, '122 °C', { size: 12, w: 700, fill: '#163a22' }) + `<rect x="864" y="220" width="32" height="50" rx="4" fill="#1f2227"/><path d="M876 214V260" stroke="#e8f3f8" stroke-width="3"/><rect x="874.5" y="250" width="3" height="10" fill="#fff"/>` + T(880, 340, 'capillary tube of solid;', { size: 12 }) + T(880, 356, 'impure: lower, wider range', { size: 12 });
+    g += `` + beaker(350, 170, 80, 120, .72, "#e8d17a", .45) + `${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${360 + i * 11}" y="${276 - (i % 2) * 6}" width="8" height="8" fill="#fff"/>`).join('')}` + T(390, 330, 'swirl until the liquid', { size: 12 }) + T(390, 346, 'turns clear; then filter', { size: 12 });
+    g += `<path d="M622 250V272L572 368Q566 380 580 380H700Q714 380 708 368L658 272V250" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/><path d="M582 368H698L690 352H590Z" fill="#e8d17a" fill-opacity=".45"/><path d="M664 286H730" stroke="${GL}" stroke-width="5"/><rect x="618" y="240" width="44" height="14" rx="3" fill="url(#LGiron)"/><rect x="600" y="190" width="80" height="34" rx="4" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><path d="M632 224V262H648V224" fill="#f4f6f7" stroke="#c9d0d6" stroke-width="2"/><rect x="606" y="182" width="68" height="8" fill="#fff8e0"/>` + T(734, 290, 'to vacuum', { size: 11, a: 'start' }) + T(640, 410, 'wash crystals with a little', { size: 12 }) + T(640, 426, 'cold solvent', { size: 12 });
+    g += `` + lgShadow(880, 312, 58, 5) + `<rect x="830" y="160" width="100" height="150" rx="8" fill="url(#LGiron)"/><rect x="842" y="174" width="76" height="22" rx="3" fill="#9fe0b0"/>` + T(880, 190, '122 °C', { size: 12, w: 700, fill: '#163a22' }) + `<rect x="864" y="220" width="32" height="50" rx="4" fill="#1f2227"/><path d="M876 214V260" stroke="#e8f3f8" stroke-width="3"/><rect x="874.5" y="250" width="3" height="10" fill="#fff"/>` + T(880, 340, 'capillary tube of solid;', { size: 12 }) + T(880, 356, 'impure: lower, wider range', { size: 12 });
     g += T(500, 450, 'Recrystallisation: dissolve in the minimum hot solvent, filter hot, cool to crystallise, filter under reduced pressure', { size: 13, w: 700 });
     return wrap(W, H, o.aria || 'Purifying organic products: separating funnel, drying agent, Büchner filtration and melting point', '', g);
   }
@@ -1594,8 +1618,8 @@
     const W = 980, H = 440;
     let g = beaker(140, 200, 180, 170, 0.7, '#cfe7f2') + beaker(620, 200, 180, 170, 0.7, '#56a0e0', 0.55);
     g += `<path d="M300 260V200Q300 160 340 160H600Q640 160 640 200V260" fill="none" stroke="#e0d090" stroke-width="18"/><path d="M300 260V200Q300 160 340 160H600Q640 160 640 200V260" fill="none" stroke="#f4ecc4" stroke-width="12"/>`;
-    g += `<path d="M216 130V250Q216 262 230 262Q244 262 244 250V130" fill="none" stroke="${GL}" stroke-width="3"/><rect x="222" y="280" width="16" height="40" fill="#cfd5dc" stroke="#8e98a3"/><path d="M230 130V280" stroke="#9aa3ad" stroke-width="2"/><path d="M180 140H216" stroke="${GL}" stroke-width="4"/>` + arrow(150, 140, 176, 140, '#cfd5dc', 2.5, 9) + [0, 1, 2].map(i => `<circle cx="${226 + (i % 2) * 8}" cy="${300 + i * 12}" r="3" fill="none" stroke="#fff"/>`).join('');
-    g += `<rect x="702" y="220" width="16" height="120" fill="#c26b3a"/>`;
+    g += `<path d="M216 130V250Q216 262 230 262Q244 262 244 250V130" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/><rect x="222" y="280" width="16" height="40" fill="url(#LGzinc)" stroke="#8e98a3"/><path d="M230 130V280" stroke="#9aa3ad" stroke-width="2"/><path d="M180 140H216" stroke="${GL}" stroke-width="4"/>` + arrow(150, 140, 176, 140, '#cfd5dc', 2.5, 9) + [0, 1, 2].map(i => `<circle cx="${226 + (i % 2) * 8}" cy="${300 + i * 12}" r="3" fill="none" stroke="#fff"/>`).join('');
+    g += `<rect x="702" y="220" width="16" height="120" rx="2" fill="url(#LGcopper)"/>`;
     g += wire('M230 130V70H420') + meter(450, 70, 'V') + wire('M480 70H710V220') + T(450, 40, 'high-resistance voltmeter: +0.34 V', { size: 13, w: 700 });
     g += T(230, 400, 'standard hydrogen electrode', { size: 14, w: 700 }) + T(230, 418, 'H₂ at 100 kPa, 1.00 mol dm⁻³ H⁺, platinum', { size: 12 });
     g += T(710, 400, 'Cu²⁺/Cu half-cell', { size: 14, w: 700 }) + T(710, 418, '1.00 mol dm⁻³ Cu²⁺, copper electrode', { size: 12 });
@@ -1627,8 +1651,8 @@
     const W = 940, H = 440;
     let g = bench(80, 560, 400);
     g += stand(140, 410, 330, 150, 300);
-    g += `<path d="M250 140V250Q250 262 262 262H338Q350 262 350 250V140" fill="#c27a3a" stroke="#8a4f22" stroke-width="3"/><path d="M254 170H346V258H254Z" fill="${WATER}" fill-opacity=".45"/>` + thermo(310, 90, 240, 0.5);
-    g += `<path d="M268 330Q268 304 300 304Q332 304 332 330V400H268Z" fill="#e8f3f8" fill-opacity=".25" stroke="${GL}" stroke-width="3"/><path d="M270 360H330V398H270Z" fill="#e8d17a" fill-opacity=".5"/><rect x="296" y="290" width="8" height="16" fill="#f4f1e6"/><path d="M292 290Q290 276 300 262Q310 276 308 290Z" fill="#ffb03a"/>`;
+    g += `<path d="M250 140V250Q250 262 262 262H338Q350 262 350 250V140" fill="url(#LGcopper)" stroke="#8a4f22" stroke-width="3"/><path d="M254 170H346V258H254Z" fill="${WATER}" fill-opacity=".45"/>` + thermo(310, 90, 240, 0.5);
+    g += `<path d="M268 330Q268 304 300 304Q332 304 332 330V400H268Z" fill="url(#LGglass)" stroke="${GL}" stroke-width="3"/>` + lgShadow(300, 402, 40, 4) + `<path d="M270 360H330V398H270Z" fill="#e8d17a" fill-opacity=".55"/><path d="M270 360H330V398H270Z" fill="url(#LGliq)"/><rect x="296" y="290" width="8" height="16" fill="#f4f1e6"/><path d="M292 290Q290 276 300 262Q310 276 308 290Z" fill="#ffb03a"/>`;
     g += `<path d="M220 400V230M380 400V230" stroke="#c9ccd2" stroke-width="4" opacity=".7"/>`;
     g += T(470, 40, 'Enthalpy change of combustion', { size: 16, w: 700 }) + T(470, 62, 'weigh the spirit burner before and after; q = m c ΔT', { size: 13 });
     g += T(720, 120, 'Why the value is too small', { size: 14, w: 700 });
@@ -1690,10 +1714,10 @@
   function chemicalCell(o = {}) {
     const W = 980, H = 430;
     let g = panelT(230, 'A simple chemical cell', 'two different metals in an electrolyte') + panelT(720, 'Hydrogen fuel cell', 'hydrogen + oxygen → water');
-    g += beaker(130, 180, 200, 170, 0.7, '#cfe7f2') + `<rect x="166" y="150" width="20" height="170" fill="#9aa3ad"/><rect x="276" y="150" width="20" height="170" fill="#c26b3a"/>`;
+    g += beaker(130, 180, 200, 170, 0.7, '#cfe7f2') + `<rect x="166" y="150" width="20" height="170" rx="2" fill="url(#LGzinc)"/><rect x="276" y="150" width="20" height="170" rx="2" fill="url(#LGcopper)"/>`;
     g += wire('M176 150V120H215') + meter(230, 120, 'V') + wire('M245 120H286V150') + T(230, 100, '1.10 V', { size: 15, w: 700 });
     g += T(176, 378, 'zinc', { size: 13, w: 700 }) + T(286, 378, 'copper', { size: 13, w: 700 }) + T(230, 404, 'bigger difference in reactivity → bigger voltage', { size: 12 }) + T(230, 420, 'stops when a reactant is used up (non-rechargeable)', { size: 12 });
-    g += `<rect x="620" y="150" width="200" height="170" rx="8" fill="#3d4654"/><rect x="660" y="160" width="14" height="150" fill="#9aa3ad"/><rect x="766" y="160" width="14" height="150" fill="#9aa3ad"/><rect x="674" y="160" width="92" height="150" fill="#cfe7f2" opacity=".35"/>`;
+    g += `` + lgShadow(720, 324, 110, 6) + `<rect x="620" y="150" width="200" height="170" rx="8" fill="url(#LGiron)"/><rect x="626" y="154" width="188" height="6" rx="3" fill="#fff" opacity=".15"/><rect x="660" y="160" width="14" height="150" fill="url(#LGzinc)"/><rect x="766" y="160" width="14" height="150" fill="url(#LGzinc)"/><rect x="674" y="160" width="92" height="150" fill="#cfe7f2" opacity=".35"/>`;
     g += arrow(560, 200, 640, 200, '#7fb2ff', 3) + T(552, 205, 'H₂ in', { size: 13, a: 'end' }) + arrow(900, 200, 820, 200, '#ef5b4c', 3) + T(908, 205, 'O₂ in', { size: 13, a: 'start' }) + arrow(800, 300, 900, 340, '#5aa9f0', 3) + T(904, 360, 'H₂O out', { size: 13, a: 'start' });
     g += wire('M667 150V100H773V150') + lamp(720, 100) + arrow(690, 118, 640, 118, '#e0a64a', 0, 0) + T(720, 140, 'electrons flow through the external circuit', { size: 12 });
     g += T(720, 345, 'electrolyte', { size: 12 }).replace('<text', '<text opacity=".9"') + T(720, 404, 'only product is water; hydrogen must be made and stored', { size: 12 });
@@ -1856,8 +1880,8 @@
   }
 
   /* ======================= WAVE 8: NMR, redox titration and KS3 lab pictures ======================= */
-  const burette = (x, y1, y2, liq) => `<rect x="${x - 9}" y="${y1}" width="18" height="${y2 - y1}" rx="3" fill="${liq}" fill-opacity=".45" stroke="${GL}" stroke-width="2.5"/>${Array.from({ length: 10 }, (_, i) => `<path d="M${x - 9} ${y1 + 10 + i * (y2 - y1 - 20) / 9}h7" stroke="${GL}" stroke-width="1.3"/>`).join('')}<path d="M${x - 3} ${y2}V${y2 + 26}M${x + 3} ${y2}V${y2 + 26}" stroke="${GL}" stroke-width="2.5"/><rect x="${x - 12}" y="${y2 + 6}" width="24" height="8" rx="2" fill="#55606c"/>`;
-  const conical = (x, y, liq, op = 0.6) => `<path d="M${x - 12} ${y}V${y + 30}L${x - 52} ${y + 110}Q${x - 56} ${y + 120} ${x - 44} ${y + 120}H${x + 44}Q${x + 56} ${y + 120} ${x + 52} ${y + 110}L${x + 12} ${y + 30}V${y}" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x - 36} ${y + 78}H${x + 36}L${x + 52} ${y + 110}Q${x + 56} ${y + 118} ${x + 44} ${y + 118}H${x - 44}Q${x - 56} ${y + 118} ${x - 52} ${y + 110}Z" fill="${liq}" fill-opacity="${op}"/>`;
+  const burette = (x, y1, y2, liq) => `<rect x="${x - 9}" y="${y1}" width="18" height="${y2 - y1}" rx="3" fill="url(#LGglass)"/><rect x="${x - 9}" y="${y1 + 12}" width="18" height="${y2 - y1 - 12}" rx="3" fill="${liq}" fill-opacity=".45"/><rect x="${x - 9}" y="${y1 + 12}" width="18" height="${y2 - y1 - 12}" rx="3" fill="url(#LGliq)"/><rect x="${x - 9}" y="${y1}" width="18" height="${y2 - y1}" rx="3" fill="none" stroke="${GL}" stroke-width="2.5"/>${Array.from({ length: 10 }, (_, i) => `<path d="M${x - 9} ${y1 + 10 + i * (y2 - y1 - 20) / 9}h7" stroke="#6f8a96" stroke-width="1.3"/>`).join('')}<path d="M${x - 5} ${y1 + 6}V${y2 - 6}" stroke="#fff" stroke-width="2" opacity=".45"/><path d="M${x - 3} ${y2}V${y2 + 26}M${x + 3} ${y2}V${y2 + 26}" stroke="${GL}" stroke-width="2.5"/><rect x="${x - 12}" y="${y2 + 6}" width="24" height="8" rx="2" fill="url(#LGiron)"/><rect x="${x + 10}" y="${y2 + 4}" width="10" height="12" rx="2" fill="#2b6a3c"/>`;
+  const conical = (x, y, liq, op = 0.6) => { const bd = `M${x - 12} ${y}V${y + 30}L${x - 52} ${y + 110}Q${x - 56} ${y + 120} ${x - 44} ${y + 120}H${x + 44}Q${x + 56} ${y + 120} ${x + 52} ${y + 110}L${x + 12} ${y + 30}V${y}`, lq = `M${x - 36} ${y + 78}H${x + 36}L${x + 52} ${y + 110}Q${x + 56} ${y + 118} ${x + 44} ${y + 118}H${x - 44}Q${x - 56} ${y + 118} ${x - 52} ${y + 110}Z`; return lgShadow(x, y + 122, 56, 4) + `<path d="${bd}Z" fill="url(#LGglass)"/><path d="${lq}" fill="${liq}" fill-opacity="${op}"/><path d="${lq}" fill="url(#LGliq)"/><path d="M${x - 35} ${y + 78}H${x + 35}" stroke="#fff" stroke-width="1.4" opacity=".5"/><path d="${bd}" fill="none" stroke="${GL}" stroke-width="3"/><path d="M${x - 15} ${y - 2}H${x + 15}" stroke="${GL}" stroke-width="3" stroke-linecap="round"/><path d="M${x - 24} ${y + 62}L${x - 44} ${y + 104}" stroke="#fff" stroke-width="3" opacity=".4" stroke-linecap="round"/>`; };
 
   /* ---------- redox titrations ---------- */
   function redoxTitration(o = {}) {
@@ -3278,7 +3302,7 @@
   const splint = (x1, y1, x2, y2) => `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="#d9b07a" stroke-width="6" stroke-linecap="round"/><path d="M${x1} ${y1}L${x2} ${y2}" stroke="#a87a45" stroke-width="1.2"/>`;
   const flameS = (x, y, s = 1, k) => `<path d="M${x} ${y}q${-10 * s} ${-12 * s} ${-2 * s} ${-30 * s}q${4 * s} ${10 * s} ${8 * s} ${8 * s}q${2 * s} ${-8 * s} ${-2 * s} ${-14 * s}q${14 * s} ${12 * s} ${8 * s} ${30 * s}q${-4 * s} ${8 * s} ${-12 * s} ${6 * s}z" fill="#ffb02e"/><path d="M${x} ${y - 2 * s}q${-4 * s} ${-8 * s} 0 ${-16 * s}q${5 * s} ${8 * s} 0 ${16 * s}z" fill="#fff2a8"/>`;
   const bubbles = (x, y, n, sp = 14) => Array.from({ length: n }, (_, i) => `<circle cx="${f(x + (i % 2 ? 3 : -3))}" cy="${f(y - i * sp)}" r="${f(2.5 + (i % 3))}" fill="none" stroke="#fff" stroke-width="1.3" opacity=".85"/>`).join('');
-  const gauze = (x, y, w) => `<rect x="${x - w / 2}" y="${y}" width="${w}" height="5" fill="#9aa3ad"/><rect x="${x - w / 4}" y="${y}" width="${w / 2}" height="5" fill="#e8e2d6"/>`;
+  const gauze = (x, y, w) => `<rect x="${x - w / 2}" y="${y}" width="${w}" height="5" rx="1" fill="url(#LGsteelV)"/>` + Array.from({ length: Math.floor(w / 6) }, (_, i) => `<path d="M${x - w / 2 + 3 + i * 6} ${y}v5" stroke="#55606c" stroke-width=".8"/>`).join('') + `<rect x="${x - w / 4}" y="${y}" width="${w / 2}" height="5" fill="#efe9dc" opacity=".9"/>`;
 
   function cracking2(o = {}) {
     const W = 960, H = 420, k = id('ck');
@@ -3304,7 +3328,7 @@
   function gasTests2(o = {}) {
     const W = 1000, H = 400, k = id('gt');
     let g = T(500, 30, 'The four gas tests', { size: 17, w: 700 });
-    const rack = `<rect x="40" y="318" width="920" height="14" rx="3" fill="${WOOD}"/><rect x="40" y="250" width="920" height="10" rx="3" fill="${WOOD}" opacity=".9"/>`;
+    const rack = `<rect x="40" y="318" width="920" height="14" rx="3" fill="url(#LGwood)"/><rect x="40" y="250" width="920" height="10" rx="3" fill="url(#LGwood)"/>`;
     g += rack;
     // hydrogen: inverted test tube of gas, lit splint at the mouth
     g += tubeG(125, 150, 170) + splint(128, 146, 200, 70) + flameS(126, 148, .9) + T(84, 112, 'POP!', { size: 18, w: 700, fill: '#e0a64a' }) + `<path d="M104 126l-10 -6M100 138l-14 0M112 116l-4 -12" stroke="#e0a64a" stroke-width="2"/>`;
@@ -3322,7 +3346,7 @@
     return wrap(W, H, o.aria || 'Tests for hydrogen, oxygen, carbon dioxide and chlorine', '', g);
   }
 
-  const conicalF = (x, by, w, h, liq, lvl = .35) => { const t = by - h, nw = 14; let s = ''; if (liq) { const ly = by - h * lvl * .9, hw = nw + (w / 2 - nw) * (1 - (ly - t - 20) / (h - 20)); s += `<path d="M${f(x - hw)} ${f(ly)}H${f(x + hw)}L${x + w / 2 - 4} ${by - 4}H${x - w / 2 + 4}Z" fill="${liq}" fill-opacity=".5"/>`; } return s + `<path d="M${x - nw} ${t}V${t + 20}L${x - w / 2} ${by - 4}Q${x - w / 2} ${by} ${x - w / 2 + 6} ${by}H${x + w / 2 - 6}Q${x + w / 2} ${by} ${x + w / 2} ${by - 4}L${x + nw} ${t + 20}V${t}" fill="none" stroke="${GL}" stroke-width="3"/>` + glassSheen(x - w / 2 + 14, by - h * .45, h * .4); };
+  const conicalF = (x, by, w, h, liq, lvl = .35) => { const t = by - h, nw = 14; let s = ''; if (liq) { const ly = by - h * lvl * .9, hw = nw + (w / 2 - nw) * (1 - (ly - t - 20) / (h - 20)); s += `<path d="M${f(x - hw)} ${f(ly)}H${f(x + hw)}L${x + w / 2 - 4} ${by - 4}H${x - w / 2 + 4}Z" fill="${liq}" fill-opacity=".5"/>`; } return lgShadow(x, by + 2, w * .55, 4) + `<path d="M${x - nw} ${t}V${t + 20}L${x - w / 2} ${by - 4}Q${x - w / 2} ${by} ${x - w / 2 + 6} ${by}H${x + w / 2 - 6}Q${x + w / 2} ${by} ${x + w / 2} ${by - 4}L${x + nw} ${t + 20}V${t}Z" fill="url(#LGglass)"/>` + s + `<path d="M${x - nw} ${t}V${t + 20}L${x - w / 2} ${by - 4}Q${x - w / 2} ${by} ${x - w / 2 + 6} ${by}H${x + w / 2 - 6}Q${x + w / 2} ${by} ${x + w / 2} ${by - 4}L${x + nw} ${t + 20}V${t}" fill="none" stroke="${GL}" stroke-width="3"/>` + glassSheen(x - w / 2 + 14, by - h * .45, h * .4); };
   function separation2(o = {}) {
     const W = 1000, H = 460, k = id('sp');
     let g = bench(30, 970, 436);
@@ -3343,7 +3367,7 @@
     const W = 960, H = 420, k = id('ru');
     const tube = x => `<path d="M${x - 30} 90V320Q${x - 30} 352 ${x} 352Q${x + 30} 352 ${x + 30} 320V90" fill="#fff" fill-opacity=".06" stroke="${GL}" stroke-width="3"/>` + glassSheen(x - 20, 92, 230);
     const nail = (x, y1, y2, rust) => `<defs>${lg(k + x, '#d6dce2', '#7d858f', false, '#f4f7f9')}</defs><path d="M${x - 4} ${y1}V${y2 - 14}L${x} ${y2}L${x + 4} ${y2 - 14}V${y1}Z" fill="url(#${k + x})" stroke="#55606c" stroke-width="1"/><rect x="${x - 11}" y="${y1 - 6}" width="22" height="7" rx="2" fill="url(#${k + x})" stroke="#55606c"/>` + (rust ? [0, 1, 2, 3, 4, 5].map(i => `<ellipse cx="${x + (i % 2 ? 2 : -2)}" cy="${y1 + 18 + i * 22}" rx="${5 + (i % 3)}" ry="${7 + (i % 2) * 3}" fill="#b5541f" opacity=".85"/>`).join('') + `<rect x="${x - 11}" y="${y1 - 6}" width="12" height="7" fill="#b5541f" opacity=".7"/>` : '');
-    let g = `<rect x="80" y="330" width="800" height="16" rx="4" fill="${WOOD}"/><rect x="80" y="160" width="800" height="12" rx="4" fill="${WOOD}" opacity=".85"/>`;
+    let g = `<rect x="80" y="330" width="800" height="16" rx="4" fill="url(#LGwood)"/><rect x="80" y="160" width="800" height="12" rx="4" fill="url(#LGwood)"/>`;
     g += tube(160) + `<path d="M132 200H188V320Q188 346 160 346Q132 346 132 320Z" fill="${WATER}" opacity=".45"/>` + nail(160, 140, 300, true) + T(160, 380, 'Air and water', { size: 15, w: 700 }) + T(160, 400, 'nail rusts', { size: 13, fill: '#c8662a' });
     g += tube(480) + `<path d="M452 150H508V320Q508 346 480 346Q452 346 452 320Z" fill="${WATER}" opacity=".45"/><rect x="452" y="138" width="56" height="14" fill="#f0d24a" opacity=".85"/>` + bung(480, 92, 62) + nail(480, 160, 300, false) + T(480, 380, 'Boiled water + oil layer', { size: 15, w: 700 }) + T(480, 400, 'no air: no rust', { size: 13 }) + T(560, 146, 'oil stops air dissolving', { size: 12, a: 'start' }) + `<path d="M556 142L512 144" stroke="currentColor" stroke-width="1"/>`;
     g += tube(800) + `<path d="M772 268H828V320Q828 346 800 346Q772 346 772 320Z" fill="#f4f4f4" opacity=".5"/>` + Array.from({ length: 22 }, (_, i) => `<circle cx="${776 + (i * 13) % 48}" cy="${276 + Math.floor(i / 4) * 12}" r="5" fill="#fbfbfb" stroke="#c9ccd2"/>`).join('') + `<path d="M772 262H828" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="3 3"/>` + bung(800, 92, 62) + nail(800, 120, 250, false) + T(800, 380, 'Dry air (calcium chloride)', { size: 15, w: 700 }) + T(800, 400, 'no water: no rust', { size: 13 }) + T(740, 296, 'drying agent', { size: 12, a: 'end' });
