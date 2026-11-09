@@ -5,7 +5,7 @@
   'use strict';
   const S = root.SciFig;
   if (!S) return;
-  const labels = S._labels, wrap0 = S._wrap, f = S._f, esc = S._esc;
+  const labels = S._labels, tag = S._tag, near = S._near, wrap0 = S._wrap, f = S._f, esc = S._esc;
   /* shared lab gradients: helpers write url(#LGname); wrap() swaps in ids unique to each figure */
   const LGD = (u, n) => ({
     glass: `<linearGradient id="${u}glass" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".5"/><stop offset=".14" stop-color="#d9eef8" stop-opacity=".2"/><stop offset=".5" stop-color="#e8f5fb" stop-opacity=".07"/><stop offset=".84" stop-color="#d9eef8" stop-opacity=".16"/><stop offset="1" stop-color="#ffffff" stop-opacity=".4"/></linearGradient>`,
@@ -31,7 +31,8 @@
   let uid = 0;
   const id = p => 'sg' + p + (++uid);
   /* helpers */
-  const T = (x, y, s, o = {}) => `<text x="${f(x)}" y="${f(y)}" font-size="${o.size || 15}" text-anchor="${o.a || 'middle'}" class="sf-lab"${o.w ? ` font-weight="${o.w}"` : ''}${o.fill ? ` style="fill:${o.fill}"` : ''}>${esc(s)}</text>`;
+  const subs = s => s.indexOf('_') < 0 ? s : s.replace(/_(?:\{([^}]+)\}|([A-Za-z0-9]+))([^_]*)/g, (m, a, b, rest) => `<tspan dy="0.32em" font-size="72%">${a || b}</tspan>` + (rest ? `<tspan dy="-0.23em">${rest}</tspan>` : ''));
+  const T = (x, y, s, o = {}) => `<text x="${f(x)}" y="${f(y)}" font-size="${o.size || 15}" text-anchor="${o.a || 'middle'}" class="sf-lab"${o.w ? ` font-weight="${o.w}"` : ''}${o.fill ? ` style="fill:${o.fill}"` : ''}>${subs(esc(s))}</text>`;
   const arrow = (x1, y1, x2, y2, col = 'currentColor', w = 3, head = 12) => {
     const a = Math.atan2(y2 - y1, x2 - x1), hx = x2 - Math.cos(a) * head, hy = y2 - Math.sin(a) * head;
     const p = (s) => `${f(hx + Math.cos(a + s * Math.PI / 2) * head * 0.5)} ${f(hy + Math.sin(a + s * Math.PI / 2) * head * 0.5)}`;
@@ -73,19 +74,19 @@
     // radiator
     g += `<rect x="${x0 + 80}" y="${gy - 42}" width="84" height="34" rx="4" fill="#f1f1f1" stroke="#bbb"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M${x0 + 88 + i * 13} ${gy - 38}v26" stroke="#ccc" stroke-width="3"/>`).join('')}`;
     // energy-transfer arrows (thin where insulated)
-    g += wavy(mid - 60, ey - 40, mid - 60, py + 40, HOT, 2) + wavy(x0 + 10, gy - 140, x0 - 70, gy - 140, HOT, 2);
-    g += wavy(x1 - 10, ey + 70, x1 + 70, ey + 70, HOT, 2);
+    g += wavy(mid - 60, ey - 40, mid - 60, py + 40, HOT, 2) + wavy(x0 + 10, ey + 105, x0 - 48, ey + 105, HOT, 2);
+    g += wavy(x1 - 10, ey + 70, x1 + 46, ey + 70, HOT, 2);
     g += T(470, 40, o.title || 'Warm house, cold day: how insulation reduces energy transfer', { size: 17, w: 700 });
-    g += T(553, ey + 60, 'Inside', { size: 15, w: 700, fill: '#ffd0b0' }) + T(553, ey + 80, '20 °C', { size: 15, w: 700, fill: '#ffd0b0' }) + T(W - 110, 110, 'Outside 5 °C', { size: 15, w: 700, fill: COLD });
+    g += T(556, ey + 104, 'Inside', { size: 15, w: 700, fill: '#b5532a' }) + T(556, ey + 123, '20 °C', { size: 15, w: 700, fill: '#b5532a' }) + T(W - 110, 110, 'Outside 5 °C', { size: 15, w: 700, fill: COLD });
     const labs = [
       { x: x0 + 60, y: ey - 20, t: 'Loft insulation: mineral wool traps air', side: 'l' },
       { x: x0 + 23, y: ey + 60, t: 'Cavity wall insulation: foam fills the gap', side: 'l' },
       { x: x0 + 8, y: ey + 150, t: 'Thick brick walls', side: 'l' },
       { x: x0 + 90, y: gy - 25, t: 'Radiator (energy source)', side: 'l' },
       { x: 506, y: ey + 50, t: 'Double glazing: gas gap between two panes', side: 'r', ly: ey + 20 },
-      { x: x1 - 118, y: gy - 5, t: 'Draught excluder stops warm air escaping', side: 'r' },
-      { x: x1 + 40, y: ey + 70, t: 'Energy transferred to the cold surroundings', side: 'r' }];
-    return wrap(W, H, o.aria || 'Cutaway house showing loft insulation, cavity wall insulation, double glazing and a draught excluder', '', g + labels(labs, { W, H, lx: 250, rx: 690, size: 15, top: 70 }));
+      { x: x1 - 118, y: gy - 5, t: 'Draught excluder stops warm air escaping', side: 'r', ly: gy - 45 },
+      { x: x1 + 30, y: ey + 70, t: 'Energy transferred to the cold surroundings', side: 'r', ly: ey + 95 }];
+    return wrap(W, H, o.aria || 'Cutaway house showing loft insulation, cavity wall insulation, double glazing and a draught excluder', '', g + labels(labs, { W, H, lx: 250, rx: 712, size: 15, top: 70 }));
   }
 
   /* ---------- UK three-pin plug ---------- */
@@ -105,20 +106,20 @@
     g += wire('#3b9b3f', `M${cx} 392C${cx} 330 ${cx} 260 ${E[0]} ${E[1] + 34}`, '#f2d23a');
     g += wire('#2f6fd6', `M${cx - 14} 392C${cx - 40} 360 ${N[0] + 10} 340 ${N[0]} ${N[1] + 16}`);
     g += wire('#8a5a2b', `M${cx + 14} 392C${cx + 40} 360 ${cx + 55} 330 ${cx + 55} 284`);
-    g += `<path d="M${cx + 55} 196V${L[1] - 16}" stroke="#c8792a" stroke-width="5"/><path d="M${cx + 55} 196C${cx + 70} 180 ${L[0]} 200 ${L[0]} ${L[1] - 12}" stroke="#c8792a" stroke-width="5" fill="none"/>`;
+    g += `<path d="M${cx + 55} 202C${cx + 70} 180 ${L[0]} 200 ${L[0]} ${L[1] - 12}" stroke="#c8792a" stroke-width="5" fill="none"/>`;
     [[E[0], E[1] + 30], [N[0], N[1] + 12], [cx + 55, 284]].forEach(([x, y]) => g += `<circle cx="${x}" cy="${y}" r="5" fill="#c8792a"/>`);
     const labs = [
-      { x: E[0] + 12, y: E[1] - 10, t: 'Earth pin', side: 'r', ly: 110 },
-      { x: cx + 8, y: 330, t: 'Earth wire (green and yellow): safety wire, 0 V', side: 'r', ly: 160 },
-      { x: cx + 62, y: 240, t: 'Fuse: melts if the current is too large', side: 'r', ly: 220 },
-      { x: L[0] + 20, y: L[1], t: 'Live pin', side: 'r', ly: 290 },
-      { x: cx + 40, y: 370, t: 'Live wire (brown): about 230 V', side: 'r', ly: 350 },
-      { x: N[0] - 20, y: N[1], t: 'Neutral pin', side: 'l', ly: 300 },
-      { x: cx - 30, y: 375, t: 'Neutral wire (blue): close to 0 V', side: 'l', ly: 360 },
-      { x: cx - 48, y: 403, t: 'Cable grip holds the cable', side: 'l', ly: 420 },
-      { x: cx - 150, y: 120, t: 'Plastic case: an insulator', side: 'l', ly: 140 },
-      { x: cx - 34, y: 480, t: 'Outer insulation', side: 'l', ly: 480 }];
-    return wrap(W, H, o.aria || 'Inside a UK three-pin plug: live, neutral and earth wires, fuse and cable grip', '', labels(labs, { W, H, lx: 250, rx: 610, size: 15 }) + g);
+      { x: E[0] + 9, y: E[1] - 16, t: 'Earth pin', side: 'r', ly: 110 },
+      { x: cx - 5, y: 235, t: 'Earth wire (green and yellow): safety wire, 0 V', side: 'l', ly: 215 },
+      { x: cx + 66, y: 226, t: 'Fuse: melts if the current is too large', side: 'r', ly: 190 },
+      { x: L[0] + 18, y: L[1], t: 'Live pin', side: 'r', ly: 290 },
+      { x: cx + 46, y: 356, t: 'Live wire (brown): about 230 V', side: 'r', ly: 356 },
+      { x: N[0] - 18, y: N[1], t: 'Neutral pin', side: 'l', ly: 290 },
+      { x: cx - 50, y: 356, t: 'Neutral wire (blue): close to 0 V', side: 'l', ly: 356 },
+      { x: cx - 46, y: 408, t: 'Cable grip holds the cable', side: 'l', ly: 420 },
+      { x: cx - 158, y: 120, t: 'Plastic case: an insulator', side: 'l', ly: 120 },
+      { x: cx - 30, y: 480, t: 'Outer insulation', side: 'l', ly: 480 }];
+    return wrap(W, H, o.aria || 'Inside a UK three-pin plug: live, neutral and earth wires, fuse and cable grip', '', g + labels(labs, { W, H, lx: 250, rx: 610, size: 15 }));
   }
 
   /* ---------- the National Grid ---------- */
@@ -157,7 +158,7 @@
     g += `<circle cx="130" cy="220" r="34" fill="none" stroke="currentColor" stroke-width="3"/><path d="M110 220q10 -22 20 0t20 0" stroke="currentColor" stroke-width="3" fill="none"/><path d="M130 186V125H150M130 254V315H150" stroke="currentColor" stroke-width="3" fill="none"/>`;
     g += `<rect x="712" y="190" width="40" height="60" fill="none" stroke="currentColor" stroke-width="3"/><path d="M710 125H732V190M710 315H732V250" stroke="currentColor" stroke-width="3" fill="none"/>`;
     g += T(430, 40, `${ns > np ? 'Step-up' : 'Step-down'} transformer:  Vp / Vs = Np / Ns`, { size: 17, w: 700 });
-    const labs = [{ x: 268, y: 220, t: `Primary coil (${np} turns)`, side: 'l', ly: 380 }, { x: 108, y: 210, t: 'Alternating p.d. in', side: 'l', ly: 90 },
+    const labs = [{ x: 268, y: 220, t: `Primary coil (${np} turns)`, side: 'l', ly: 380 }, { x: 156, y: 200, t: 'Alternating p.d. in', side: 'l', ly: 90 },
       { x: 430, y: 100, t: 'Iron core: carries the changing field', side: 'r', ly: 70 }, { x: 600, y: 200, t: `Secondary coil (${ns} turns)`, side: 'r', ly: 390 }, { x: 750, y: 220, t: 'Output to the load', side: 'r', ly: 220 }];
     return wrap(W, H, o.aria || 'Transformer: primary and secondary coils wound on an iron core', '', g + labels(labs, { W, H, lx: 120, rx: 770, size: 15 }));
   }
@@ -431,7 +432,7 @@
     const pos = z => { if (z === 1) return [1, 1]; if (z === 2) return [18, 1];
       if (z <= 10) return [z <= 4 ? z - 2 : z + 8, 2]; if (z <= 18) return [z <= 12 ? z - 10 : z, 3];
       const p = z <= 36 ? 4 : z <= 54 ? 5 : 6, s = p === 4 ? 18 : p === 5 ? 36 : 54; let c = z - s; if (p === 6 && z > 57) c = z - 54 - 14 + 0; return [p === 6 && z > 57 ? c : c, p]; };
-    const nonmetal = new Set([1, 2, 5, 6, 7, 8, 9, 10, 14, 15, 16, 17, 18, 32, 33, 34, 35, 36, 51, 52, 53, 54, 85, 86]);
+    const nonmetal = new Set([1, 2, 5, 6, 7, 8, 9, 10, 14, 15, 16, 17, 18, 33, 34, 35, 36, 52, 53, 54, 85, 86]);
     let g = '';
     const zs = []; for (let z = 1; z <= 56; z++) zs.push(z); zs.push(57); for (let z = 72; z <= 86; z++) zs.push(z);
     zs.forEach(z => { let [c, p] = pos(z); if (z >= 72) c = z - 68; if (z === 57) c = 3;
@@ -440,7 +441,7 @@
       const sym = z >= 72 ? SY[z - 15] : SY[z - 1];
       g += `<rect x="${x + 2}" y="${y + 2}" width="${cw - 4}" height="${ch - 4}" rx="5" fill="${col}"/>` + T(x + cw / 2, y + 22, String(z), { size: 10, fill: '#fff' }) + T(x + cw / 2, y + 40, sym, { size: 16, w: 700, fill: '#fff' }); });
     // staircase between metals and non-metals
-    g += `<path d="M${x0 + 12 * cw} ${y0 + cw}H${x0 + 13 * cw}V${y0 + 2 * ch}H${x0 + 14 * cw}V${y0 + 3 * ch}H${x0 + 15 * cw}V${y0 + 4 * ch}H${x0 + 16 * cw}V${y0 + 6 * ch}" stroke="#fff" stroke-width="4" fill="none"/>`;
+    g += `<path d="M${x0 + 12 * cw} ${y0 + ch}V${y0 + 2 * ch}H${x0 + 13 * cw}V${y0 + 3 * ch}H${x0 + 14 * cw}V${y0 + 4 * ch}H${x0 + 15 * cw}V${y0 + 5 * ch}H${x0 + 16 * cw}V${y0 + 6 * ch}" stroke="currentColor" stroke-width="4" stroke-linejoin="round" fill="none"/>`;
     for (let c = 1; c <= 18; c++) { const n = c <= 2 ? c : c >= 13 ? (c === 18 ? 0 : c - 10) : ''; if (n !== '') g += T(x0 + (c - 0.5) * cw, y0 - 10, String(n), { size: 14, w: 700 }); }
     g += T(x0 + 9.5 * cw, 40, 'Groups are columns (same outer electrons); periods are rows (same number of shells)', { size: 15, w: 700 });
     const key = [['#e0533f', 'Group 1: alkali metals'], ['#c98a3a', 'Transition metals'], ['#8a94a6', 'Other metals'], ['#3f8fd6', 'Non-metals'], ['#3fb27f', 'Group 7: halogens'], ['#8e6bd6', 'Group 0: noble gases']];
@@ -486,7 +487,7 @@
     const panel = (x, exo) => { const ox = x + 50, oy = 330, w = 330, rL = exo ? 190 : 260, pL = exo ? 270 : 170, pk = 100;
       let s = `<path d="M${ox} 60V${oy}H${ox + w}" stroke="currentColor" stroke-width="2.5" fill="none"/>` + T(ox - 14, 190, 'Energy', { size: 14, a: 'middle' }).replace('<text', `<text transform="rotate(-90 ${ox - 18} 190)"`) + T(ox + w / 2, oy + 30, 'Progress of reaction', { size: 14 });
       s += `<path d="M${ox + 10} ${rL}H${ox + 80}C${ox + 130} ${rL} ${ox + 140} ${pk} ${ox + 170} ${pk}C${ox + 200} ${pk} ${ox + 210} ${pL} ${ox + 260} ${pL}H${ox + 320}" stroke="${exo ? '#ef5b4c' : '#3f8fd6'}" stroke-width="4" fill="none"/>`;
-      s += T(ox + 45, rL - 10, 'Reactants', { size: 13 }) + T(ox + 290, pL - 10, 'Products', { size: 13 });
+      s += T(ox + 45, rL - 10, 'Reactants', { size: 13 }) + T(ox + (exo ? 282 : 290), exo ? pL + 19 : pL - 10, 'Products', { size: 13 });
       s += dbl(ox + 95, rL, ox + 95, pk) + T(ox + 88, pk + 20, 'Activation', { size: 12, a: 'end' }) + T(ox + 88, pk + 35, 'energy', { size: 12, a: 'end' }) + `<path d="M${ox + 95} ${pk}H${ox + 170}" stroke="currentColor" stroke-dasharray="4 4" opacity=".6"/>`;
       s += `<path d="M${ox + 260} ${rL}H${ox + 320}" stroke="currentColor" stroke-dasharray="4 4"/>` + dbl(ox + 305, rL, ox + 305, pL) + T(ox + 314, (rL + pL) / 2 - 3, exo ? 'Energy' : 'Energy', { size: 12, a: 'start' }) + T(ox + 314, (rL + pL) / 2 + 12, exo ? 'given out' : 'taken in', { size: 12, a: 'start' });
       return s + T(x + 210, 34, exo ? 'Exothermic: products lower than reactants' : 'Endothermic: products higher than reactants', { size: 15, w: 700 }); };
@@ -537,23 +538,28 @@
   function bloodCells(o = {}) {
     const W = 900, H = 420, r = S._rnd(31);
     let g = `<rect x="40" y="60" width="520" height="320" rx="20" fill="#f5d98a" opacity=".55"/>`;
-    for (let i = 0; i < 22; i++) { const x = 70 + r() * 460, y = 90 + r() * 260; if (Math.hypot(x - 300, y - 210) < 70) continue; g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="22" ry="16" fill="#d93a3a" transform="rotate(${f(r() * 180)} ${f(x)} ${f(y)})"/><ellipse cx="${f(x)}" cy="${f(y)}" rx="9" ry="6" fill="#a82222" transform="rotate(${f(r() * 180)} ${f(x)} ${f(y)})"/>`; }
+    const PL = [[470, 120], [110, 330], [420, 330], [200, 110]], RC = [];
+    for (let i = 0; i < 60 && RC.length < 20; i++) { const x = 70 + r() * 460, y = 90 + r() * 260, a = r() * 180; if (Math.hypot(x - 300, y - 210) < 76 || PL.some(([px, py]) => Math.hypot(x - px - 5, y - py - 2) < 34) || RC.some(([cx2, cy2]) => Math.hypot(x - cx2, y - cy2) < 30) || Math.hypot(x - 520, y - 250) < 40 || (x > 330 && Math.abs(y - 224) < 27)) continue; RC.push([x, y]); g += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="22" ry="16" fill="#d93a3a" transform="rotate(${f(a)} ${f(x)} ${f(y)})"/><ellipse cx="${f(x)}" cy="${f(y)}" rx="10" ry="6.5" fill="#b92c2c" opacity=".55" transform="rotate(${f(a)} ${f(x)} ${f(y)})"/>`; }
+    const rc = near(RC, 520, 120);
     g += `<circle cx="300" cy="210" r="48" fill="#f2f0f6" stroke="#b9b2cc" stroke-width="2"/><path d="M272 196q14 -26 34 -6q20 -14 22 12q-8 26 -30 14q-24 14 -26 -20z" fill="#7a4ab8"/>`;
-    [[470, 120], [110, 330], [420, 330], [200, 110]].forEach(([x, y]) => g += `<path d="M${x} ${y}l6 -5 7 4 -1 7 -7 3z" fill="#e0a64a"/>`);
-    const labs = [{ x: 250, y: 150, t: 'Red blood cell: no nucleus, biconcave shape, haemoglobin carries oxygen', side: 'r', ly: 110 }, { x: 345, y: 210, t: 'White blood cell: has a nucleus; part of the immune system', side: 'r', ly: 210 },
-      { x: 476, y: 118, t: 'Platelets: small cell fragments that help blood clot', side: 'r', ly: 160 }, { x: 520, y: 300, t: 'Plasma: liquid carrying cells, glucose, CO₂, urea, hormones', side: 'r', ly: 300 }];
+    PL.forEach(([x, y]) => g += `<path d="M${x} ${y}l6 -5 7 4 -1 7 -7 3z" fill="#e0a64a" stroke="#a8742a"/>`);
+    const top = rc[1] < 122;
+    const labs = [{ x: rc[0] + 12, y: rc[1], t: 'Red blood cell: no nucleus, biconcave shape, haemoglobin carries oxygen', side: 'r', ly: top ? 100 : 165 }, { x: 340, y: 222, t: 'White blood cell: has a nucleus; part of the immune system', side: 'r', ly: 225 },
+      { x: 476, y: 122, t: 'Platelets: small cell fragments that help blood clot', side: 'r', ly: top ? 160 : 100 }, { x: 520, y: 250, t: 'Plasma: liquid carrying cells, glucose, CO₂, urea, hormones', side: 'r', ly: 300 }];
     return wrap(W, H, o.aria || 'Components of blood seen under a microscope', '', g + labels(labs, { W, H, lx: 30, rx: 590, size: 14 }));
   }
 
   /* ---------- brain regions ---------- */
   function brain(o = {}) {
-    const W = 880, H = 440, k = id('br');
+    const W = 880, H = 440, k = id('br'), lv = S._LV(o.level);
     let g = `<defs><pattern id="${k}" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 20q10 -14 20 0t20 0M0 36q10 -10 20 0t20 0M0 6q10 -10 20 0t20 0" stroke="#c97a8a" stroke-width="2" fill="none"/></pattern></defs>`;
     g += `<path d="M260 250C220 140 300 70 420 70C560 66 640 140 620 240C610 290 560 300 520 296L470 300C430 300 360 300 320 296C280 292 268 276 260 250Z" fill="#f2b5bf"/><path d="M260 250C220 140 300 70 420 70C560 66 640 140 620 240C610 290 560 300 520 296L470 300C430 300 360 300 320 296C280 292 268 276 260 250Z" fill="url(#${k})"/>`;
     g += `<path d="M520 296C560 300 610 300 616 330C612 366 560 372 520 356C496 344 498 312 520 296Z" fill="#d98a9a"/>${[0, 1, 2, 3].map(i => `<path d="M${514 + i * 2} ${310 + i * 12}H${600 - i * 4}" stroke="#b56a7a" stroke-width="2"/>`).join('')}`;
     g += `<path d="M470 300C468 330 480 360 486 400H452C450 370 444 330 440 300Z" fill="#e8a8b4" stroke="#c97a8a" stroke-width="2"/>`;
     const labs = [{ x: 380, y: 130, t: 'Cerebral cortex: memory, language, intelligence and consciousness', side: 'l', ly: 90 }, { x: 565, y: 330, t: 'Cerebellum: balance and coordinating muscle movement', side: 'r', ly: 340 },
-      { x: 466, y: 370, t: 'Medulla: unconscious activities, e.g. heartbeat and breathing', side: 'r', ly: 400 }, { x: 300, y: 260, t: 'Front of the head', side: 'l', ly: 300 }];
+      { x: 466, y: 370, t: (lv === 2 ? 'Medulla oblongata: controls heart rate and breathing' : 'Medulla: unconscious activities, e.g. heartbeat and breathing'), side: 'r', ly: 400 }];
+    if (lv === 2) { g += `<ellipse cx="402" cy="296" rx="24" ry="11" fill="#b9648a" stroke="#8a4466" stroke-width="1.5"/><path d="M398 306v8" stroke="#8a4466" stroke-width="3"/><circle cx="397" cy="322" r="9" fill="#8e5bd6" stroke="#5e3784" stroke-width="1.5"/>`; labs[0].t = 'Cerebrum: memory, language, thought and voluntary movement'; labs.push({ x: 388, y: 296, t: 'Hypothalamus: temperature and water balance; controls the pituitary', side: 'l', ly: 250 }, { x: 390, y: 323, t: 'Pituitary gland: releases hormones', side: 'l', ly: 345 }); }
+    g += arrow(250, 395, 200, 395, 'currentColor', 2, 9) + T(258, 400, 'front of the head', { size: 13, a: 'start' });
     return wrap(W, H, o.aria || 'Side view of the brain showing the cerebral cortex, cerebellum and medulla', '', g + labels(labs, { W, H, lx: 240, rx: 650, size: 14 }));
   }
 
@@ -570,7 +576,7 @@
         : ['Vasoconstriction: vessels near the surface narrow,', 'less energy transferred to the surroundings', 'Little or no sweat; shivering releases energy', 'Hairs stand up, trapping a layer of air'];
       return s + notes.map((t, i) => T(x + 200, 400 + i * 0 + [0, 14, 30, 46][i] - 8, t, { size: 12 })).join(''); };
     let g = panel(20, true) + panel(580, false);
-    g += [[76, 284, 102], [134, 330, 124], [210, 330, 170], [250, 266, 318], [308, 123, 275]].map(([y, px, py]) => `<path d="M454 ${y - 4}L${px} ${py}" stroke="currentColor" stroke-width="1.2" opacity=".7"/><circle cx="${px}" cy="${py}" r="2.6" fill="currentColor"/>`).join('');
+    g += [[76, 284, 102], [134, 330, 124], [210, 330, 170], [250, 266, 318], [308, 683, 275]].map(([y, px, py]) => `<path d="M${px > 500 ? 546 : 454} ${y - 4}L${px} ${py}" stroke="currentColor" stroke-width="1.2" opacity=".7"/><circle cx="${px}" cy="${py}" r="2.6" fill="currentColor"/>`).join('');
     g += T(500, 76, 'Sweat pore', { size: 13 }) + T(500, 210, 'Blood vessel', { size: 13 }) + T(500, 134, 'Epidermis', { size: 13 }) + T(500, 300, 'Hair erector', { size: 13 }) + T(500, 316, 'muscle', { size: 13 }) + T(500, 250, 'Sweat gland', { size: 13 });
     return wrap(W, H + 20, o.aria || 'Skin responses when the body is too hot and too cold', '', g);
   }
@@ -582,10 +588,10 @@
       <rect x="${cx - 130}" y="176" width="40" height="230" rx="20" transform="rotate(8 ${cx - 110} 176)"/><rect x="${cx + 90}" y="176" width="40" height="230" rx="20" transform="rotate(-8 ${cx + 110} 176)"/>
       <rect x="${cx - 80}" y="410" width="66" height="140" rx="24"/><rect x="${cx + 14}" y="410" width="66" height="140" rx="24"/></g>`;
     const gl = (x, y, r, c) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" stroke="#fff" stroke-width="2"/>`;
-    g += gl(cx, 96, 8, '#8e5bd6') + gl(cx - 12, 156, 9, '#3f7fd6') + gl(cx + 12, 156, 9, '#3f7fd6') + gl(cx - 34, 300, 9, '#e0a64a') + gl(cx + 34, 300, 9, '#e0a64a') + `<ellipse cx="${cx + 12}" cy="330" rx="34" ry="10" fill="#3fb27f" stroke="#fff" stroke-width="2"/>` + gl(cx - 30, 392, 8, '#e0533f') + gl(cx + 30, 392, 8, '#e0533f');
+    g += gl(cx, 96, 8, '#8e5bd6') + gl(cx - 12, 156, 9, '#3f7fd6') + gl(cx + 12, 156, 9, '#3f7fd6') + gl(cx - 34, 300, 9, '#e0a64a') + gl(cx + 34, 300, 9, '#e0a64a') + `<ellipse cx="${cx + 12}" cy="330" rx="34" ry="10" fill="#3fb27f" stroke="#fff" stroke-width="2"/>` + gl(cx - 30, 392, 8, '#e0533f') + gl(cx + 30, 392, 8, '#e0533f') + gl(cx - 9, 447, 7, '#d98a2b') + gl(cx + 9, 447, 7, '#d98a2b');
     const labs = [{ x: cx - 8, y: 96, t: "Pituitary gland: the 'master gland' (FSH, LH, ADH, TSH)", side: 'l', ly: 70 }, { x: cx - 20, y: 156, t: 'Thyroid: thyroxine controls metabolic rate', side: 'l', ly: 180 },
       { x: cx - 42, y: 300, t: 'Adrenal glands: adrenaline (fight or flight)', side: 'l', ly: 290 }, { x: cx + 46, y: 330, t: 'Pancreas: insulin and glucagon control blood glucose', side: 'r', ly: 330 },
-      { x: cx - 36, y: 392, t: 'Ovaries (female): oestrogen and progesterone', side: 'l', ly: 400 }, { x: cx + 36, y: 392, t: 'Testes (male): testosterone', side: 'r', ly: 410 }];
+      { x: cx - 37, y: 392, t: 'Ovaries (female): oestrogen and progesterone', side: 'l', ly: 400 }, { x: cx + 15, y: 447, t: 'Testes (male): testosterone', side: 'r', ly: 450 }, { x: cx + 37, y: 392, t: 'Ovary', side: 'r', ly: 392 }];
     g += T(cx, 572, 'Glands secrete hormones into the blood, which carries them to target organs', { size: 13 });
     return wrap(W, H, o.aria || 'Positions of the main endocrine glands in the body', '', g + labels(labs, { W, H, lx: 290, rx: 610, size: 14 }));
   }
@@ -598,18 +604,18 @@
     // plant
     g += `<path d="M150 430V300" stroke="#6b4a2f" stroke-width="12"/><circle cx="150" cy="270" r="60" fill="#3f9b3f"/><circle cx="110" cy="300" r="34" fill="#4fb04f"/><circle cx="190" cy="300" r="34" fill="#4fb04f"/>` + T(150, 200, 'Green plants', { size: 14, w: 700 });
     // animal (cow)
-    g += `<rect x="420" y="360" width="110" height="52" rx="20" fill="#f2f2f2" stroke="#999"/><circle cx="440" cy="380" r="10" fill="#333"/><rect x="520" y="345" width="40" height="34" rx="12" fill="#f2f2f2" stroke="#999"/>${[430, 450, 500, 520].map(x => `<rect x="${x}" y="408" width="8" height="24" fill="#ddd"/>`).join('')}` + T(475, 340, 'Animals', { size: 14, w: 700 });
+    g += `<rect x="420" y="360" width="110" height="52" rx="20" fill="#f2f2f2" stroke="#999"/><circle cx="440" cy="380" r="10" fill="#333"/><rect x="520" y="345" width="40" height="34" rx="12" fill="#f2f2f2" stroke="#999"/>${[430, 450, 500, 520].map(x => `<rect x="${x}" y="408" width="8" height="24" fill="#ddd"/>`).join('')}` + T(570, 372, 'Animals', { size: 14, w: 700, a: 'start' });
     // decomposers
-    g += `<path d="M700 430q20 -40 40 0z" fill="#c9a07a"/><path d="M712 430v-8M728 430v-8" stroke="#a07a5a" stroke-width="4"/><path d="M760 430q16 -30 32 0z" fill="#d9b48a"/>` + T(745, 455, 'Decomposers (microorganisms)', { size: 14, w: 700, fill: '#fff' });
+    g += `<path d="M700 430q20 -40 40 0z" fill="#c9a07a"/><path d="M712 430v-8M728 430v-8" stroke="#a07a5a" stroke-width="4"/><path d="M760 430q16 -30 32 0z" fill="#d9b48a"/>` + T(745, 464, 'Decomposers (microorganisms)', { size: 13, w: 700, fill: '#fff' });
     // fossil fuels
-    g += `<rect x="830" y="476" width="120" height="30" rx="6" fill="#222"/>` + T(890, 496, 'Fossil fuels', { size: 13, w: 700, fill: '#fff' }) + T(900, 520 - 4, '', {}) + `<rect x="880" y="300" width="40" height="130" fill="#8a8f98"/><rect x="866" y="290" width="68" height="16" fill="#6a6f78"/>` + T(900, 280, 'Combustion', { size: 13, w: 700 });
+    g += `<rect x="830" y="476" width="120" height="30" rx="6" fill="#222"/>` + T(890, 496, 'Fossil fuels', { size: 13, w: 700, fill: '#fff' }) + T(900, 520 - 4, '', {}) + `<rect x="880" y="300" width="40" height="130" fill="#8a8f98"/><rect x="866" y="290" width="68" height="16" fill="#6a6f78"/>` + T(870, 372, 'Combustion', { size: 13, w: 700, a: 'end' });
     const lbl = (x, y, t, c) => T(x, y, t, { size: 13, w: 700, fill: c });
     g += arrow(380, 96, 200, 210, '#3fb27f', 4, 14) + lbl(250, 140, 'Photosynthesis', '#3fb27f');
     g += arrow(230, 230, 400, 100, '#e0663a', 3, 12) + lbl(352, 176, 'Respiration', '#e0663a');
     g += arrow(214, 300, 414, 380, '#e0a64a', 3, 12) + lbl(310, 312, 'Feeding', '#e0a64a');
-    g += arrow(540, 400, 696, 422, '#c9a07a', 3, 12) + arrow(170, 445, 690, 445, '#c9a07a', 2, 10) + T(400, 500, 'Death and waste (plants and animals) → decomposers', { size: 13, w: 700, fill: '#fff' });
-    g += arrow(500, 340, 520, 100, '#e0663a', 3, 12) + lbl(560, 220, 'Respiration', '#e0663a');
-    g += arrow(740, 410, 620, 96, '#e0663a', 3, 12) + lbl(720, 300, 'Respiration', '#e0663a');
+    g += arrow(540, 400, 696, 422, '#c9a07a', 3, 12) + arrow(170, 441, 690, 441, '#e8c9a8', 2, 10) + T(400, 500, 'Death and waste (plants and animals) → decomposers', { size: 13, w: 700, fill: '#fff' });
+    g += arrow(500, 340, 520, 100, '#e0663a', 3, 12) + T(524, 220, 'Respiration', { size: 13, w: 700, fill: '#e0663a', a: 'start' });
+    g += arrow(740, 410, 620, 96, '#e0663a', 3, 12) + T(712, 300, 'Respiration', { size: 13, w: 700, fill: '#e0663a', a: 'start' });
     g += arrow(900, 300, 650, 80, '#8a8f98', 3, 12) + arrow(890, 474, 900, 440, '#8a8f98', 2, 8);
     return wrap(W, H, o.aria || 'The carbon cycle: photosynthesis, respiration, feeding, decay and combustion', '', g);
   }
@@ -643,7 +649,7 @@
 
   /* ---------- cell membrane (fluid mosaic) ---------- */
   function membrane(o = {}) {
-    const W = 1200, H = 340, y1 = 170, y2 = 270;
+    const W = 1140, H = 350, y1 = 170, y2 = 270;
     let g = `<rect x="60" y="${y1 - 10}" width="820" height="${y2 - y1 + 20}" fill="#f5e3a6" opacity=".25"/>`;
     const head = (x, y, up) => `<circle cx="${x}" cy="${y}" r="10" fill="#e0663a"/><path d="M${x - 4} ${y + (up ? 10 : -10)}q-4 ${up ? 18 : -18} 0 ${up ? 36 : -36}M${x + 4} ${y + (up ? 10 : -10)}q4 ${up ? 18 : -18} 0 ${up ? 36 : -36}" stroke="#e0a64a" stroke-width="2.5" fill="none"/>`;
     for (let x = 70; x <= 870; x += 22) { if ((x > 300 && x < 380) || (x > 560 && x < 650)) continue; g += head(x, y1, true) + head(x, y2, false); }
@@ -651,24 +657,26 @@
     g += `<path d="M566 ${y1 - 24}q40 -20 80 0v${y2 - y1 + 48}q-40 20 -80 0z" fill="#3fb27f"/>`;
     g += `<ellipse cx="460" cy="${y1 + 20}" rx="40" ry="34" fill="#8e5bd6" opacity=".85"/><path d="M460 ${y1 - 14}v-30m0 0l-14 -16m14 16l14 -16m-14 -16l0 -10" stroke="#ffd84a" stroke-width="4" fill="none"/>`;
     g += `<rect x="200" y="${y1 + 14}" width="8" height="30" rx="3" fill="#f2d23a"/><rect x="752" y="${y2 - 44}" width="8" height="30" rx="3" fill="#f2d23a"/>`;
-    const labs = [{ x: 158, y: y1, t: 'Phospholipid: hydrophilic head', side: 'l', ly: 60 }, { x: 160, y: y1 + 30, t: 'Hydrophobic fatty acid tails', side: 'l', ly: 330 },
-      { x: 340, y: y1 - 30, t: 'Channel protein (lets ions through)', side: 'l', ly: 110 }, { x: 460, y: y1 - 52, t: 'Glycoprotein: cell recognition and signalling', side: 'r', ly: 60 },
-      { x: 606, y: y1 - 24, t: 'Carrier protein (active transport, facilitated diffusion)', side: 'r', ly: 110 }, { x: 204, y: y1 + 30, t: 'Cholesterol: regulates fluidity', side: 'l', ly: 380 }, { x: 860, y: y2 + 10, t: 'Inside the cell', side: 'r', ly: 360 }];
-    labs.forEach(l => { l.x = 250 + 0.75 * l.x; l.y = 50 + 0.75 * l.y; if (l.ly) l.ly = 50 + 0.75 * l.ly; }); return wrap(W, H, o.aria || 'Fluid mosaic model of the cell-surface membrane', '', `<g transform="translate(250 50) scale(.75)">${g}</g>` + labels(labs, { W, H, lx: 240, rx: 930, size: 14 }));
+    const X = x => 250 + 0.75 * x, Y = y => 62 + 0.75 * y;
+    const labs = [{ x: X(92), y: Y(y1), t: 'Phospholipid: hydrophilic head', side: 'l', ly: Y(y1) - 16 }, { x: X(90), y: Y(y1 + 34), t: 'Hydrophobic fatty acid tails', side: 'l', ly: Y(y1 + 34) + 16 }];
+    const tags = tag(X(340), Y(y1 - 28), X(250), 62, 'Channel protein\n(lets ions through)', { size: 16 }) + tag(X(460), Y(y1 - 62), X(470), 28, 'Glycoprotein: cell recognition\nand signalling', { size: 16 })
+      + tag(X(606), Y(y1 - 32), X(775), 66, 'Carrier protein (active transport,\nfacilitated diffusion)', { ex: X(690), size: 16 }) + tag(X(756), Y(y2 - 14), X(756), 330, 'Cholesterol: regulates fluidity', { size: 16 })
+      + T(X(890), Y(y1 - 40), 'Outside the cell', { size: 15, a: 'start', w: 700 }) + T(X(890), Y(y2 + 50), 'Inside the cell', { size: 15, a: 'start', w: 700 });
+    return wrap(W, H, o.aria || 'Fluid mosaic model of the cell-surface membrane', '', `<g transform="translate(250 62) scale(.75)">${g}</g>` + tags + labels(labs, { W, H, lx: 290, rx: 930, size: 16 }));
   }
 
   /* ---------- menstrual cycle hormones ---------- */
   function menstrualCycle(o = {}) {
     const W = 960, H = 440, x0 = 110, x1 = 900, yb = 300, sx = (x1 - x0) / 28;
-    const curve = (fn, c, name, lx) => { let d = ''; for (let t = 0; t <= 28; t += 0.25) d += (t ? 'L' : 'M') + f(x0 + t * sx) + ' ' + f(yb - fn(t)); return `<path d="${d}" stroke="${c}" stroke-width="3.5" fill="none"/>` + T(x0 + lx * sx, yb - fn(lx) - 10, name, { size: 13, w: 700, fill: c }); };
+    const curve = (fn, c, name, lx) => { let d = ''; for (let t = 0; t <= 28; t += 0.25) d += (t ? 'L' : 'M') + f(x0 + t * sx) + ' ' + f(yb - fn(t)); return `<path d="${d}" stroke="${c}" stroke-width="3.5" fill="none"/>` + T(x0 + lx[0] * sx, yb - lx[1], name, { size: 13, w: 700, fill: c, a: lx[2] || 'middle' }); };
     const gs = (t, m, s, h) => h * Math.exp(-((t - m) ** 2) / (2 * s * s));
     let g = `<path d="M${x0} 60V${yb}H${x1}" stroke="currentColor" stroke-width="2" fill="none"/>`;
     for (let d = 0; d <= 28; d += 7) g += T(x0 + d * sx, yb + 20, String(d), { size: 12 });
     g += T((x0 + x1) / 2, yb + 40, 'Day of the cycle', { size: 13 }) + T(60, 170, 'Hormone level', { size: 13 }).replace('<text', '<text transform="rotate(-90 60 170)"');
-    g += curve(t => 30 + gs(t, 3, 3, 40) + gs(t, 14, 1.2, 70), '#3f7fd6', 'FSH', 3.5);
-    g += curve(t => 20 + gs(t, 14, 1.1, 190), '#8e5bd6', 'LH', 17);
-    g += curve(t => 25 + gs(t, 12.5, 3, 150) + gs(t, 21, 3, 60), '#e0533f', 'Oestrogen', 8);
-    g += curve(t => 15 + gs(t, 21, 3.5, 130), '#3fb27f', 'Progesterone', 23.5);
+    g += curve(t => 30 + gs(t, 3, 3, 40) + gs(t, 14, 1.2, 70), '#3f7fd6', 'FSH', [3.2, 80]);
+    g += curve(t => 20 + gs(t, 14, 1.1, 190), '#8e5bd6', 'LH', [15.2, 196, 'start']);
+    g += curve(t => 25 + gs(t, 12.5, 3, 150) + gs(t, 21, 3, 60), '#e0533f', 'Oestrogen', [10.4, 160, 'end']);
+    g += curve(t => 15 + gs(t, 21, 3.5, 130), '#3fb27f', 'Progesterone', [21.6, 158]);
     g += `<path d="M${x0 + 14 * sx} 60V${yb}" stroke="#ffd84a" stroke-dasharray="6 5" stroke-width="2"/>` + T(x0 + 14 * sx, 52, 'Ovulation (about day 14)', { size: 13, w: 700, fill: '#e0a64a' });
     let lin = `M${x0} 400`; for (let t = 0; t <= 28; t += 0.5) { const th = t < 5 ? 6 : t < 14 ? 6 + (t - 5) * 3 : t < 24 ? 33 : 33 - (t - 24) * 6; lin += `L${f(x0 + t * sx)} ${f(400 - th)}`; } lin += `L${x1} 400Z`;
     g += `<path d="${lin}" fill="#d97a8a" opacity=".8"/>` + T(x0 - 10, 392, 'Uterus lining', { size: 12, a: 'end' }) + `<rect x="${x0}" y="402" width="${5 * sx}" height="10" fill="#b8322f"/>` + T(x0 + 2.5 * sx, 428, 'Menstruation', { size: 12 });
@@ -738,7 +746,7 @@
     const pts = [[0, 40], [120, 120], [260, 120], [360, 220], [560, 220], [660, 300]];
     g += `<path d="M${pts.map(([x, y]) => `${x0 + x} ${y0 - y}`).join('L')}" stroke="#e0663a" stroke-width="4" fill="none"/>`;
     g += `<path d="M${x0} ${y0 - 120}H${x0 + 120}M${x0} ${y0 - 220}H${x0 + 360}" stroke="currentColor" stroke-dasharray="5 5" opacity=".6"/>` + T(x0 - 10, y0 - 116, 'melting point', { size: 12, a: 'end' }) + T(x0 - 10, y0 - 216, 'boiling point', { size: 12, a: 'end' });
-    g += T(x0 + 50, y0 - 60, 'solid', { size: 14, w: 700, a: 'start' }) + T(x0 + 190, y0 - 132, 'melting', { size: 14, w: 700 }) + T(x0 + 190, y0 - 96, 'solid + liquid', { size: 12 }) + T(x0 + 290, y0 - 150, 'liquid', { size: 14, w: 700 }) + T(x0 + 460, y0 - 232, 'boiling', { size: 14, w: 700 }) + T(x0 + 460, y0 - 196, 'liquid + gas', { size: 12 }) + T(x0 + 620, y0 - 290, 'gas', { size: 14, w: 700 });
+    g += T(x0 + 66, y0 - 52, 'solid', { size: 14, w: 700, a: 'start' }) + T(x0 + 190, y0 - 132, 'melting', { size: 14, w: 700 }) + T(x0 + 190, y0 - 96, 'solid + liquid', { size: 12 }) + T(x0 + 308, y0 - 146, 'liquid', { size: 14, w: 700, a: 'start' }) + T(x0 + 460, y0 - 232, 'boiling', { size: 14, w: 700 }) + T(x0 + 460, y0 - 196, 'liquid + gas', { size: 12 }) + T(x0 + 620, y0 - 290, 'gas', { size: 14, w: 700 });
     g += T(450, 40, 'Flat sections: energy breaks bonds between particles (latent heat), so temperature stays constant', { size: 14 });
     return wrap(W, H, o.aria || 'Heating curve showing melting and boiling at constant temperature', '', g);
   }
@@ -866,7 +874,7 @@
     const mono = (x, y, dblb) => bond(x, y, x + 60, y, dblb) + bond(x, y, x, y - 44) + bond(x, y, x, y + 44) + bond(x + 60, y, x + 60, y - 44) + bond(x + 60, y, x + 60, y + 44) + at(x, y - 44, 'H') + at(x, y + 44, 'H') + at(x + 60, y - 44, 'H') + at(x + 60, y + 44, 'H') + at(x, y, 'C') + at(x + 60, y, 'C');
     let g = T(78, 158, 'n', { size: 22, w: 700 }) + mono(110, 150, true) + T(140, 240, 'ethene (monomer)', { size: 14 });
     g += arrow(240, 150, 340, 150, 'currentColor', 3) + T(290, 130, 'heat, pressure,', { size: 12 }) + T(290, 178, 'catalyst', { size: 12 });
-    g += `<path d="M380 80V220M640 80V220" stroke="currentColor" stroke-width="3"/><path d="M380 80h10M380 220h10M640 80h-10M640 220h-10" stroke="currentColor" stroke-width="3"/>` + bond(400, 150, 450, 150) + mono(450, 150, false) + bond(510, 150, 560, 150) + bond(560, 150, 620, 150) + T(655, 232, 'n', { size: 22, w: 700, a: 'start' }) + T(510, 260, 'poly(ethene) (polymer)', { size: 14 });
+    g += `<path d="M380 80V220M640 80V220" stroke="currentColor" stroke-width="3"/><path d="M380 80h10M380 220h10M640 80h-10M640 220h-10" stroke="currentColor" stroke-width="3"/>` + bond(400, 150, 450, 150) + bond(510, 150, 620, 150) + mono(450, 150, false) + T(655, 232, 'n', { size: 22, w: 700, a: 'start' }) + T(510, 260, 'poly(ethene) (polymer)', { size: 14 });
     g += T(820, 120, 'The C=C double bond opens', { size: 13 }) + T(820, 138, 'and the monomers join', { size: 13 }) + T(820, 156, 'in a long chain; no other', { size: 13 }) + T(820, 174, 'product is made', { size: 13 });
     return wrap(W, H, o.aria || 'Addition polymerisation of ethene to poly(ethene)', '', g);
   }
@@ -948,10 +956,12 @@
   function villus(o = {}) {
     const W = 880, H = 480, cx = 330;
     let g = `<path d="M${cx - 90} 440V180C${cx - 90} 60 ${cx + 90} 60 ${cx + 90} 180V440" fill="#f2b5bf" stroke="#c97a8a" stroke-width="3"/>`;
-    for (let i = 0; i < 22; i++) { const a = Math.PI + i * Math.PI / 21; g += `<path d="M${f(cx + 90 * Math.cos(a))} ${f(140 + 80 * Math.sin(a))}l${f(8 * Math.cos(a))} ${f(8 * Math.sin(a))}" stroke="#c97a8a" stroke-width="3"/>`; }
+    const bz = t => { const u = 1 - t, x = cx - 90 * u * u * u - 270 * u * u * t + 270 * u * t * t + 90 * t * t * t, y = 180 * u * u * u + 180 * u * u * t + 180 * u * t * t + 180 * t * t * t, dx = 540 * u * t, dy = -360 * u * u + 360 * t * t, n = Math.hypot(dx, dy) || 1; return [x, y, dy / n, -dx / n]; };
+    let mv = null; for (let i = 0; i <= 26; i++) { const [x, y, nx, ny] = bz(i / 26); g += `<path d="M${f(x)} ${f(y)}l${f(9 * nx)} ${f(9 * ny)}" stroke="#c97a8a" stroke-width="3" stroke-linecap="round"/>`; if (i === 20) mv = [x + 7 * nx, y + 7 * ny]; }
+    for (let y = 200; y <= 430; y += 14) g += `<path d="M${cx - 90} ${y}h-9M${cx + 90} ${y}h9" stroke="#c97a8a" stroke-width="3" stroke-linecap="round"/>`;
     g += `<path d="M${cx - 50} 440V190C${cx - 50} 120 ${cx + 50} 120 ${cx + 50} 190V440" fill="none" stroke="#d93a3a" stroke-width="5"/><path d="M${cx - 30} 440V200C${cx - 30} 150 ${cx + 30} 150 ${cx + 30} 200V440" fill="none" stroke="#5a7fd6" stroke-width="5"/><path d="M${cx} 440V180" stroke="#f2e6a0" stroke-width="10"/>`;
     for (let i = 0; i < 6; i++) g += `<path d="M${cx - 50} ${200 + i * 38}q25 10 50 0q25 -10 50 0" stroke="#d93a3a" stroke-width="2" fill="none"/>`;
-    const labs = [{ x: cx + 60, y: 100, t: 'Microvilli: even more surface area', side: 'r', ly: 90 }, { x: cx + 86, y: 260, t: 'Wall one cell thick: short diffusion distance', side: 'r', ly: 200 },
+    const labs = [{ x: mv[0], y: mv[1], t: 'Microvilli: even more surface area', side: 'r', ly: 90 }, { x: cx + 84, y: 260, t: 'Wall one cell thick: short diffusion distance', side: 'r', ly: 200 },
       { x: cx + 50, y: 330, t: 'Capillary network: good blood supply keeps a steep concentration gradient', side: 'r', ly: 290 }, { x: cx, y: 360, t: 'Lacteal: absorbs fatty acids and glycerol', side: 'r', ly: 390 },
       { x: cx - 90, y: 260, t: 'Millions of villi give a huge surface area', side: 'l', ly: 260 }];
     g += T(cx, 470, 'A villus in the small intestine (absorption of digested food)', { size: 14 });
@@ -1048,8 +1058,8 @@
     g += thermo(440, 120, 330, 0.5);
     // circuit: heater leads to the supply; ammeter in series; voltmeter across the heater
     g += psu(660, 150, 110, 64, ' ');
-    g += wire('M378 120V60H630V250H686V196') + wire('M392 120V100H535') + meter(550, 100, 'A') + wire('M565 100H610V270H744V196');
-    g += wire('M480 60V65') + meter(480, 80, 'V') + wire('M480 95V100');
+    g += wire('M378 120V40H630V250H686V196') + wire('M392 120V108H535') + meter(550, 108, 'A') + wire('M565 108H610V270H744V196');
+    g += wire('M470 40V59') + meter(470, 74, 'V') + wire('M470 89V108') + `<circle cx="470" cy="40" r="4" fill="currentColor"/><circle cx="470" cy="108" r="4" fill="currentColor"/>`;
     g += T(715, 140, 'power supply', { size: 13 });
     g += stopwatch(200, 250) + T(200, 290, 'stopwatch', { size: 13 });
     g += T(470, 440, 'E = V × I × t;   c = E ÷ (m × Δθ)', { size: 15, w: 700 });
@@ -1058,7 +1068,7 @@
       { x: 440, y: 260, t: 'Thermometer', side: 'r', ly: 300 },
       { x: 466, y: 380, t: 'Aluminium block (mass m, measured on a balance)', side: 'r', ly: 350 },
       { x: 336, y: 330, t: 'Insulation reduces energy lost to the surroundings', side: 'l', ly: 360 },
-      { x: 480, y: 66, t: 'Voltmeter across the heater', side: 'r', ly: 40 }
+      { x: 484, y: 72, t: 'Voltmeter in parallel with the heater', side: 'r', ly: 70 }
     ];
     return wrap(W, H, o.aria || 'Specific heat capacity practical: heater and thermometer in an insulated aluminium block', '', g + labels(labs, { W, H, lx: 280, rx: 660, size: 14, top: 30 }));
   }
@@ -1112,7 +1122,7 @@
     g += T(240, 256, 'component', { size: 12 });
     g += wire('M190 280V340H225M255 340H290V280') + meter(240, 340, 'V');
     g += T(240, 54, 'Circuit', { size: 16, w: 700 }) + T(240, 400, 'Change the variable resistor, record V and I;', { size: 13 }) + T(240, 418, 'reverse the supply for negative values', { size: 13 });
-    const gr = (cx, title, d) => `<path d="M${cx - 80} 230H${cx + 80}M${cx} 130V330" stroke="currentColor" stroke-width="2"/>` + T(cx + 84, 236, 'V', { size: 13, a: 'start' }) + T(cx + 6, 130, 'I', { size: 13, a: 'start' }) + `<path d="${d}" stroke="#3f7fd6" stroke-width="3.5" fill="none"/>` + T(cx, 370, title, { size: 15, w: 700 });
+    const gr = (cx, title, d) => `<path d="M${cx - 80} 230H${cx + 80}M${cx} 130V330" stroke="currentColor" stroke-width="2"/>` + T(cx + 78, 222, 'V', { size: 13, a: 'end' }) + T(cx + 6, 130, 'I', { size: 13, a: 'start' }) + `<path d="${d}" stroke="#3f7fd6" stroke-width="3.5" fill="none"/>` + T(cx, 370, title, { size: 15, w: 700 });
     g += gr(530, 'Resistor', 'M460 300L600 160');
     g += gr(710, 'Filament lamp', 'M640 290Q670 285 690 260L730 200Q750 175 780 170');
     g += gr(880, 'Diode', 'M822 232H905Q918 230 922 150');
@@ -1136,25 +1146,25 @@
     g += `<path d="M596 282q-3 10 0 18" stroke="${WATER}" stroke-width="3" fill="none"/><path d="M570 290V372Q570 378 576 378H620Q626 378 626 372V290" fill="none" stroke="${GL}" stroke-width="3"/><path d="M572 330H624V376H572Z" fill="${WATER}" fill-opacity=".5"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M626 ${300 + i * 13}h-10" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
     g += T(520, 40, 'Irregular solid', { size: 16, w: 700 }) + T(520, 62, 'volume = volume of water displaced', { size: 13 });
     g += T(800, 160, 'density = mass ÷ volume', { size: 16, w: 700 }) + T(800, 186, 'ρ = m ÷ V', { size: 15 }) + T(800, 214, 'units: g/cm³ or kg/m³', { size: 13 }) + T(800, 250, '1 cm³ = 1 ml', { size: 13 });
-    const labs = [{ x: 440, y: 300, t: 'Eureka (displacement) can filled to the spout', side: 'l', ly: 140 }, { x: 610, y: 340, t: 'Measuring cylinder', side: 'r', ly: 320 }, { x: 470, y: 300, t: 'Object on a thread', side: 'r', ly: 120 }];
+    const labs = [{ x: 421, y: 215, t: 'Eureka (displacement) can filled to the spout', side: 'l', ly: 140 }, { x: 610, y: 340, t: 'Measuring cylinder', side: 'r', ly: 320 }, { x: 470, y: 300, t: 'Object on a thread', side: 'r', ly: 120 }];
     return wrap(W, H, o.aria || 'Density practical: measuring a regular block and using a eureka can for an irregular object', '', g + labels(labs, { W, H, lx: 330, rx: 650, size: 13 }));
   }
 
   /* ---------- acceleration (trolley, light gates) ---------- */
   function accelerationPractical(o = {}) {
     const W = 980, H = 440;
-    let g = `<path d="M60 300L760 260" stroke="${WOOD}" stroke-width="14" stroke-linecap="round"/><path d="M70 312L70 360M740 272L740 360" stroke="#7d858f" stroke-width="6"/><rect x="40" y="360" width="760" height="8" fill="#7d858f" opacity=".6"/>`;
+    let g = `<path d="M60 268L760 288" stroke="${WOOD}" stroke-width="14" stroke-linecap="round"/><path d="M70 280L70 360M740 300L740 360" stroke="#7d858f" stroke-width="6"/><rect x="40" y="360" width="760" height="8" fill="#7d858f" opacity=".6"/>`;
     // trolley
-    g += `<g transform="rotate(-3.3 200 270)"><rect x="140" y="250" width="120" height="34" rx="5" fill="#2f6fd6"/><rect x="180" y="210" width="6" height="40" fill="#22262e"/><rect x="170" y="196" width="26" height="14" fill="#22262e"/><circle cx="160" cy="288" r="10" fill="#22262e"/><circle cx="240" cy="288" r="10" fill="#22262e"/><rect x="200" y="236" width="30" height="14" fill="#9aa3ad"/><rect x="204" y="226" width="22" height="10" fill="#9aa3ad"/></g>`;
+    g += `<g transform="translate(0 -31) rotate(1.64 200 270)"><rect x="140" y="250" width="120" height="34" rx="5" fill="#2f6fd6"/><rect x="180" y="210" width="6" height="40" fill="#22262e"/><rect x="170" y="196" width="26" height="14" fill="#22262e"/><circle cx="160" cy="288" r="10" fill="#22262e"/><circle cx="240" cy="288" r="10" fill="#22262e"/><rect x="200" y="236" width="30" height="14" fill="#9aa3ad"/><rect x="204" y="226" width="22" height="10" fill="#9aa3ad"/></g>`;
     // light gates
-    const gate = x => { const y = 300 - (x - 60) * 40 / 700; return `<path d="M${x - 14} ${f(y - 8)}V${f(y - 90)}H${x + 14}V${f(y - 8)}" stroke="#e0a64a" stroke-width="7" fill="none"/><path d="M${x - 10} ${f(y - 50)}H${x + 10}" stroke="#ef5b4c" stroke-width="1.5" stroke-dasharray="3 3"/>`; };
+    const gate = x => { const y = 268 + (x - 60) * 20 / 700; return `<path d="M${x - 14} ${f(y - 8)}V${f(y - 90)}H${x + 14}V${f(y - 8)}" stroke="#e0a64a" stroke-width="7" fill="none"/><path d="M${x - 10} ${f(y - 50)}H${x + 10}" stroke="#ef5b4c" stroke-width="1.5" stroke-dasharray="3 3"/>`; };
     g += gate(340) + gate(600);
-    g += `<rect x="420" y="110" width="110" height="60" rx="6" fill="#3d4654"/><rect x="430" y="120" width="90" height="22" rx="3" fill="#9fe0b0"/>` + T(475, 136, '0.42 m/s²', { size: 12, w: 700, fill: '#163a22' }) + wire('M340 204Q360 160 420 150M600 190Q580 160 530 150');
+    g += `<rect x="420" y="110" width="110" height="60" rx="6" fill="#3d4654"/><rect x="430" y="120" width="90" height="22" rx="3" fill="#9fe0b0"/>` + T(475, 136, '0.42 m/s²', { size: 12, w: 700, fill: '#163a22' }) + wire('M340 186Q360 160 420 150M600 193Q580 160 530 150');
     // string over pulley to masses
-    g += `<path d="M260 262L770 236" stroke="#d9d0bc" stroke-width="2"/><circle cx="772" cy="250" r="14" fill="#9aa3ad" stroke="#55606c" stroke-width="3"/><path d="M786 250V330" stroke="#d9d0bc" stroke-width="2"/><rect x="772" y="330" width="28" height="12" fill="#55606c"/><rect x="772" y="342" width="28" height="12" fill="#6b7480"/><rect x="772" y="354" width="28" height="12" fill="#55606c"/><path d="M786 330V324" stroke="#55606c" stroke-width="3"/>`;
+    g +=  `<path d="M262 238L772 252" stroke="#d9d0bc" stroke-width="2"/><circle cx="772" cy="266" r="14" fill="#9aa3ad" stroke="#55606c" stroke-width="3"/><path d="M786 266V330" stroke="#d9d0bc" stroke-width="2"/><rect x="772" y="330" width="28" height="12" fill="#55606c"/><rect x="772" y="342" width="28" height="12" fill="#6b7480"/><rect x="772" y="354" width="28" height="12" fill="#55606c"/><path d="M786 330V324" stroke="#55606c" stroke-width="3"/>`;
     g += T(480, 40, 'Investigating F = m a', { size: 16, w: 700 }) + T(480, 62, 'falling masses pull the trolley; light gates measure speed at two points', { size: 13 });
-    g += T(480, 400, 'Vary force: move masses from the trolley to the hanger (total mass stays the same).', { size: 13 }) + T(480, 418, 'Vary mass: add masses to the trolley, keep the hanging mass the same.  a = (v − u) ÷ t', { size: 13 });
-    const labs = [{ x: 183, y: 205, t: 'Card (interrupts the beam)', side: 'l', ly: 120 }, { x: 200, y: 268, t: 'Trolley', side: 'l', ly: 230 }, { x: 600, y: 230, t: 'Light gate', side: 'r', ly: 110 }, { x: 772, y: 250, t: 'Pulley', side: 'r', ly: 200 }, { x: 800, y: 348, t: 'Hanging masses (force)', side: 'r', ly: 320 }, { x: 420, y: 140, t: 'Data logger', side: 'l', ly: 80 }];
+    g += T(110, 334, 'runway tilted slightly to compensate for friction', { size: 12, a: 'start' }) + T(480, 400, 'Vary force: move masses from the trolley to the hanger (total mass stays the same).', { size: 13 }) + T(480, 418, 'Vary mass: add masses to the trolley, keep the hanging mass the same.  a = (v − u) ÷ t', { size: 13 });
+    const labs = [{ x: 183, y: 174, t: 'Card (interrupts the beam)', side: 'l', ly: 120 }, { x: 180, y: 240, t: 'Trolley', side: 'l', ly: 225 }, { x: 614, y: 222, t: 'Light gate', side: 'r', ly: 110 }, { x: 778, y: 262, t: 'Pulley', side: 'r', ly: 200 }, { x: 800, y: 348, t: 'Hanging masses (force)', side: 'r', ly: 320 }, { x: 420, y: 140, t: 'Data logger', side: 'l', ly: 80 }];
     return wrap(W, H, o.aria || 'Acceleration practical: trolley on a runway with light gates, pulley and hanging masses', '', g + labels(labs, { W, H, lx: 120, rx: 830, size: 13, top: 80 }));
   }
 
@@ -1169,13 +1179,13 @@
     g += `<path d="M110 230L90 330M350 230L370 330" stroke="#7d858f" stroke-width="5"/><rect x="60" y="330" width="340" height="40" fill="#f4f1e6"/>${Array.from({ length: 10 }, (_, i) => `<rect x="${78 + i * 32}" y="334" width="14" height="32" fill="#b9c6cf" opacity=".8"/>`).join('')}`;
     g += T(230, 394, 'shadow of the waves on paper', { size: 12 }) + T(230, 420, 'measure across 10 waves, ÷ 10 = λ;  count waves in 10 s ÷ 10 = f', { size: 12 });
     // vibrating string
-    g += `<rect x="520" y="200" width="60" height="50" rx="6" fill="#3d4654"/><path d="M550 200V180" stroke="#55606c" stroke-width="6"/>` + T(550, 270, 'vibration generator', { size: 12 });
+    g += `<rect x="520" y="200" width="60" height="50" rx="6" fill="#3d4654"/><path d="M550 200V180" stroke="#55606c" stroke-width="6"/>` + T(558, 270, 'vibration generator', { size: 12 });
     g += `<path d="M550 178H880" stroke="#c9ccd2" stroke-width="1"/>`;
     const L = 330, nl = 3; let d = 'M550 178'; for (let i = 1; i <= 60; i++) { const x = 550 + L * i / 60; d += `L${f(x)} ${f(178 - 28 * Math.sin(Math.PI * nl * i / 60))}`; }
     let d2 = 'M550 178'; for (let i = 1; i <= 60; i++) { const x = 550 + L * i / 60; d2 += `L${f(x)} ${f(178 + 28 * Math.sin(Math.PI * nl * i / 60))}`; }
     g += `<path d="${d}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${d2}" stroke="#3f7fd6" stroke-width="2" fill="none" opacity=".5"/>`;
     g += `<rect x="868" y="168" width="12" height="160" fill="${WOOD}"/><circle cx="890" cy="186" r="12" fill="#9aa3ad" stroke="#55606c" stroke-width="3"/><path d="M902 186V280" stroke="#c9ccd2" stroke-width="2"/><rect x="890" y="280" width="24" height="12" fill="#55606c"/><rect x="890" y="292" width="24" height="12" fill="#6b7480"/>`;
-    g += `<rect x="600" y="300" width="70" height="40" rx="5" fill="#3d4654"/><rect x="608" y="306" width="54" height="14" rx="2" fill="#9fe0b0"/>` + T(635, 317, '60 Hz', { size: 10, w: 700, fill: '#163a22' }) + wire('M600 320H560V250') + T(635, 360, 'signal generator (f)', { size: 12 }) + T(902, 324, 'masses', { size: 12 }) + T(902, 340, '(tension)', { size: 12 });
+    g += `<rect x="600" y="300" width="70" height="40" rx="5" fill="#3d4654"/><rect x="608" y="306" width="54" height="14" rx="2" fill="#9fe0b0"/>` + T(635, 317, '60 Hz', { size: 10, w: 700, fill: '#163a22' }) + wire('M600 320H502V225H520') + T(635, 360, 'signal generator (f)', { size: 12 }) + T(902, 324, 'masses', { size: 12 }) + T(902, 340, '(tension)', { size: 12 });
     g += dbl(550, 130, 660, 130, 'currentColor', 1.6) + T(605, 122, 'λ/2', { size: 13, w: 700 });
     g += T(720, 400, 'adjust f until a clear stationary wave appears;', { size: 12 }) + T(720, 418, 'measure the length of several half wavelengths.  v = f λ', { size: 12 });
     const labs = [{ x: 230, y: 96, t: 'Lamp', side: 'l', ly: 96 }, { x: 103, y: 188, t: 'Vibrating bar (dipper)', side: 'l', ly: 200 }, { x: 890, y: 186, t: 'Pulley', side: 'r', ly: 140 }];
@@ -1461,8 +1471,7 @@
     g += `<rect x="90" y="300" width="120" height="44" rx="6" fill="#c9ccd2" stroke="#7d858f"/><rect x="200" y="314" width="50" height="16" fill="#9aa3ad"/>` + T(170, 370, 'micrometer: diameter d', { size: 12 }) + T(170, 386, 'at several points', { size: 12 });
     g += T(480, 330, 'stress = F ÷ A,  A = π d² ÷ 4', { size: 14 }) + T(480, 352, 'strain = extension ÷ L', { size: 14 }) + T(480, 380, 'E = stress ÷ strain  (gradient of the stress–strain graph)', { size: 14, w: 700 });
     g += T(700, 200, 'marker', { size: 12, a: 'start' }) + T(880, 200, 'pulley', { size: 12 }) + T(916, 366, 'masses', { size: 12, a: 'start' });
-    const labs = [{ x: 65, y: 214, t: 'Wire clamped at one end', side: 'l', ly: 120 }];
-    return wrap(W, H, o.aria || 'Young modulus practical: long wire over a pulley with a marker and a fixed scale', '', g + labels(labs, { W, H, lx: 160, rx: 920, size: 13 }));
+    return wrap(W, H, o.aria || 'Young modulus practical: long wire over a pulley with a marker and a fixed scale', '', g + tag(65, 204, 44, 132, 'Wire clamped\nat one end', { anchor: 'start', size: 13, ex: 62, ey: 156 }));
   }
 
   /* ---------- e.m.f. and internal resistance ---------- */
@@ -1719,7 +1728,7 @@
     g += T(176, 378, 'zinc', { size: 13, w: 700 }) + T(286, 378, 'copper', { size: 13, w: 700 }) + T(230, 404, 'bigger difference in reactivity → bigger voltage', { size: 12 }) + T(230, 420, 'stops when a reactant is used up (non-rechargeable)', { size: 12 });
     g += `` + lgShadow(720, 324, 110, 6) + `<rect x="620" y="150" width="200" height="170" rx="8" fill="url(#LGiron)"/><rect x="626" y="154" width="188" height="6" rx="3" fill="#fff" opacity=".15"/><rect x="660" y="160" width="14" height="150" fill="url(#LGzinc)"/><rect x="766" y="160" width="14" height="150" fill="url(#LGzinc)"/><rect x="674" y="160" width="92" height="150" fill="#cfe7f2" opacity=".35"/>`;
     g += arrow(560, 200, 640, 200, '#7fb2ff', 3) + T(552, 205, 'H₂ in', { size: 13, a: 'end' }) + arrow(900, 200, 820, 200, '#ef5b4c', 3) + T(908, 205, 'O₂ in', { size: 13, a: 'start' }) + arrow(800, 300, 900, 340, '#5aa9f0', 3) + T(904, 360, 'H₂O out', { size: 13, a: 'start' });
-    g += wire('M667 150V100H773V150') + lamp(720, 100) + arrow(690, 118, 640, 118, '#e0a64a', 0, 0) + T(720, 140, 'electrons flow through the external circuit', { size: 12 });
+    g += wire('M667 150V100H773V150') + lamp(720, 100) + arrow(690, 118, 640, 118, '#e0a64a', 0, 0) + T(720, 80, 'electrons flow through the external circuit', { size: 12 });
     g += T(720, 345, 'electrolyte', { size: 12 }).replace('<text', '<text opacity=".9"') + T(720, 404, 'only product is water; hydrogen must be made and stored', { size: 12 });
     return wrap(W, H, o.aria || 'A zinc and copper chemical cell, and a hydrogen fuel cell', '', g);
   }
@@ -1861,7 +1870,7 @@
     g += `<rect x="${f(X(1500))}" y="${y0 - hgt}" width="${f(X(500) - X(1500))}" height="${hgt}" fill="#e0a64a" opacity=".1"/><path d="${pts.join('')}" stroke="#3f7fd6" stroke-width="2.5" fill="none"/>`;
     g += T(X(3000), Y(20), 'O–H (carboxylic acid)', { size: 12, w: 700 }) + T(X(3000), Y(20) + 16, 'very broad, 2500–3300', { size: 12 });
     g += T(X(1715) + 10, Y(6), 'C=O, sharp, 1630–1820', { size: 12, w: 700, a: 'start' });
-    g += T(X(1000), y0 - hgt + 18, 'fingerprint region (below 1500)', { size: 12 }) + T(X(1000), y0 - hgt + 34, 'unique to each compound', { size: 12 });
+    g += T(X(1000), y0 - hgt - 10, 'fingerprint region (below 1500): unique to each compound', { size: 12 });
     g += T(490, 30, 'Infrared spectrum of ethanoic acid', { size: 15, w: 700 });
     g += T(490, 400, 'an alcohol O–H is broad at 3200–3600; an aldehyde or ketone has C=O but no O–H', { size: 12 });
     return wrap(W, H, o.aria || 'Infrared spectrum of ethanoic acid with the broad O–H and sharp C=O absorptions labelled', '', g);
@@ -1886,13 +1895,13 @@
   /* ---------- redox titrations ---------- */
   function redoxTitration(o = {}) {
     const W = 980, H = 460;
-    let g = panelT(250, 'Manganate(VII) titration', 'MnO₄⁻ is its own indicator') + panelT(720, 'Iodine–thiosulfate titration', 'starch indicator near the end point');
+    let g = panelT(250, 'Manganate(VII) titration') + panelT(720, 'Iodine–thiosulfate titration');
     g += stand(330, 400, 320, 90, 250) + burette(250, 60, 230, '#8a2a8f') + conical(250, 270, '#c9e3a8', 0.45);
     g += T(250, 424, 'Fe²⁺ (acidified with dilute H₂SO₄)', { size: 12 }) + T(250, 440, 'end point: first permanent pale pink', { size: 12, w: 700 });
-    g += T(130, 120, 'KMnO₄(aq)', { size: 12, a: 'end' }) + T(130, 136, 'read the top of', { size: 11, a: 'end' }) + T(130, 150, 'the meniscus', { size: 11, a: 'end' });
+    g += T(130, 120, 'KMnO₄(aq)', { size: 12, a: 'end' }) + T(130, 136, 'read the top of', { size: 11, a: 'end' }) + T(130, 150, 'the meniscus', { size: 11, a: 'end' }) + T(130, 176, 'MnO₄⁻ is its own', { size: 11, a: 'end' }) + T(130, 190, 'indicator', { size: 11, a: 'end' });
     g += stand(800, 400, 320, 90, 720) + burette(720, 60, 230, '#e8eef2') + conical(720, 270, '#3a3fa0', 0.7);
     g += T(720, 424, 'I₂ released (add starch when it is pale yellow)', { size: 12 }) + T(720, 440, 'end point: blue-black → colourless', { size: 12, w: 700 });
-    g += T(600, 120, 'Na₂S₂O₃(aq)', { size: 12, a: 'end' });
+    g += T(600, 120, 'Na₂S₂O₃(aq)', { size: 12, a: 'end' }) + T(600, 136, 'starch indicator', { size: 11, a: 'end' }) + T(600, 150, 'near the end point', { size: 11, a: 'end' });
     g += T(490, 180, 'MnO₄⁻ + 8H⁺ + 5Fe²⁺', { size: 12 }) + T(490, 196, '→ Mn²⁺ + 4H₂O + 5Fe³⁺', { size: 12 }) + T(490, 236, 'I₂ + 2S₂O₃²⁻', { size: 12 }) + T(490, 252, '→ 2I⁻ + S₄O₆²⁻', { size: 12 });
     return wrap(W, H, o.aria || 'Redox titrations: potassium manganate(VII) with iron(II), and sodium thiosulfate with iodine', '', g);
   }
@@ -2405,7 +2414,7 @@
     g += `<path d="M50 320L110 160Q130 140 170 132Q230 126 260 150L270 176" stroke="#3f7fd6" stroke-width="3" fill="none"/><circle cx="110" cy="160" r="4" fill="#ef5b4c"/><circle cx="214" cy="126" r="4" fill="#e0a64a"/><path d="M266 168l10 10M276 168l-10 10" stroke="#ef5b4c" stroke-width="2.5"/>`;
     g += T(118, 178, 'yield point', { size: 11, a: 'start' }) + T(214, 114, 'UTS', { size: 12, w: 700, fill: '#e0a64a' }) + T(160, 220, 'plastic', { size: 11 }) + T(78, 270, 'E = gradient', { size: 11, a: 'start' }).replace('x="78"', 'x="84"');
     g += `<path d="M370 320L520 120" stroke="#3f7fd6" stroke-width="3"/><path d="M516 112l10 10M526 112l-10 10" stroke="#ef5b4c" stroke-width="2.5"/>` + T(540, 116, 'fractures', { size: 12, a: 'start' });
-    g += `<path d="${curveP(t => 0.15 * t + 0.7 * t ** 4 + 0.1 * Math.sin(t * 3), 690, 320, 230, 200)}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${curveP(t => 0.08 * t + 0.6 * t ** 5, 690, 320, 230, 200)}" stroke="#3f7fd6" stroke-width="2" fill="none" stroke-dasharray="6 4"/>` + T(820, 260, 'unloading curve below', { size: 11 }) + T(820, 276, 'the loading curve', { size: 11 });
+    g += `<path d="${curveP(t => 0.15 * t + 0.7 * t ** 4 + 0.1 * Math.sin(t * 3), 690, 320, 230, 200)}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${curveP(t => 0.08 * t + 0.6 * t ** 5, 690, 320, 230, 200)}" stroke="#3f7fd6" stroke-width="2" fill="none" stroke-dasharray="6 4"/>` + T(772, 150, 'unloading curve (dashed)', { size: 11 }) + T(772, 166, 'is below the loading curve', { size: 11 });
     g += T(490, 386, 'UTS = ultimate tensile strength (greatest stress before breaking)', { size: 12 });
     return wrap(W, H, o.aria || 'Stress–strain graphs for ductile, brittle and polymeric materials', '', g);
   }
@@ -2473,7 +2482,7 @@
     const W = 920, H = 380, x0 = 90, y0 = 320;
     let g = axes(x0, y0, 420, 250, 'Thickness x', 'Intensity I');
     g += `<path d="${curveP(t => Math.exp(-t * 1.2), x0, y0, 400, 230)}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${curveP(t => Math.exp(-t * 4.5), x0, y0, 400, 230)}" stroke="#ef5b4c" stroke-width="3" fill="none"/>`;
-    g += T(x0 + 300, y0 - 90, 'soft tissue (small μ)', { size: 12, a: 'start', fill: '#3f7fd6' }) + T(x0 + 70, y0 - 40, 'bone (large μ)', { size: 12, a: 'start', fill: '#ef5b4c' }) + T(x0 - 6, y0 - 226, 'I₀', { size: 13, a: 'end' });
+    g += T(x0 + 250, y0 - 130, 'soft tissue (small μ)', { size: 12, a: 'start', fill: '#3f7fd6' }) + T(x0 + 24, y0 - 12, 'bone (large μ)', { size: 12, a: 'start', fill: '#ef5b4c' }) + T(x0 - 6, y0 - 226, 'I₀', { size: 13, a: 'end' });
     g += T(700, 100, 'I = I₀ e^(−μx)', { size: 16, w: 700 }) + T(700, 126, 'μ = attenuation coefficient', { size: 12 });
     g += T(700, 180, 'Contrast media', { size: 14, w: 700 }) + T(700, 204, 'barium or iodine have a high', { size: 12 }) + T(700, 220, 'atomic number, so absorb X-rays', { size: 12 }) + T(700, 236, 'strongly: soft organs like the gut', { size: 12 }) + T(700, 252, 'and blood vessels show up', { size: 12 });
     g += T(460, 30, 'Attenuation of X-rays', { size: 15, w: 700 });
@@ -2496,7 +2505,7 @@
     let g = panelT(230, 'Book on a table', 'balanced: W = N') + panelT(700, 'Box on a rough slope', 'resolve along and at 90° to the slope');
     g += `<rect x="120" y="250" width="220" height="12" fill="${WOOD}"/><rect x="190" y="210" width="80" height="40" rx="4" fill="#3f7fd6"/>` + arrow(230, 230, 230, 330, '#ef5b4c', 3) + arrow(230, 230, 230, 130, '#3fb27f', 3) + T(244, 320, 'W = mg', { size: 13, w: 700, a: 'start', fill: '#ef5b4c' }) + T(244, 140, 'N (normal contact)', { size: 13, w: 700, a: 'start', fill: '#3fb27f' });
     g += `<path d="M520 320L880 320L880 160Z" fill="${WOOD}" opacity=".7"/><g transform="rotate(-24 700 240)"><rect x="660" y="200" width="80" height="44" rx="4" fill="#3f7fd6"/></g>`;
-    g += arrow(700, 220, 700, 320, '#ef5b4c', 3) + T(712, 316, 'W', { size: 13, w: 700, a: 'start', fill: '#ef5b4c' }) + arrow(700, 220, 660, 130, '#3fb27f', 3) + T(650, 126, 'N', { size: 13, w: 700, a: 'end', fill: '#3fb27f' }) + arrow(700, 220, 790, 180, '#e0a64a', 3) + T(796, 176, 'F (friction)', { size: 13, w: 700, a: 'start', fill: '#e0a64a' });
+    g += arrow(700, 220, 700, 320, '#ef5b4c', 3) + T(712, 300, 'W', { size: 14, w: 700, a: 'start', fill: '#fff' }) + arrow(700, 220, 660, 130, '#3fb27f', 3) + T(650, 126, 'N', { size: 13, w: 700, a: 'end', fill: '#3fb27f' }) + arrow(700, 220, 790, 180, '#e0a64a', 3) + T(796, 176, 'F (friction)', { size: 13, w: 700, a: 'start', fill: '#e0a64a' });
     g += T(700, 356, 'along slope: mg sin θ = F;  at 90°: N = mg cos θ', { size: 13 }) + T(230, 356, 'draw forces from the centre of mass', { size: 12 });
     return wrap(W, H, o.aria || 'Free-body diagrams for a book on a table and a box on a rough slope', '', g);
   }
@@ -2528,7 +2537,7 @@
     const W = 920, H = 380;
     let g = panelT(250, 'Three forces in equilibrium', 'a sign hanging from two strings') + panelT(690, 'Triangle of forces', 'drawn tip to tail, the arrows close');
     g += `<path d="M80 80H420" stroke="#7d858f" stroke-width="8"/><path d="M120 84L250 200L390 84" stroke="#d6d9de" stroke-width="2.5" fill="none"/><rect x="200" y="200" width="100" height="60" rx="4" fill="#e0a64a"/>` + T(250, 236, 'SALE', { size: 14, w: 700, fill: '#1d2733' });
-    g += arrow(250, 200, 180, 137, '#3f7fd6', 3) + arrow(250, 200, 330, 128, '#3fb27f', 3) + arrow(250, 230, 250, 320, '#ef5b4c', 3) + T(170, 130, 'T₁', { size: 14, w: 700, a: 'end', fill: '#3f7fd6' }) + T(338, 124, 'T₂', { size: 14, w: 700, a: 'start', fill: '#3fb27f' }) + T(262, 316, 'W', { size: 14, w: 700, a: 'start', fill: '#ef5b4c' });
+    g += arrow(250, 200, 180, 137, '#3f7fd6', 3) + arrow(250, 200, 330, 128, '#3fb27f', 3) + arrow(250, 230, 250, 320, '#ef5b4c', 3) + T(176, 162, 'T₁', { size: 14, w: 700, a: 'end', fill: '#3f7fd6' }) + T(338, 124, 'T₂', { size: 14, w: 700, a: 'start', fill: '#3fb27f' }) + T(262, 316, 'W', { size: 14, w: 700, a: 'start', fill: '#ef5b4c' });
     g += arrow(620, 120, 620, 300, '#ef5b4c', 3) + arrow(620, 300, 720, 210, '#3fb27f', 3) + arrow(720, 210, 620, 120, '#3f7fd6', 3) + T(608, 214, 'W', { size: 14, w: 700, a: 'end', fill: '#ef5b4c' }) + T(682, 274, 'T₂', { size: 14, w: 700, a: 'start', fill: '#3fb27f' }) + T(682, 152, 'T₁', { size: 14, w: 700, a: 'start', fill: '#3f7fd6' });
     g += T(690, 346, 'closed triangle → resultant force is zero', { size: 12, w: 700 });
     return wrap(W, H, o.aria || 'Three forces in equilibrium on a hanging sign and the closed triangle of forces', '', g);
@@ -2565,8 +2574,8 @@
     for (let i = 0; i < 70; i++) { const t = rnd(); const x = x0 + 30 + t * (w - 60), y = y0 - h + 30 + t * (h - 60) + (rnd() - 0.5) * 30; const c = t < 0.3 ? '#9fc6ff' : t < 0.55 ? '#ffffff' : t < 0.75 ? '#ffe680' : '#ff9a5a'; g += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(6 - t * 3)}" fill="${c}"/>`; }
     for (let i = 0; i < 14; i++) g += `<circle cx="${f(x0 + 420 + rnd() * 160)}" cy="${f(y0 - h + 50 + rnd() * 80)}" r="${f(6 + rnd() * 6)}" fill="#ff8a4a"/>`;
     for (let i = 0; i < 12; i++) g += `<circle cx="${f(x0 + 60 + rnd() * 160)}" cy="${f(y0 - 50 - rnd() * 50)}" r="3" fill="#dfe8ff"/>`;
-    g += `<circle cx="${x0 + 360}" cy="${y0 - 170}" r="8" fill="#ffe680" stroke="#fff" stroke-width="2"/>` + T(x0 + 374, y0 - 166, 'the Sun', { size: 12, a: 'start' });
-    g += T(x0 + 200, y0 - 180, 'main sequence', { size: 13, w: 700, a: 'start' }).replace('<text', `<text transform="rotate(34 ${x0 + 200} ${y0 - 180})"`) + T(x0 + 500, y0 - h + 34, 'red giants and supergiants', { size: 12 }) + T(x0 + 140, y0 - 20, 'white dwarfs', { size: 12 });
+    g += `<circle cx="${x0 + 360}" cy="${y0 - 170}" r="8" fill="#ffe680" stroke="#fff" stroke-width="2"/>` + T(x0 + 374, y0 - 166, 'the Sun', { size: 12, a: 'start', fill: '#e8ecf5' });
+    g += T(x0 + 200, y0 - 180, 'main sequence', { size: 13, w: 700, a: 'start', fill: '#e8ecf5' }).replace('<text', `<text transform="rotate(34 ${x0 + 200} ${y0 - 180})"`) + T(x0 + 500, y0 - h + 34, 'red giants and supergiants', { size: 12, fill: '#e8ecf5' }) + T(x0 + 140, y0 - 20, 'white dwarfs', { size: 12, fill: '#e8ecf5' });
     g += T(450, 30, 'Hertzsprung–Russell diagram', { size: 15, w: 700 });
     return wrap(W, H, o.aria || 'Hertzsprung–Russell diagram with the main sequence, giants and white dwarfs', '', g);
   }
@@ -2611,16 +2620,16 @@
 
   function fieldLines(o = {}) {
     const W = 960, H = 430;
-    let g = panelT(240, 'Radial field', 'around a point charge or a planet') + panelT(720, 'Uniform field', 'between parallel plates (or near Earth’s surface)');
+    let g = panelT(240, 'Radial field', 'around a positive point charge') + panelT(720, 'Uniform field', 'between parallel plates (or near Earth’s surface)');
     g += `<circle cx="240" cy="220" r="22" fill="#ef5b4c"/>` + T(240, 228, '+', { size: 20, w: 700, fill: '#fff' });
     for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; g += arrow(240 + 28 * Math.cos(a), 220 + 28 * Math.sin(a), 240 + 140 * Math.cos(a), 220 + 140 * Math.sin(a), '#e0a64a', 2, 9); }
     [60, 95, 130].forEach(r => { g += `<circle cx="240" cy="220" r="${r}" fill="none" stroke="#5aa9f0" stroke-width="1.4" stroke-dasharray="5 5"/>`; });
-    g += T(240, 384, 'lines spread out: field gets weaker, E ∝ 1/r²', { size: 12 });
+    g += T(240, 384, 'lines spread out: field gets weaker, E ∝ 1/r²', { size: 12 }) + T(240, 400, 'arrows point inwards for a negative charge or a planet', { size: 12 });
     g += `<rect x="560" y="110" width="320" height="12" fill="#ef5b4c"/><rect x="560" y="320" width="320" height="12" fill="#3f7fd6"/>` + T(550, 120, '+', { size: 18, w: 700, a: 'end' }) + T(550, 332, '−', { size: 18, w: 700, a: 'end' });
     for (let i = 0; i < 7; i++) g += arrow(580 + i * 48, 124, 580 + i * 48, 316, '#e0a64a', 2, 9);
     [170, 220, 270].forEach(y => { g += `<path d="M560 ${y}H880" stroke="#5aa9f0" stroke-width="1.4" stroke-dasharray="5 5"/>`; });
     g += T(720, 384, 'equally spaced: same strength everywhere, E = V ÷ d', { size: 12 }) + T(480, 418, 'solid: field lines;  dashed: equipotentials (always at 90° to field lines)', { size: 12, w: 700 });
-    return wrap(W, H, o.aria || 'Radial and uniform field lines with equipotentials', '', g).replace(T(240, 60, 'around a point charge or a planet', { size: 12 }), T(240, 76, 'around a point charge or a planet', { size: 12 }));
+    return wrap(W, H, o.aria || 'Radial and uniform field lines with equipotentials', '', g).replace(T(240, 60, 'around a positive point charge', { size: 12 }), T(240, 76, 'around a positive point charge', { size: 12 }));
   }
 
   function potentialGraph(o = {}) {
@@ -2701,7 +2710,7 @@
     let g = axes(x0, y0, 520, 230, 'Molecular speed (or energy)', 'Number of molecules');
     const mb = (a, s) => curveP(t => s * (t * a) ** 2 * Math.exp(-((t * a) ** 2)) * 2.7, x0, y0, 500, 200, 120);
     g += `<path d="${mb(3, 1)}" stroke="#3f7fd6" stroke-width="3" fill="none"/><path d="${mb(2, 0.68)}" stroke="#ef5b4c" stroke-width="3" fill="none"/>`;
-    g += T(x0 + 175, y0 - 206, 'lower T', { size: 12, fill: '#3f7fd6', a: 'start' }) + T(x0 + 400, y0 - 74, 'higher T', { size: 12, fill: '#ef5b4c', a: 'start' }) + T(x0 + 400, y0 - 58, '(flatter, peak to the right)', { size: 12, fill: '#ef5b4c', a: 'start' });
+    g += T(x0 + 175, y0 - 206, 'lower T', { size: 12, fill: '#3f7fd6', a: 'start' }) + T(x0 + 262, y0 - 178, 'higher T: flatter, peak to the right', { size: 12, fill: '#ef5b4c', a: 'start' });
     g += `<path d="M${x0 + 380} ${y0}V${y0 - 150}" stroke="#e0a64a" stroke-width="2" stroke-dasharray="5 4"/>` + T(x0 + 384, y0 - 156, 'E_a', { size: 13, w: 700, fill: '#e0a64a', a: 'start' });
     g += T(450, 30, 'Maxwell–Boltzmann distribution', { size: 15, w: 700 }) + T(450, 368, 'area under each curve = total number of molecules (the same); more molecules above E_a when hotter', { size: 12 });
     return wrap(W, H, o.aria || 'Maxwell–Boltzmann distributions at two temperatures with the activation energy marked', '', g);
@@ -2868,7 +2877,7 @@
     g += lv(80, 260, 330, 'Na(s) + ½Cl₂(g)') + lv(80, 260, 290, 'Na(g) + ½Cl₂(g)') + lv(80, 260, 230, 'Na(g) + Cl(g)') + lv(80, 260, 80, 'Na⁺(g) + e⁻ + Cl(g)') + lv(330, 510, 150, 'Na⁺(g) + Cl⁻(g)') + lv(80, 260, 410, 'NaCl(s)');
     g += arrow(120, 330, 120, 292, '#3f7fd6', 2) + T(126, 316, '+107 atomisation (Na)', { size: 11, a: 'start' }) + arrow(150, 290, 150, 232, '#3f7fd6', 2) + T(156, 266, '+122 atomisation (Cl)', { size: 11, a: 'start' }) + arrow(180, 230, 180, 82, '#3f7fd6', 2) + T(186, 160, '+496 1st ionisation energy', { size: 11, a: 'start' });
     g += arrow(380, 80, 380, 148, '#ef5b4c', 2) + T(386, 112, '−349 electron affinity', { size: 11, a: 'start' }) + arrow(420, 150, 420, 406, '#ef5b4c', 2.5) + T(426, 290, 'lattice enthalpy = ?', { size: 13, w: 700, a: 'start', fill: '#ef5b4c' }) + arrow(100, 330, 100, 406, '#ef5b4c', 2) + T(94, 380, '−411 ΔfH', { size: 11, a: 'end' }).replace('x="94"', 'x="96"');
-    g += `<path d="M260 410H420" stroke="currentColor" stroke-dasharray="4 4"/>`;
+    g += `<path d="M322 410H420" stroke="currentColor" stroke-dasharray="4 4"/>`;
     g += T(700, 300, 'Hess: ΔfH = sum of all other steps', { size: 12 }) + T(700, 320, 'LE = −411 − (107 + 122 + 496 − 349)', { size: 12 }) + T(700, 344, '= −787 kJ mol⁻¹', { size: 14, w: 700 });
     return wrap(W, H, o.aria || 'Born–Haber cycle for sodium chloride used to find the lattice enthalpy', '', g);
   }
@@ -3101,7 +3110,7 @@
     // slope (wedge with rough surface)
     g += shadow(700, 324, 190, 5) + `<path d="M520 320L880 320L880 160Z" fill="url(#${k}s)" stroke="#6b4a26" stroke-width="2"/>` + Array.from({ length: 18 }, (_, i) => { const t = (i + .5) / 18, x = 520 + 360 * t, y = 320 - 160 * t; return `<path d="M${f(x)} ${f(y)}l3 4" stroke="#6b4a26" stroke-width="1.4"/>`; }).join('');
     g += `<g transform="rotate(-24 700 240)"><rect x="660" y="198" width="80" height="46" rx="4" fill="url(#${k}x)" stroke="#1d3d6e" stroke-width="1.5"/><rect x="664" y="201" width="72" height="6" rx="3" fill="#fff" opacity=".3"/><path d="M700 198V244" stroke="#c9a06a" stroke-width="6" opacity=".85"/></g>`;
-    g += `<circle cx="700" cy="220" r="4" fill="currentColor"/>` + arrow(700, 220, 700, 320, '#ef5b4c', 3.5) + T(712, 316, 'W', { size: 13, w: 700, a: 'start', fill: '#ef5b4c' }) + arrow(700, 220, 660, 130, '#3fb27f', 3.5) + T(650, 126, 'N', { size: 13, w: 700, a: 'end', fill: '#3fb27f' }) + arrow(700, 220, 790, 180, '#e0a64a', 3.5) + T(784, 166, 'F (friction)', { size: 13, w: 700, a: 'end', fill: '#e0a64a' });
+    g += `<circle cx="700" cy="220" r="4" fill="currentColor"/>` + arrow(700, 220, 700, 320, '#ef5b4c', 3.5) + T(712, 300, 'W', { size: 14, w: 700, a: 'start', fill: '#fff' }) + arrow(700, 220, 660, 130, '#3fb27f', 3.5) + T(650, 126, 'N', { size: 13, w: 700, a: 'end', fill: '#3fb27f' }) + arrow(700, 220, 790, 180, '#e0a64a', 3.5) + T(784, 166, 'F (friction)', { size: 13, w: 700, a: 'end', fill: '#e0a64a' });
     g += `<path d="M570 320A50 50 0 0 0 566 300" stroke="currentColor" fill="none" stroke-width="1.5"/>` + T(584, 312, 'θ', { size: 13 });
     g += T(700, 356, 'along slope: mg sin θ = F;  at 90°: N = mg cos θ', { size: 13 }) + T(230, 360, 'draw forces from the centre of mass', { size: 12 });
     return wrap(W, H, o.aria || 'Free-body diagrams for a book on a table and a box on a rough slope', '', g);
@@ -3319,7 +3328,7 @@
     g += `<path d="M458 200H560V320" stroke="${GL}" stroke-width="6" fill="none"/><path d="M458 200H560V320" stroke="#fff" stroke-width="1.6" fill="none" opacity=".5"/>`;
     g += `<path d="M500 300V380Q500 392 512 392H800Q812 392 812 380V300" fill="${WATER}" fill-opacity=".35" stroke="${GL}" stroke-width="3"/><path d="M500 312H812" stroke="${WATER}" stroke-width="2"/>`;
     g += `<path d="M574 360V214Q574 196 592 196Q610 196 610 214V360" fill="#fff" fill-opacity=".08" stroke="${GL}" stroke-width="3"/><rect x="577" y="262" width="30" height="98" fill="${WATER}" opacity=".45"/>` + bubbles(566, 340, 3, 16) + bubbles(592, 250, 3, 14);
-    g += T(118, 124, 'mineral wool soaked in', { size: 12 }) + T(118, 140, 'liquid paraffin (long alkanes)', { size: 12 }) + `<path d="M118 146V184" stroke="currentColor" stroke-width="1"/>` + T(316, 150, 'hot porous pot / catalyst', { size: 12 }) + `<path d="M316 156V190" stroke="currentColor" stroke-width="1"/>` + T(330, 418, 'heat strongly', { size: 12 });
+    g += T(118, 124, 'mineral wool soaked in', { size: 12 }) + T(118, 140, 'liquid paraffin (long alkanes)', { size: 12 }) + `<path d="M118 146V184" stroke="currentColor" stroke-width="1"/>` + T(316, 150, 'hot porous pot / catalyst', { size: 12 }) + `<path d="M316 156V190" stroke="currentColor" stroke-width="1"/>` + T(372, 336, 'heat strongly', { size: 12, a: 'start' });
     g += T(640, 230, 'gas collected over water:', { size: 12, a: 'start' }) + T(640, 246, 'shorter alkenes (decolourise', { size: 12, a: 'start' }) + T(640, 262, 'bromine water) and alkanes', { size: 12, a: 'start' });
     g += T(480, 50, 'Cracking: large alkanes → smaller, more useful alkanes + alkenes', { size: 16, w: 700 }) + T(480, 74, 'e.g. C₁₀H₂₂ → C₈H₁₈ + C₂H₄   (catalytic cracking or steam cracking)', { size: 14 });
     return wrap(W, H, o.aria || 'Laboratory cracking of liquid paraffin over a hot catalyst', '', g);
@@ -3352,14 +3361,14 @@
     let g = bench(30, 970, 436);
     // filtration
     g += stand(70, 436, 260, 196, 126) + `<path d="M98 120H182L148 190V272H132V190Z" fill="#fff" fill-opacity=".08" stroke="${GL}" stroke-width="3"/><path d="M104 124H176L146 182H134Z" fill="#f6f2e4" stroke="#d9cfae"/><path d="M114 160H166L146 182H134Z" fill="#a98352"/>` + conicalF(140, 436, 110, 180, '#cfeaf7', .35) + `<path d="M140 276v60" stroke="#cfeaf7" stroke-width="2" stroke-dasharray="3 5"/>`;
-    g += T(140, 60, 'Filtration', { size: 16, w: 700 }) + T(140, 82, 'separates an insoluble solid', { size: 12 }) + T(198, 150, 'residue', { size: 12, a: 'start' }) + `<path d="M196 146L156 166" stroke="currentColor" stroke-width="1"/>` + T(140, 456, 'filtrate', { size: 12 });
+    g += T(140, 60, 'Filtration', { size: 16, w: 700 }) + T(140, 82, 'separates an insoluble solid', { size: 12 }) + T(198, 150, 'residue', { size: 12, a: 'start' }) + `<path d="M196 146L156 166" stroke="currentColor" stroke-width="1"/>` + T(206, 412, 'filtrate', { size: 12, a: 'start' });
     // crystallisation: evaporating basin on gauze, tripod, bunsen
     g += `<path d="M310 260Q312 300 370 302Q428 300 430 260Z" fill="#f4f1ea" stroke="#c9c2b0" stroke-width="2.5"/><path d="M318 268Q326 294 370 296Q414 294 422 268Z" fill="#e0a64a" fill-opacity=".45"/>${[0, 1, 2, 3].map(i => `<path d="M${336 + i * 22} 278l7 -8 7 8 -7 8z" fill="#fff" stroke="#9fd4e6"/>`).join('')}` + gauze(370, 302, 140) + tripod(370, 307, 82, 120) + bunsen(370, 436) + `<path d="M350 250q6 -14 0 -26M370 246q6 -14 0 -26M390 250q6 -14 0 -26" stroke="#cfd5dc" stroke-width="2" fill="none" opacity=".8"/>`;
     g += T(370, 60, 'Crystallisation', { size: 16, w: 700 }) + T(370, 82, 'gets a soluble solid from a solution', { size: 12 }) + T(370, 196, 'heat to evaporate some water,', { size: 12 }) + T(370, 212, 'then leave to cool: crystals form', { size: 12 });
     // simple distillation
     g += stand(530, 436, 300, 230, 600) + rbFlask(600, 300, 46, '#e0a64a') + glassSheen(572, 270, 50) + `<rect x="589" y="190" width="22" height="20" rx="3" fill="#c26b3a"/>` + thermo(600, 150, 240, .5) + condenser(620, 222, 800, 292) + `<path d="M800 292L820 340" stroke="${GL}" stroke-width="5"/>`;
     g += `<path d="M676 262l-6 16M760 268l6 -16" stroke="${GL}" stroke-width="4"/>` + beaker(780, 340, 90, 90, .3) + gauze(600, 352, 110) + tripod(600, 357, 70, 100) + bunsen(600, 436);
-    g += T(720, 60, 'Simple distillation', { size: 16, w: 700 }) + T(720, 82, 'separates a solvent from a solution', { size: 12 }) + T(586, 140, 'thermometer', { size: 12, a: 'end' }) + T(760, 214, 'condenser (cold water)', { size: 12, a: 'start' }) + T(870, 420, 'pure distillate', { size: 12, a: 'start' });
+    g += T(720, 60, 'Simple distillation', { size: 16, w: 700 }) + T(720, 82, 'separates a solvent from a solution', { size: 12 }) + T(614, 160, 'thermometer', { size: 12, a: 'start' }) + T(760, 214, 'condenser (cold water)', { size: 12, a: 'start' }) + T(880, 420, 'pure distillate', { size: 12, a: 'start' });
     return wrap(W, H, o.aria || 'Filtration, crystallisation and simple distillation apparatus', '', g);
   }
 

@@ -41,6 +41,12 @@
     run(L, 'l'); run(R, 'r');
     return g;
   }
+  function tag(x, y, tx, ty, t, o = {}) {
+    const size = (o.size || 14) * LAB_K, anchor = o.anchor || 'middle', lines = String(t).split('\n'), lh = size * 1.18, cw = size * 0.56, tw = Math.max(...lines.map(s => s.length)) * cw;
+    const left = anchor === 'start' ? tx : anchor === 'end' ? tx - tw : tx - tw / 2, above = ty < y;
+    const ex = o.ex ?? (anchor === 'start' ? tx - 5 : anchor === 'end' ? tx + 5 : tx), ey = o.ey ?? (anchor === 'middle' ? (above ? ty + (lines.length - 1) * lh + 5 : ty - size * 0.9) : ty - size * 0.32 + (lines.length - 1) * lh / 2);
+    return `<path d="M${f(ex)} ${f(ey)}L${f(x)} ${f(y)}" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".75"/><circle cx="${f(x)}" cy="${f(y)}" r="2.6" fill="currentColor"/><g class="sf-lbl"><rect class="sf-blank" x="${f(left - 5)}" y="${f(ty - size)}" width="${f(tw + 10)}" height="${f(lines.length * lh + 6)}" rx="5"/><text x="${f(tx)}" y="${f(ty)}" text-anchor="${anchor}" class="sf-lab" font-size="${size}">${lines.map((s, k) => `<tspan x="${f(tx)}" dy="${k ? f(lh) : 0}">${esc(s)}</tspan>`).join('')}</text></g>`;
+  }
   const wrap = (W, H, aria, defs, body) => { let x0 = 0, y0 = 0, w = W, h = H; if (EXT) { x0 = Math.min(0, Math.floor(EXT.l - 10)); y0 = Math.min(0, Math.floor(EXT.t - 4)); w = Math.max(W, Math.ceil(EXT.r + 10)) - x0; h = Math.max(H, Math.ceil(EXT.b + 4)) - y0; } return `<svg class="sf" viewBox="${x0} ${y0} ${w} ${h}" role="img" aria-label="${esc(aria)}" style="color:var(--ink,#e8ecf5)"><defs>${defs}</defs>${body}</svg>`; };
   const LV = l => (l === 'ks3' ? 0 : l === 'alevel' || l === 'a' ? 2 : 1);
 
@@ -58,15 +64,16 @@
     if (alevel) s += `<path d="M${f(-w / 2 + 8)} 0H${f(w / 2 - 8)}" stroke="#1f5a1a" stroke-width=".8" opacity=".7"/><circle cx="${f(w * 0.25)}" cy="${f(h * 0.18)}" r="2.4" fill="#f4f0d0" opacity=".9"/>`;
     return s + '</g>';
   };
-  const ribos = (r, n, cx, cy, rx, ry, avoid) => {
+  const ribos = (r, n, cx, cy, rx, ry, avoid, out) => {
     let s = '';
     for (let i = 0, k = 0; i < n * 4 && k < n; i++) {
       const a = r() * Math.PI * 2, rr = Math.sqrt(r()), x = cx + Math.cos(a) * rx * rr, y = cy + Math.sin(a) * ry * rr;
       if (avoid && avoid.some(([ax, ay, ar]) => (x - ax) ** 2 + (y - ay) ** 2 < ar * ar)) continue;
-      s += `<circle cx="${f(x)}" cy="${f(y)}" r="1.9" fill="#4b2c6b"/>`; k++;
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="1.9" fill="#4b2c6b"/>`; k++; if (out) out.push([x, y]);
     }
     return s;
   };
+  const near = (pts, x, y) => pts.reduce((b, p) => ((p[0] - x) ** 2 + (p[1] - y) ** 2 < (b[0] - x) ** 2 + (b[1] - y) ** 2 ? p : b), pts[0] || [x, y]);
   const gradDefs = id => `<radialGradient id="${id}-nuc" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#d8b6ef"/><stop offset=".7" stop-color="#a979cf"/><stop offset="1" stop-color="#7d4fa5"/></radialGradient>
 <radialGradient id="${id}-mito" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#ffc4a8"/><stop offset="1" stop-color="#ec8a68"/></radialGradient>
 <radialGradient id="${id}-chl" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#9edc78"/><stop offset="1" stop-color="#4f9b3a"/></radialGradient>
@@ -89,13 +96,13 @@
     b += nucleus(N[0], N[1], N[2], N[3], id, lv);
     const M = [[cx + 110, cy - 70, 62, 30, -25], [cx - 120, cy + 70, 58, 28, 30], [cx + 95, cy + 95, 56, 27, 15], [cx - 125, cy - 60, 54, 26, -40]];
     M.forEach(m => b += mito(m[0], m[1], m[2], m[3], m[4], id, lv === 2));
-    const labs = [{ x: cx - 110, y: cy + 120, t: 'Cytoplasm', side: 'l' }, { x: cx + 180, y: cy - 60, t: lv === 2 ? 'Cell-surface membrane' : 'Cell membrane', side: 'r' }, { x: N[0] - 30, y: N[1] - 20, t: 'Nucleus', side: 'l' }, { x: M[0][0] + 10, y: M[0][1], t: 'Mitochondrion', side: 'r' }];
-    if (lv >= 1) { b += ribos(r, lv === 2 ? 26 : 34, cx, cy, 165, 130, [[N[0], N[1], 75], ...M.map(m => [m[0], m[1], 36])]); labs.push({ x: cx + 40, y: cy + 130, t: 'Ribosomes', side: 'r' }); }
+    const labs = [{ x: cx - 110, y: cy + 120, t: 'Cytoplasm', side: 'l' }, { x: cx + 192, y: cy - 45, t: lv === 2 ? 'Cell-surface membrane' : 'Cell membrane', side: 'r', ly: cy - 45 }, { x: N[0] - 30, y: N[1] - 20, t: 'Nucleus', side: 'l' }, { x: M[0][0] + 10, y: M[0][1], t: 'Mitochondrion', side: 'r' }];
+    if (lv >= 1) { const rp = []; b += ribos(r, lv === 2 ? 26 : 34, cx, cy, 165, 130, [[N[0], N[1], 75], ...M.map(m => [m[0], m[1], 36])], rp); const q = near(rp, cx + 40, cy + 130); labs.push({ x: q[0], y: q[1], t: 'Ribosomes', side: 'r', ly: cy + 130 }); }
     if (lv === 2) {
       b += rer(cx - 70, cy + 72, 90, 3) + ser(cx + 60, cy + 30, 60) + golgi(cx + 30, cy - 120) + `<circle cx="${cx - 60}" cy="${cy - 115}" r="13" fill="#e9b7d8" stroke="#a45a8a" stroke-width="1.6"/><g transform="translate(${cx + 140} ${cy + 25})"><rect x="-10" y="-4" width="20" height="8" rx="2" fill="#c9a26b"/><rect x="-4" y="-12" width="8" height="20" rx="2" fill="#c9a26b" transform="translate(14 4)"/></g>`;
-      labs.push({ x: N[0] + 20, y: N[1] + 20, t: 'Nucleolus', side: 'r', ly: cy + 10 }, { x: N[0] - 55, y: N[1] + 25, t: 'Nuclear envelope', side: 'l' }, { x: cx - 30, y: cy + 75, t: 'Rough ER', side: 'l' }, { x: cx + 85, y: cy + 28, t: 'Smooth ER', side: 'r' }, { x: cx + 30, y: cy - 118, t: 'Golgi apparatus', side: 'r' }, { x: cx - 60, y: cy - 115, t: 'Lysosome', side: 'l' }, { x: cx + 145, y: cy + 25, t: 'Centrioles', side: 'r' });
+      labs.push({ x: N[0] + N[2] * 0.2, y: N[1] - N[3] * 0.1, t: 'Nucleolus', side: 'r', ly: cy + 10 }, { x: N[0] - 55, y: N[1] + 25, t: 'Nuclear envelope', side: 'l' }, { x: cx - 30, y: cy + 75, t: 'Rough ER', side: 'l' }, { x: cx + 85, y: cy + 28, t: 'Smooth ER', side: 'r' }, { x: cx + 30, y: cy - 118, t: 'Golgi apparatus', side: 'r' }, { x: cx - 60, y: cy - 115, t: 'Lysosome', side: 'l' }, { x: cx + 145, y: cy + 25, t: 'Centrioles', side: 'r' });
     }
-    if (lv === 1) labs.push({ x: N[0] + 20, y: N[1] - 2, t: 'Genetic material (DNA)', side: 'r', ly: cy - 20 });
+    if (lv === 1) labs.push({ x: N[0] + 34, y: N[1] + 22, t: 'Genetic material (DNA)', side: 'r', ly: cy + 20 });
     return wrap(W, H, o.aria || 'Labelled animal cell', gradDefs(id), b + labels(labs, { W, H, lx: 190, rx: 640 }));
   }
   function plantCell(o = {}) {
@@ -111,7 +118,7 @@
     M.forEach(m => b += mito(m[0], m[1], m[2], m[3], m[4], id, lv === 2));
     const labs = [{ x: x0 + 2, y: y0 + 120, t: 'Cell wall', side: 'l' }, { x: x0 + 10, y: y0 + 285, t: 'Cell membrane', side: 'l' }, { x: x0 + 60, y: y0 + 130, t: 'Cytoplasm', side: 'l', ly: y0 + 150 }, { x: N[0] - 20, y: N[1] - 10, t: 'Nucleus', side: 'l' },
       { x: C[5][0] + 10, y: C[5][1], t: 'Chloroplast', side: 'r' }, { x: V[0] + 40, y: V[1], t: lv ? 'Permanent vacuole' : 'Vacuole', side: 'r' }, { x: M[1][0], y: M[1][1], t: 'Mitochondrion', side: 'l', ly: y0 + 215 }];
-    if (lv >= 1) { b += ribos(r, 26, x0 + w / 2, y0 + h / 2, w * 0.45, h * 0.44, [[V[0], V[1], 110], [N[0], N[1], 45], ...C.map(c => [c[0], c[1], 24])]); labs.push({ x: x0 + 78, y: y0 + 248, t: 'Ribosomes', side: 'l', ly: y0 + 250 }); }
+    if (lv >= 1) { const rp = []; b += ribos(r, 26, x0 + w / 2, y0 + h / 2, w * 0.45, h * 0.44, [[V[0], V[1], 110], [N[0], N[1], 45], ...C.map(c => [c[0], c[1], 24])], rp); const q = near(rp, x0 + 78, y0 + 248); labs.push({ x: q[0], y: q[1], t: 'Ribosomes', side: 'l', ly: y0 + 250 }); }
     if (lv === 2) { b += golgi(x0 + 140, y0 + 95, 4) + `<path d="M${x0 + 175} ${y0}v9M${x0 + 175} ${y0 + h - 9}v9" stroke="#2f5d20" stroke-width="3"/>`; labs.push({ x: V[0] + V[2] - 4, y: V[1] + 14, t: 'Tonoplast', side: 'r', ly: V[1] + 40 }, { x: x0 + 140, y: y0 + 100, t: 'Golgi apparatus', side: 'l' }, { x: x0 + 175, y: y0 + h + 4, t: 'Plasmodesma', side: 'r', ly: H - 20 }); }
     return wrap(W, H, o.aria || 'Labelled plant cell', gradDefs(id), b + labels(labs, { W, H, lx: 205, rx: 640 }));
   }
@@ -125,11 +132,11 @@
     b += `<path d="${loop}Z" fill="none" stroke="#5e3784" stroke-width="2.4"/>`;
     const P = [[cx + 110, cy - 30, 16], [cx + 130, cy + 30, 12], [cx - 150, cy + 30, 11]];
     P.forEach(p => b += `<ellipse cx="${p[0]}" cy="${p[1]}" rx="${p[2]}" ry="${p[2] * 0.75}" fill="none" stroke="#c0392b" stroke-width="2.2"/>`);
-    b += ribos(r, 40, cx, cy, 175, 60, [[cx - 30, cy, 40], ...P.map(p => [p[0], p[1], p[2] + 4])]);
-    const labs = [{ x: cx - 70, y: cy - 34, t: lv === 2 ? 'Circular DNA (nucleoid)' : 'DNA (single loop)', side: 'l' }, { x: P[0][0] + 11, y: P[0][1] - 12, t: 'Plasmids', side: 'r', ly: cy - 90 }, { x: cx - 150, y: cy - 60, t: 'Cell wall', side: 'l', ly: cy - 100 }, { x: cx - 120, y: cy + 68, t: 'Cell membrane', side: 'l' }, { x: cx + 60, y: cy + 50, t: 'Cytoplasm', side: 'r', ly: cy + 70 }, { x: cx + 300, y: cy + 6, t: 'Flagellum', side: 'r', ly: cy - 45 }];
-    if (lv >= 1) labs.push({ x: cx - 100, y: cy + 40, t: lv === 2 ? 'Ribosomes (70S)' : 'Ribosomes', side: 'l' });
-    if (lv === 2 || o.capsule) labs.push({ x: cx + 170, y: cy - 88, t: 'Capsule (slime layer)', side: 'r', ly: cy - 120 });
-    if (lv === 2) { b += [-60, -20, 30, 70].map((dx, i) => `<path d="M${cx + dx} ${cy - 80}l${i % 2 ? 4 : -4} -14" stroke="#8a6d3b" stroke-width="1.6"/>`).join(''); labs.push({ x: cx - 20, y: cy - 90, t: 'Pili', side: 'r', ly: cy - 150 }); }
+    const rp = []; b += ribos(r, 40, cx, cy, 175, 60, [[cx - 30, cy, 40], ...P.map(p => [p[0], p[1], p[2] + 4])], rp); const rq = near(rp, cx - 100, cy + 40);
+    const labs = [{ x: cx - 70, y: cy - 34, t: lv === 2 ? 'Circular DNA (nucleoid)' : 'DNA (single loop)', side: 'l' }, { x: P[0][0] + 11, y: P[0][1] - 12, t: 'Plasmids', side: 'r', ly: cy - 90 }, { x: cx - 150, y: cy - 60, t: 'Cell wall', side: 'l', ly: cy - 100 }, { x: cx - 120, y: cy + 68, t: 'Cell membrane', side: 'l' }, { x: cx + 60, y: cy + 50, t: 'Cytoplasm', side: 'r', ly: cy + 70 }, { x: cx + 207, y: cy - 2, t: 'Flagellum', side: 'r', ly: cy - 8 }];
+    if (lv >= 1) labs.push({ x: rq[0], y: rq[1], t: lv === 2 ? 'Ribosomes (70S)' : 'Ribosomes', side: 'l', ly: cy + 40 });
+    if (lv === 2 || o.capsule) labs.push({ x: cx + 162, y: cy - 76, t: 'Capsule (slime layer)', side: 'r', ly: cy - 120 });
+    if (lv === 2) { b += [-60, -20, 30, 70].map((dx, i) => `<path d="M${cx + dx} ${cy - 80}l${i % 2 ? 4 : -4} -14" stroke="#8a6d3b" stroke-width="1.6"/>`).join(''); labs.push({ x: cx + 73, y: cy - 90, t: 'Pili', side: 'r', ly: cy - 150 }); }
     return wrap(W, H, o.aria || 'Labelled bacterial cell', gradDefs(id), b + labels(labs, { W, H, lx: 205, rx: 675, top: 20 }));
   }
 
@@ -161,19 +168,31 @@
       slots.forEach(([a, m]) => { for (let k = 0; k < m; k++) { const aa = (a + (m === 2 ? (k ? 9 : -9) * 52 / rr : 0)) * Math.PI / 180, x = cx + Math.cos(aa) * rr, y = cy + Math.sin(aa) * rr; if (!firstE) firstE = [x, y]; es += `<circle cx="${f(x)}" cy="${f(y)}" r="7.5" fill="url(#${id}-e)" stroke="#123c6b" stroke-opacity=".6"/>` + (lv >= 1 ? `<text x="${f(x)}" y="${f(y + 3.5)}" text-anchor="middle" font-size="10" font-weight="700" class="sf-in" style="fill:#fff">−</text>` : ''); } });
       b += qg(es, cx, cy, rr);
     });
-    const pk = pts.findIndex((_, k) => isP[k]), nk = pts.findIndex((_, k) => !isP[k]);
+    let pk = pts.findIndex((_, k) => isP[k]), nk = pts.findIndex((_, k) => !isP[k]);
+    { /* pick a visible proton above a visible neutron so the two leaders never cross */
+      const LX = cx - 230, top = k => !pts.some((q, j) => j > k && Math.hypot(q[0] - pts[k][0], q[1] - pts[k][1]) < r1 * 1.1);
+      const ccw = (a, b2, c) => (c[1] - a[1]) * (b2[0] - a[0]) > (b2[1] - a[1]) * (c[0] - a[0]);
+      const hit = (a, b2, c, d) => ccw(a, c, d) !== ccw(b2, c, d) && ccw(a, b2, c) !== ccw(a, b2, d);
+      let best = -1e9;
+      pts.forEach((p, i) => { if (!isP[i]) return; pts.forEach((q, j) => { if (isP[j]) return;
+        if (hit([LX, cy + 60], p, [LX, cy + 110], q)) return;
+        const nu = [[LX, cy + 4], [cx - nr - 4, cy + 4]];
+        if (hit([LX, cy + 60], p, nu[0], nu[1]) || hit([LX, cy + 110], q, nu[0], nu[1])) return;
+        const sc = (top(i) ? 40 : 0) + (top(j) ? 40 : 0) + Math.min(30, q[1] - p[1]) - Math.abs(p[0] - cx) * 0.3 - Math.abs(q[0] - cx) * 0.3 + (Math.hypot(p[0] - q[0], p[1] - q[1]) > r1 * 1.6 ? 15 : 0);
+        if (sc > best) { best = sc; pk = i; nk = j; } }); });
+    }
     const labs = [{ x: cx - nr - 6, y: cy + 4, t: 'Nucleus', side: 'l' }];
     if (pk >= 0) labs.push({ x: pts[pk][0], y: pts[pk][1], t: lv ? 'Proton (+1)' : 'Proton', side: 'l', ly: cy + 60 });
     if (nk >= 0) labs.push({ x: pts[nk][0], y: pts[nk][1], t: lv ? 'Neutron (0)' : 'Neutron', side: 'l', ly: cy + 110 });
     if (firstE) labs.push({ x: firstE[0], y: firstE[1], t: lv ? 'Electron (−1)' : 'Electron', side: 'r', ly: 40 });
     const outR = R0 + dR * cfg.length;
     labs.push({ x: cx + outR * 0.71, y: cy + outR * 0.71, t: lv ? 'Shell (energy level)' : 'Shell', side: 'r', ly: cy + 150 });
-    let sideTxt = `<g transform="translate(${W - 140} 150)"><text x="0" y="0" font-size="16" class="sf-lab" text-anchor="middle">${esc(o.title || (NAME[Z][0].toUpperCase() + NAME[Z].slice(1) + (ch ? ' ion' : ' atom')))}</text>`;
+    let sideTxt = `<g transform="translate(${W - 140} 150)${o.big ? ` scale(${o.big})` : ''}"><text x="0" y="0" font-size="16" class="sf-lab" text-anchor="middle">${esc(o.title || (NAME[Z][0].toUpperCase() + NAME[Z].slice(1) + (ch ? ' ion' : ' atom')))}</text>`;
     sideTxt += `<text x="-6" y="44" font-size="14" text-anchor="end" class="sf-lab">${A}</text><text x="-6" y="72" font-size="14" text-anchor="end" class="sf-lab">${Z}</text><text x="0" y="70" font-size="40" font-weight="700" class="sf-lab">${SYM[Z]}</text>${ch ? `<text x="${SYM[Z].length * 24 + 4}" y="46" font-size="16" class="sf-lab">${Math.abs(ch) > 1 ? Math.abs(ch) : ''}${ch > 0 ? '+' : '−'}</text>` : ''}`;
     if (lv >= 1) { const t1 = `${Z} p · ${N} n · ${e} e⁻`, t2 = `Electrons: ${cfg.join(', ')}`; sideTxt += qt(`<text x="0" y="104" font-size="13" text-anchor="middle" class="sf-lab">${t1}</text>`, -t1.length * 3.8 - 6, 91, t1.length * 7.6 + 12, 17) + qt(`<text x="0" y="124" font-size="13" text-anchor="middle" class="sf-lab">${t2}</text>`, -t2.length * 3.8 - 6, 112, t2.length * 7.6 + 12, 17); }
     sideTxt += '</g>';
     if (o.noSide) sideTxt = '';
-    return wrap(W, H, o.aria || `Atom diagram of ${NAME[Z]}: ${Z} protons, ${N} neutrons, ${e} electrons arranged ${cfg.join(', ')}`, defs, b + labels(labs, { W, H, lx: cx - outR - 26, rx: cx + outR + 30, top: 30 }) + sideTxt);
+    return wrap(W, H, o.aria || `Atom diagram of ${NAME[Z]}: ${Z} protons, ${N} neutrons, ${e} electrons arranged ${cfg.join(', ')}`, defs, b + labels(labs, { W, H, lx: cx - outR - 26, rx: cx + outR + 30, top: 30, size: o.big ? 15 * o.big : 15 }) + sideTxt);
   }
 
 
@@ -193,8 +212,8 @@
     const ex = bx + 528;
     [[-0.7, 60], [-0.25, 70], [0.2, 66], [0.65, 58]].forEach(([a, l]) => { const x2 = ex + Math.cos(a) * l, y2 = cy + Math.sin(a) * l; b += `<path d="M${ex} ${cy}Q${f(ex + l * 0.5)} ${f(cy + Math.sin(a) * l * 0.3)} ${f(x2)} ${f(y2)}" stroke="#e7a68c" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="${f(x2 + 4)}" cy="${f(y2)}" r="8" fill="#f0b29a" stroke="#c97f63"/>`; });
     b += `<path d="M${bx + 120} ${cy + 46}H${bx + 360}" stroke="#ffcf5a" stroke-width="3"/><path d="M${bx + 360} ${cy + 40}l12 6 -12 6z" fill="#ffcf5a"/><text x="${bx + 240}" y="${cy + 66}" text-anchor="middle" font-size="14" class="sf-lab">direction of impulse</text>`;
-    const labs = [{ x: bx - 70, y: cy - 60, t: 'Dendrites', side: 'l' }, { x: bx + 30, y: cy - 30, t: 'Cell body', side: 'l', ly: 70 }, { x: bx - 6, y: cy + 4, t: 'Nucleus', side: 'l', ly: 260 },
-      { x: sx + sw + gap + 40, y: cy - 15, t: lv === 2 ? 'Myelin sheath (Schwann cell)' : 'Myelin sheath', side: 'r', ly: 40 }, { x: sx + segs * (sw + gap) + 2, y: cy, t: 'Axon', side: 'r', ly: 115 }, { x: ex + 66, y: cy + 40, t: lv === 2 ? 'Axon terminals (synaptic knobs)' : 'Nerve endings', side: 'r', ly: 300 }];
+    const labs = [{ x: bx - 64, y: cy - 48, t: 'Dendrites', side: 'l', ly: cy - 50 }, { x: bx + 22, y: cy - 26, t: 'Cell body', side: 'l', ly: 70 }, { x: bx - 6, y: cy + 4, t: 'Nucleus', side: 'l', ly: 260 },
+      { x: sx + sw + gap + 40, y: cy - 15, t: lv === 2 ? 'Myelin sheath (Schwann cell)' : 'Myelin sheath', side: 'r', ly: 40 }, { x: sx + segs * (sw + gap) + 2, y: cy, t: 'Axon', side: 'r', ly: 115 }, { x: ex + 50, y: cy + 35, t: lv === 2 ? 'Axon terminals (synaptic knobs)' : 'Nerve endings', side: 'r', ly: 300 }];
     if (lv === 2) labs.push({ x: sx + 2 * (sw + gap) - gap / 2, y: cy - 4, t: 'Node of Ranvier', side: 'r', ly: 70 });
     return wrap(W, H, o.aria || 'Labelled motor neurone', defs, b + labels(labs, { W, H, lx: 150, rx: 870, size: 14, gap: 24 }));
   }
@@ -208,7 +227,7 @@
     /* vessels behind the heart */
     b += `<path d="M470 300C468 230 455 160 462 110C470 60 560 40 610 70C640 88 650 120 652 170" fill="none" stroke="${Rd}" stroke-width="48" stroke-linecap="butt"/><path d="M470 300C468 230 455 160 462 110C470 60 560 40 610 70C640 88 650 120 652 170" fill="none" stroke="${Rr}" stroke-width="40"/>`;
     b += `<path d="M300 40V190" stroke="${Bd}" stroke-width="44"/><path d="M300 40V190" stroke="${B}" stroke-width="36"/>`;
-    b += `<path d="M262 330L222 430" stroke="${Bd}" stroke-width="40"/><path d="M262 330L222 430" stroke="${B}" stroke-width="32"/>`;
+    b += `<path d="M228 455C230 390 236 320 270 262" fill="none" stroke="${Bd}" stroke-width="38"/><path d="M228 455C230 390 236 320 270 262" fill="none" stroke="${B}" stroke-width="30"/>`;
     b += [[200], [236]].map(([y]) => `<path d="M560 ${y}H690" stroke="${Rd}" stroke-width="26"/><path d="M560 ${y}H690" stroke="${Rr}" stroke-width="20"/>`).join('');
     /* muscle */
     b += `<path d="M250 210C246 165 285 140 330 142C380 144 420 150 440 160C470 145 540 140 580 160C615 178 618 230 610 290C600 360 540 430 450 488C350 430 270 360 255 300C250 270 252 240 250 210Z" fill="url(#${id}-mu)" stroke="#7d2a25" stroke-width="2"/>`;
@@ -218,7 +237,8 @@
     b += `<path d="M278 292C320 282 370 282 405 290C412 340 418 390 432 440C368 400 300 350 278 292Z" fill="${B}"/>`;
     b += `<path d="M458 290C500 280 545 282 580 292C584 340 552 392 462 452C452 400 452 340 458 290Z" fill="${Rr}"/>`;
     /* pulmonary artery in front */
-    b += `<path d="M395 290C392 230 390 175 395 128C400 100 360 90 300 100M395 140C400 110 470 92 540 104" fill="none" stroke="${Bd}" stroke-width="40"/><path d="M395 290C392 230 390 175 395 128C400 100 360 90 300 100M395 140C400 110 470 92 540 104" fill="none" stroke="${B}" stroke-width="32"/>`;
+    b += `<path d="M395 290C392 230 390 175 395 128C400 100 360 90 300 100L222 104M395 140C400 110 470 92 540 104" fill="none" stroke="${Bd}" stroke-width="40"/><path d="M395 290C392 230 390 175 395 128C400 100 360 90 300 100L222 104M395 140C400 110 470 92 540 104" fill="none" stroke="${B}" stroke-width="32"/>`;
+    b += `<path d="M300 40V176" stroke="${Bd}" stroke-width="44"/><path d="M300 40V178" stroke="${B}" stroke-width="36"/>`;
     /* valves */
     const valve = (x, y, s) => `<path d="M${x - 22} ${y}l12 ${s * 16}M${x + 22} ${y}l-12 ${s * 16}" stroke="#f6f0e6" stroke-width="5" stroke-linecap="round"/>`;
     b += valve(335, 274, 1) + valve(525, 268, 1);
@@ -226,11 +246,11 @@
     if (lv === 2) b += `<path d="M325 290L340 330M345 290L350 330M515 285L520 330M535 285L530 330" stroke="#f6f0e6" stroke-width="1.6"/>`;
     /* flow arrows */
     const ar = (x1, y1, x2, y2) => { const a = Math.atan2(y2 - y1, x2 - x1); return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="#fff" stroke-width="3"/><path d="M${x2} ${y2}l${f(-12 * Math.cos(a - 0.4))} ${f(-12 * Math.sin(a - 0.4))}M${x2} ${y2}l${f(-12 * Math.cos(a + 0.4))} ${f(-12 * Math.sin(a + 0.4))}" stroke="#fff" stroke-width="3"/>`; };
-    b += ar(300, 60, 300, 120) + ar(335, 230, 335, 320) + ar(380, 360, 393, 250) + ar(660, 200, 600, 210) + ar(525, 225, 520, 320) + ar(480, 380, 470, 240) + ar(560, 55, 615, 75);
-    const labs = [{ x: 300, y: 70, t: lv === 2 ? 'Vena cava (superior)' : 'Vena cava', side: 'l' }, { x: 230, y: 415, t: lv === 2 ? 'Vena cava (inferior)' : 'Vena cava', side: 'l' }, { x: 310, y: 100, t: 'Pulmonary artery', side: 'l', ly: 120 },
-      { x: 300, y: 215, t: 'Right atrium', side: 'l' }, { x: 320, y: 320, t: 'Right ventricle', side: 'l' }, { x: 335, y: 282, t: lv === 2 ? 'Atrioventricular (tricuspid) valve' : 'Valve', side: 'l' },
-      { x: 600, y: 75, t: 'Aorta', side: 'r' }, { x: 675, y: 236, t: 'Pulmonary vein', side: 'r' }, { x: 555, y: 205, t: 'Left atrium', side: 'r' }, { x: 545, y: 330, t: 'Left ventricle', side: 'r' }, { x: 600, y: 330, t: 'Thick muscular wall', side: 'r' }, { x: 440, y: 380, t: 'Septum', side: 'r', ly: 430 }];
-    if (lv === 2) labs.push({ x: 452, y: 150, t: 'Semilunar valves', side: 'r', ly: 120 }, { x: 345, y: 315, t: 'Tendinous cords', side: 'l' });
+    b += ar(300, 55, 300, 150) + ar(230, 440, 280, 250) + ar(335, 230, 335, 320) + ar(380, 360, 393, 250) + ar(660, 200, 600, 210) + ar(525, 225, 520, 320) + ar(480, 380, 470, 240) + ar(560, 55, 615, 75);
+    const labs = [{ x: 300, y: 70, t: lv === 2 ? 'Vena cava (superior)' : 'Vena cava', side: 'l' }, { x: 222, y: 420, t: lv === 2 ? 'Vena cava (inferior)' : 'Vena cava', side: 'l' }, { x: 240, y: 103, t: 'Pulmonary artery', side: 'l', ly: 120 },
+      { x: 300, y: 215, t: 'Right atrium', side: 'l' }, { x: 345, y: 352, t: 'Right ventricle', side: 'l', ly: 345 }, { x: 335, y: 282, t: lv === 2 ? 'Atrioventricular (tricuspid) valve' : 'Valve', side: 'l' },
+      { x: 600, y: 75, t: 'Aorta', side: 'r' }, { x: 675, y: 236, t: 'Pulmonary vein', side: 'r' }, { x: 555, y: 205, t: 'Left atrium', side: 'r' }, { x: 545, y: 330, t: 'Left ventricle', side: 'r' }, { x: 593, y: 330, t: 'Thick muscular wall', side: 'r', ly: 360 }, { x: 440, y: 380, t: 'Septum', side: 'r', ly: 430 }];
+    if (lv === 2) labs.push({ x: 452, y: 150, t: 'Semilunar valves', side: 'r', ly: 120 }, { x: 345, y: 315, t: 'Tendinous cords', side: 'l' }, { x: 541, y: 276, t: 'Atrioventricular (bicuspid) valve', side: 'r', ly: 275 });
     b += `<text x="450" y="525" text-anchor="middle" font-size="13" class="sf-lab">Viewed from the front: the left side of the heart is on the right of the diagram</text>`;
     return wrap(W, H, o.aria || 'Labelled section through the human heart', defs, b + labels(labs, { W, H: H - 20, lx: 200, rx: 710, size: 14, gap: 25 }));
   }
@@ -250,23 +270,24 @@
     const gx = x0 + 225;
     b += `<path d="M${gx - 25} 306c0 -12 22 -12 22 0v22c0 12 -22 12 -22 0z" fill="#9fd47a" stroke="#4f8a32"/><path d="M${gx + 25} 306c0 -12 -22 -12 -22 0v22c0 12 22 12 22 0z" fill="#9fd47a" stroke="#4f8a32"/>`;
     b += `<rect x="${x0}" y="328" width="${x1 - x0}" height="6" fill="#e9f2b8" opacity=".9"/>`;
-    b += `<path d="M${gx} 380V340" stroke="#7fb2ff" stroke-width="2.4"/><path d="M${gx - 6} 350l6 -10 6 10" fill="none" stroke="#7fb2ff" stroke-width="2.4"/><text x="${gx + 10}" y="378" font-size="13" class="sf-lab">CO₂ in</text><path d="M${gx - 40} 340l-20 36" stroke="#ff9b8a" stroke-width="2.4"/><text x="${gx - 120}" y="392" font-size="13" class="sf-lab">O₂ and water vapour out</text>`;
+    b += `<path d="M${gx + 44} 382L${gx + 10} 342" stroke="#3f8fe0" stroke-width="2.4"/><path d="M${gx + 21} 344l-11 -2 2 11" fill="none" stroke="#3f8fe0" stroke-width="2.4"/><text x="${gx + 52} " y="396" font-size="13" class="sf-lab">CO₂ in</text><path d="M${gx - 10} 342L${gx - 44} 382" stroke="#e0664f" stroke-width="2.4"/><path d="M${gx - 33} 380l-11 2 2 -11" fill="none" stroke="#e0664f" stroke-width="2.4"/><text x="${gx - 50}" y="396" font-size="13" text-anchor="end" class="sf-lab">O₂ and water vapour out</text><ellipse cx="${x1 - 52}" cy="140" rx="4.5" ry="3" fill="#3f9b3a"/>`;
+    b += tag(gx, 318, gx, 372, 'Stoma', { size: 14 });
     b += `<text x="20" y="${H - 20}" font-size="13" class="sf-lab">Air spaces between spongy cells let gases diffuse to and from every cell.</text>`;
-    const labs = [{ x: x1 - 10, y: 44, t: 'Waxy cuticle', side: 'r' }, { x: x1 - 20, y: 62, t: 'Upper epidermis', side: 'r' }, { x: x1 - 15, y: 120, t: 'Palisade mesophyll', side: 'r' }, { x: x1 - 20, y: 220, t: 'Spongy mesophyll', side: 'r' }, { x: x1 - 45, y: 250, t: 'Air space', side: 'r' },
-      { x: 342, y: 220, t: 'Xylem', side: 'r', ly: 180 }, { x: 352, y: 257, t: 'Phloem', side: 'r', ly: 280 }, { x: x1 - 20, y: 318, t: 'Lower epidermis', side: 'r' }, { x: gx + 16, y: 320, t: 'Guard cell', side: 'r', ly: 350 }, { x: gx, y: 318, t: 'Stoma', side: 'r', ly: 378 }, { x: x1 - 52, y: 100, t: 'Chloroplasts', side: 'r', ly: 150 }];
+    const labs = [{ x: x1 - 10, y: 44, t: 'Waxy cuticle', side: 'r' }, { x: x1 - 20, y: 62, t: 'Upper epidermis', side: 'r' }, { x: x1 - 15, y: 105, t: 'Palisade mesophyll', side: 'r' }, { x: x1 - 20, y: 220, t: 'Spongy mesophyll', side: 'r' }, { x: x1 - 40, y: 229, t: 'Air space', side: 'r', ly: 250 },
+      { x: 342, y: 220, t: 'Xylem', side: 'r', ly: 180 }, { x: 352, y: 257, t: 'Phloem', side: 'r', ly: 280 }, { x: x1 - 20, y: 318, t: 'Lower epidermis', side: 'r' }, { x: gx + 16, y: 320, t: 'Guard cell', side: 'r', ly: 350 }, { x: x1 - 52, y: 140, t: 'Chloroplasts', side: 'r', ly: 150 }];
     return wrap(W, H, o.aria || 'Cross-section of a leaf', gradDefs(id), b + labels(labs, { W, H: H - 30, lx: 30, rx: 690, size: 14, gap: 25, top: 30 }));
   }
 
   /* ---------- alveolus and capillary ---------- */
   function alveolus(o = {}) {
     const id = 'sf' + (++uid), W = 960, H = 420, lv = LV(o.level);
-    let b = `<path d="M330 20V90" stroke="#e9d8cf" stroke-width="40"/><circle cx="330" cy="200" r="120" fill="#fbeee8" stroke="#d6a99a" stroke-width="5"/><circle cx="330" cy="200" r="114" fill="#eaf4fb"/>`;
+    let b = `<path d="M318 300V412" stroke="#d6a99a" stroke-width="46"/><path d="M318 300V414" stroke="#fbeee8" stroke-width="36"/><circle cx="330" cy="200" r="120" fill="#fbeee8" stroke="#d6a99a" stroke-width="5"/><circle cx="330" cy="200" r="114" fill="#eaf4fb"/><path d="M318 290V414" stroke="#eaf4fb" stroke-width="26"/><path d="M318 400V345" stroke="#7fa6c8" stroke-width="2.6"/><path d="M311 356l7 -12 7 12" fill="none" stroke="#7fa6c8" stroke-width="2.6"/>`;
     b += `<path d="M190 330C200 250 210 140 300 80C370 40 470 60 480 140C490 220 470 300 440 360" fill="none" stroke="#b5332b" stroke-width="30" stroke-linecap="round"/><path d="M190 330C200 250 210 140 300 80C370 40 470 60 480 140C490 220 470 300 440 360" fill="none" stroke="#e46b5f" stroke-width="24" stroke-linecap="round"/>`;
     [[205, 270], [215, 190], [255, 112], [330, 72], [410, 74], [470, 130], [476, 220], [458, 310]].forEach(([x, y]) => b += `<ellipse cx="${x}" cy="${y}" rx="9" ry="6" fill="#c0261d" stroke="#8a1610"/>`);
     const ar = (x1, y1, x2, y2, c) => { const a = Math.atan2(y2 - y1, x2 - x1); return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${c}" stroke-width="3"/><path d="M${x2} ${y2}l${f(-11 * Math.cos(a - 0.45))} ${f(-11 * Math.sin(a - 0.45))}M${x2} ${y2}l${f(-11 * Math.cos(a + 0.45))} ${f(-11 * Math.sin(a + 0.45))}" stroke="${c}" stroke-width="3"/>`; };
     b += ar(380, 190, 455, 165, '#2f7fd6') + `<text x="370" y="205" font-size="15" font-weight="700" style="fill:#2f7fd6">O₂</text>` + ar(455, 250, 382, 238, '#8a6d00') + `<text x="372" y="262" font-size="15" font-weight="700" style="fill:#8a6d00">CO₂</text>`;
     b += ar(170, 360, 196, 320, '#e46b5f') + ar(440, 365, 460, 400, '#e46b5f');
-    const labs = [{ x: 330, y: 40, t: 'Air from bronchiole', side: 'l' }, { x: 290, y: 300, t: 'Alveolus (air sac)', side: 'l' }, { x: 222, y: 245, t: lv === 2 ? 'Squamous epithelium (one cell thick)' : 'Thin alveolus wall (one cell thick)', side: 'l' }, { x: 470, y: 130, t: 'Capillary', side: 'r' }, { x: 476, y: 220, t: 'Red blood cell', side: 'r' }, { x: 175, y: 352, t: 'Blood from heart (low O₂)', side: 'l' }, { x: 455, y: 392, t: 'Blood to heart (high O₂)', side: 'r' }, { x: 420, y: 180, t: 'Oxygen diffuses into blood', side: 'r', ly: 60 }, { x: 420, y: 245, t: 'Carbon dioxide diffuses out', side: 'r', ly: 290 }];
+    const labs = [{ x: 300, y: 392, t: 'Air from bronchiole', side: 'l', ly: 400 }, { x: 290, y: 170, t: 'Alveolus (air sac)', side: 'l', ly: 150 }, { x: 222, y: 245, t: lv === 2 ? 'Squamous epithelium (one cell thick)' : 'Thin alveolus wall (one cell thick)', side: 'l' }, { x: 480, y: 172, t: 'Capillary', side: 'r', ly: 150 }, { x: 476, y: 220, t: 'Red blood cell', side: 'r' }, { x: 190, y: 330, t: 'Blood from heart (low O₂)', side: 'l', ly: 330 }, { x: 455, y: 392, t: 'Blood to heart (high O₂)', side: 'r' }, { x: 420, y: 178, t: 'Oxygen diffuses into blood', side: 'r', ly: 60 }, { x: 420, y: 245, t: 'Carbon dioxide diffuses out', side: 'r', ly: 290 }];
     labs.forEach(l => l.x += 100);
     return wrap(W, H, o.aria || 'Gas exchange between an alveolus and a capillary', '', `<g transform="translate(100 0)">${b}</g>` + labels(labs, { W, H, lx: 260, rx: 660, size: 14, gap: 26 }));
   }
@@ -274,15 +295,15 @@
   /* ---------- eye (horizontal section) ---------- */
   function eye(o = {}) {
     const id = 'sf' + (++uid), W = 920, H = 440, cx = 430, cy = 220, R = 150;
-    let b = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#f7f3ec" stroke="#cfc6b4" stroke-width="8"/><circle cx="${cx}" cy="${cy}" r="${R - 8}" fill="none" stroke="#d1584e" stroke-width="5" stroke-dasharray="560 400" stroke-dashoffset="-120"/><circle cx="${cx}" cy="${cy}" r="${R - 12}" fill="#f4f0f8"/>`;
+    let b = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#f7f3ec" stroke="#cfc6b4" stroke-width="8"/><circle cx="${cx}" cy="${cy}" r="${R - 9}" fill="#f4f0f8"/><path d="M${f(cx - 81.4)} ${f(cy - 116.3)}A142 142 0 1 1 ${f(cx - 81.4)} ${f(cy + 116.3)}" fill="none" stroke="#d1584e" stroke-width="5"/>`;
     b += `<path d="M${cx - R + 30} ${cy - 92}A110 110 0 0 0 ${cx - R + 30} ${cy + 92}" fill="#e7f3fb" stroke="#9cc3dc" stroke-width="3"/>`;
     b += `<path d="M${cx - R + 34} ${cy - 92}V${cy - 26}M${cx - R + 34} ${cy + 26}V${cy + 92}" stroke="#6b4b2a" stroke-width="9"/>`;
     b += `<ellipse cx="${cx - R + 62}" cy="${cy}" rx="20" ry="52" fill="#e9f3ff" stroke="#7fa6c8" stroke-width="2"/>`;
     b += `<path d="M${cx - R + 62} ${cy - 52}L${cx - R + 52} ${cy - 96}M${cx - R + 62} ${cy + 52}L${cx - R + 52} ${cy + 96}" stroke="#a89b80" stroke-width="1.6"/><ellipse cx="${cx - R + 52}" cy="${cy - 100}" rx="12" ry="7" fill="#c47b5f"/><ellipse cx="${cx - R + 52}" cy="${cy + 100}" rx="12" ry="7" fill="#c47b5f"/>`;
     b += `<path d="M${cx + R - 6} ${cy + 18}H${cx + R + 110}V${cy + 58}H${cx + R - 6}Z" fill="#f2e2b8" stroke="#c9ad5f" stroke-width="2"/><circle cx="${cx + R - 14}" cy="${cy + 36}" r="5" fill="#c9ad5f"/>`;
     b += `<path d="M${cx - R - 40} ${cy - 30}L${cx + R - 12} ${cy + 10}M${cx - R - 40} ${cy + 30}L${cx + R - 12} ${cy + 10}" stroke="#ffcf5a" stroke-width="1.6" stroke-dasharray="6 4" opacity=".9"/>`;
-    const labs = [{ x: cx - R + 6, y: cy - 60, t: 'Cornea', side: 'l' }, { x: cx - R + 34, y: cy - 60, t: 'Iris', side: 'l', ly: cy - 20 }, { x: cx - R + 40, y: cy, t: 'Pupil', side: 'l', ly: cy + 20 }, { x: cx - R + 64, y: cy + 30, t: 'Lens', side: 'l', ly: cy + 60 },
-      { x: cx - R + 52, y: cy - 100, t: 'Ciliary muscle', side: 'l', ly: cy - 120 }, { x: cx - R + 57, y: cy + 74, t: 'Suspensory ligaments', side: 'l', ly: cy + 110 }, { x: cx + R - 10, y: cy - 60, t: 'Retina', side: 'r' }, { x: cx + R + 2, y: cy - 110, t: 'Sclera', side: 'r' }, { x: cx + R + 80, y: cy + 40, t: 'Optic nerve', side: 'r', ly: cy + 90 }, { x: cx + R - 14, y: cy + 36, t: 'Blind spot', side: 'r', ly: cy + 40 }];
+    const labs = [{ x: cx - R + 6, y: cy - 60, t: 'Cornea', side: 'l' }, { x: cx - R + 34, y: cy - 60, t: 'Iris', side: 'l', ly: cy - 20 }, { x: cx - R + 34, y: cy, t: 'Pupil', side: 'l', ly: cy + 20 }, { x: cx - R + 64, y: cy + 30, t: 'Lens', side: 'l', ly: cy + 60 },
+      { x: cx - R + 52, y: cy - 100, t: 'Ciliary muscle', side: 'l', ly: cy - 120 }, { x: cx - R + 57, y: cy + 74, t: 'Suspensory ligaments', side: 'l', ly: cy + 110 }, { x: cx + 128.7, y: cy - 60, t: 'Retina', side: 'r' }, { x: cx + 101, y: cy - 110, t: 'Sclera', side: 'r' }, { x: cx + R + 80, y: cy + 36, t: 'Optic nerve', side: 'r', ly: cy + 36 }, { x: cx + R - 16, y: cy + 39, t: 'Blind spot', side: 'r', ly: cy + 115 }];
     return wrap(W, H, o.aria || 'Horizontal section through the eye', '', b + labels(labs, { W, H, lx: 180, rx: 730, size: 14, gap: 26 }));
   }
 
@@ -331,8 +352,8 @@
     b += `<text x="${nx + 20}" y="${ny + 44}" text-anchor="middle" font-size="12" class="sf-lab">phosphate</text><text x="${nx + 100}" y="${ny + 58}" text-anchor="middle" font-size="12" class="sf-lab">${lv === 2 ? 'deoxyribose' : 'sugar'}</text></g>`;
     const key = ['A', 'T', 'C', 'G'].map((k, i) => `<rect x="${nx}" y="${ny + 90 + i * 30}" width="22" height="22" rx="4" fill="${C[k]}"/><text x="${nx + 32}" y="${ny + 106 + i * 30}" font-size="14" class="sf-lab">${{ A: 'A adenine', T: 'T thymine', C: 'C cytosine', G: 'G guanine' }[k]}</text>`).join('');
     b += key + `<text x="${nx}" y="${ny + 222}" font-size="13" class="sf-lab">A pairs with T; C pairs with G</text>`;
-    const labs = [{ x: x0 + 3 * dx, y: yA(3), t: 'Sugar–phosphate backbone', side: 'r', ly: 360 }, { x: x0 + 7 * dx, y: cy, t: lv === 2 ? 'Base pair (hydrogen bonds)' : 'Complementary base pair', side: 'l', ly: 380 }];
-    return wrap(W, H, o.aria || 'DNA double helix with complementary base pairs and one nucleotide', '', b + `<text x="${x0}" y="30" font-size="14" class="sf-lab">Two strands twist into a double helix</text>` + labels(labs, { W, H, lx: 300, rx: 300, size: 14, top: 300 }));
+    const lab2 = tag(x0 + 2.86 * dx, cy + amp, x0 + 2.86 * dx, 330, 'Sugar–phosphate backbone') + tag(x0 + 8 * dx, cy + 38, x0 + 8 * dx + 60, 372, lv === 2 ? 'Base pair (hydrogen bonds)' : 'Complementary base pair', { ex: x0 + 8 * dx + 20 });
+    return wrap(W, H, o.aria || 'DNA double helix with complementary base pairs and one nucleotide', '', b + `<text x="${x0}" y="30" font-size="14" class="sf-lab">Two strands twist into a double helix</text>` + lab2);
   }
 
   /* ---------- nephron ---------- */
@@ -366,20 +387,21 @@
     [260, 310, 360, 410, 460].forEach(x => b += `<path d="M${x - 8} 372v-10h6v6h4v-6h6v10" fill="#3ecf8e" stroke="#1f7a4f"/>`);
     if (lv === 2) [230, 495].forEach(x => b += `<rect x="${x}" y="240" width="12" height="26" rx="3" fill="#f2a63a" stroke="#9c5f1a"/>`);
     b += `<path d="M560 100V300" stroke="#ffcf5a" stroke-width="3"/><path d="M553 288l7 12 7 -12" fill="none" stroke="#ffcf5a" stroke-width="3"/><text x="572" y="200" font-size="13" class="sf-lab">impulse</text>`;
-    const labs = [{ x: 400, y: 60, t: lv === 2 ? 'Presynaptic neurone (synaptic knob)' : 'Axon ending of first neurone', side: 'r', ly: 40 }, { x: 300, y: 170, t: 'Mitochondrion', side: 'l' }, { x: 300, y: 250, t: 'Vesicle containing neurotransmitter', side: 'l' }, { x: 380, y: 352, t: 'Synaptic cleft (gap)', side: 'r', ly: 350 }, { x: 410, y: 368, t: 'Receptor', side: 'r', ly: 390 }, { x: 260, y: 420, t: lv === 2 ? 'Postsynaptic membrane' : 'Next neurone', side: 'l', ly: 420 }, { x: 345, y: 345, t: 'Neurotransmitter', side: 'l', ly: 340 }];
-    if (lv === 2) labs.push({ x: 236, y: 252, t: 'Ca²⁺ channel', side: 'l', ly: 290 });
+    const labs = [{ x: 400, y: 60, t: lv === 2 ? 'Presynaptic neurone (synaptic knob)' : 'Axon ending of first neurone', side: 'r', ly: 40 }, { x: 300, y: 170, t: 'Mitochondrion', side: 'l' }, { x: 300, y: 250, t: 'Vesicle containing neurotransmitter', side: 'l' }, { x: 380, y: 352, t: 'Synaptic cleft (gap)', side: 'r', ly: 350 }, { x: 410, y: 368, t: 'Receptor', side: 'r', ly: 390 }, lv === 2 ? { x: 252, y: 362, t: 'Postsynaptic membrane', side: 'l', ly: 400 } : { x: 260, y: 420, t: 'Next neurone', side: 'l', ly: 420 }, { x: 345, y: 345, t: 'Neurotransmitter', side: 'l', ly: 340 }];
+    if (lv === 2) labs.push({ x: 501, y: 252, t: 'Ca²⁺ channel', side: 'r', ly: 250 });
     return wrap(W, H, o.aria || 'Labelled synapse', gradDefs(id), b + labels(labs, { W, H, lx: 190, rx: 600, size: 14, gap: 26 }));
   }
 
   /* ---------- mitochondrion and chloroplast (A-level ultrastructure) ---------- */
   function mitochondrion(o = {}) {
-    const W = 880, H = 360, cx = 430, cy = 180;
+    const W = 880, H = 360, cx = 430, cy = 180, lv = LV(o.level ?? 'alevel');
     let b = `<ellipse cx="${cx}" cy="${cy}" rx="250" ry="120" fill="#f9d2bf" stroke="#a5402e" stroke-width="4"/><ellipse cx="${cx}" cy="${cy}" rx="236" ry="106" fill="#fbe6da" stroke="#c46a4e" stroke-width="2"/>`;
     for (let i = 0; i < 9; i++) { const x = cx - 200 + i * 50, up = i % 2 === 0, e = 106 * Math.sqrt(Math.max(0, 1 - ((x - cx) / 236) ** 2)), y0 = up ? cy - e + 2 : cy + e - 2; b += `<path d="M${x - 10} ${y0}C${x - 12} ${up ? cy + 30 : cy - 30} ${x + 12} ${up ? cy + 30 : cy - 30} ${x + 10} ${y0}" fill="#f6b39a" stroke="#c46a4e" stroke-width="2"/>`; }
     b += `<path d="M${cx + 60} ${cy + 10}c10 -14 26 -4 20 8s14 14 2 22s-26 -2 -22 -14" fill="none" stroke="#5e3784" stroke-width="2.2"/>`;
     for (let i = 0; i < 14; i++) b += `<circle cx="${cx - 160 + (i * 37) % 330}" cy="${cy - 30 + (i * 23) % 70}" r="2.4" fill="#4b2c6b"/>`;
-    const labs = [{ x: cx - 200, y: cy - 103, t: 'Outer membrane', side: 'l' }, { x: cx - 180, y: cy + 92, t: 'Inner membrane', side: 'l' }, { x: cx - 152, y: cy + 40, t: 'Crista (folded inner membrane)', side: 'l' }, { x: cx + 40, y: cy - 10, t: 'Matrix (Krebs cycle, link reaction)', side: 'r' }, { x: cx + 228, y: cy - 30, t: 'Intermembrane space', side: 'r' }, { x: cx + 75, y: cy + 15, t: 'Circular DNA', side: 'r' }, { x: cx + 120, y: cy + 20, t: '70S ribosomes', side: 'r' }];
-    return wrap(W, H, o.aria || 'Ultrastructure of a mitochondrion', '', b + labels(labs, { W, H, lx: 160, rx: 700, size: 14 }));
+    const labs = lv === 2 ? [{ x: cx - 200, y: cy - 72, t: 'Outer membrane', side: 'l', ly: cy - 90 }, { x: cx - 180, y: cy + 68.6, t: 'Inner membrane', side: 'l', ly: cy + 95 }, { x: cx - 152, y: cy + 40, t: 'Crista (folded inner membrane)', side: 'l' }, { x: cx + 25, y: cy - 45, t: 'Matrix (Krebs cycle, link reaction)', side: 'r', ly: cy - 100 }, { x: cx + 212, y: cy - 55, t: 'Intermembrane space', side: 'r', ly: cy - 58 }, { x: cx + 82, y: cy + 16, t: 'Circular DNA', side: 'r', ly: cy + 35 }, { x: cx + 99, y: cy - 9, t: '70S ribosomes', side: 'r', ly: cy - 20 }]
+      : [{ x: cx - 200, y: cy - 72, t: 'Outer membrane', side: 'l', ly: cy - 90 }, { x: cx - 152, y: cy + 40, t: 'Folded inner membrane', side: 'l' }, { x: cx + 25, y: cy - 45, t: lv ? 'Matrix: enzymes for aerobic respiration' : 'Aerobic respiration happens here', side: 'r', ly: cy - 60 }, { x: cx + 152, y: cy + 30, t: 'Folds give a large surface area', side: 'r', ly: cy + 40 }];
+    return wrap(W, H, o.aria || (lv === 2 ? 'Ultrastructure of a mitochondrion' : 'A mitochondrion'), '', b + labels(labs, { W, H, lx: 160, rx: 700, size: 14 }));
   }
   function chloroplast(o = {}) {
     const W = 900, H = 380, cx = 440, cy = 190;
@@ -390,7 +412,7 @@
     b += `<ellipse cx="${cx + 60}" cy="${cy + 75}" rx="30" ry="16" fill="#f4f0d0" stroke="#b0a66a"/><circle cx="${cx - 120}" cy="${cy + 70}" r="7" fill="#f4e7a0" stroke="#b0a66a"/>`;
     b += `<path d="M${cx + 150} ${cy + 60}c10 -10 22 -2 16 8s12 12 0 18s-22 -4 -16 -12" fill="none" stroke="#5e3784" stroke-width="2"/>`;
     for (let i = 0; i < 12; i++) b += `<circle cx="${cx - 200 + (i * 41) % 400}" cy="${cy + 40 + (i * 17) % 40}" r="2.2" fill="#4b2c6b"/>`;
-    const labs = [{ x: cx - 220, y: cy - 75, t: 'Outer membrane', side: 'l' }, { x: cx - 230, y: cy + 50, t: 'Inner membrane', side: 'l' }, { x: gr[0][0] - 20, y: gr[0][1] - 8, t: 'Granum (stack of thylakoids)', side: 'l' }, { x: gr[1][0] + 26, y: gr[1][1] + 2, t: 'Thylakoid membrane (light-dependent stage)', side: 'l', ly: cy + 110 }, { x: cx - 30, y: cy - 4, t: 'Intergranal lamella', side: 'r', ly: 60 }, { x: cx + 200, y: cy + 50, t: 'Stroma (Calvin cycle)', side: 'r' }, { x: cx + 60, y: cy + 75, t: 'Starch grain', side: 'r' }, { x: cx - 120, y: cy + 70, t: 'Lipid droplet', side: 'l' }, { x: cx + 160, y: cy + 65, t: 'Circular DNA and 70S ribosomes', side: 'r' }];
+    const labs = [{ x: cx - 220, y: cy - 69, t: 'Outer membrane', side: 'l', ly: cy - 100 }, { x: cx - 225, y: cy + 50, t: 'Inner membrane', side: 'l', ly: cy + 60 }, { x: gr[0][0] - 18, y: gr[0][1] - 21, t: 'Granum (stack of thylakoids)', side: 'l', ly: cy - 55 }, { x: gr[0][0] - 20, y: gr[0][1] + 19, t: 'Thylakoid membrane (light-dependent stage)', side: 'l', ly: cy + 5 }, { x: (gr[2][0] + gr[3][0]) / 2, y: (gr[2][1] + gr[3][1]) / 2, t: 'Intergranal lamella', side: 'r', ly: cy - 115 }, { x: cx + 215, y: cy + 30, t: 'Stroma (Calvin cycle)', side: 'r', ly: cy - 5 }, { x: cx + 86, y: cy + 78, t: 'Starch grain', side: 'r', ly: cy + 140 }, { x: cx - 120, y: cy + 70, t: 'Lipid droplet', side: 'l', ly: cy + 110 }, { x: cx + 166, y: cy + 68, t: 'Circular DNA and 70S ribosomes', side: 'r', ly: cy + 65 }];
     return wrap(W, H, o.aria || 'Ultrastructure of a chloroplast', '', b + labels(labs, { W, H, lx: 160, rx: 715, size: 14 }));
   }
 
@@ -466,7 +488,8 @@
     const W = 760, H = 340, r = rnd(17);
     let g = '';
     for (let j = 0; j < 4; j++) for (let i = 0; i < 8; i++) { const x = 90 + i * 72 + (j % 2) * 36, y = 70 + j * 62; g += `<circle cx="${x}" cy="${y}" r="24" fill="#c9d1d8" stroke="#6b7680"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="16" font-weight="700" class="sf-in" style="fill:#1b1f22">+</text>`; }
-    for (let k = 0; k < 46; k++) { const x = 60 + r() * 640, y = 50 + r() * 240; g += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#2f7fd6" stroke="#9fd0ff"/>`; }
+    const ions = []; for (let j = 0; j < 4; j++) for (let i = 0; i < 8; i++) ions.push([90 + i * 72 + (j % 2) * 36, 70 + j * 62]);
+    for (let k = 0, n = 0; k < 4000 && n < 46; k++) { const x = 62 + r() * 636, y = 44 + r() * 238; if (ions.some(([a, c]) => (a - x) ** 2 + (c - y) ** 2 < 31 * 31)) continue; g += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#2f7fd6" stroke="#9fd0ff"/>`; n++; }
     g += `<text x="60" y="${H - 30}" font-size="14" class="sf-lab">Positive metal ions in regular layers, surrounded by a sea of delocalised electrons (blue).</text><text x="60" y="${H - 10}" font-size="13" class="sf-lab">The delocalised electrons can move, so metals conduct; layers can slide, so metals are malleable.</text>`;
     return wrap(W, H, o.aria || 'Metallic bonding: positive ions and delocalised electrons', '', g);
   }
@@ -508,7 +531,7 @@
   }
   function isotopes(o = {}) {
     const Z = o.Z || 6, As = o.masses || [12, 14];
-    const parts = As.map(A => atom({ Z, A, level: o.level || 'gcse', title: (NAME[Z][0].toUpperCase() + NAME[Z].slice(1)) + '-' + A }));
+    const parts = As.map(A => atom({ Z, A, big: 1.45, level: o.level || 'gcse', title: (NAME[Z][0].toUpperCase() + NAME[Z].slice(1)) + '-' + A }));
     return `<div class="sf-pair">${parts.join('')}</div>`;
   }
   function states(o = {}) {
@@ -569,7 +592,7 @@
     g += br(cx - 60, 200, Math.PI * 0.62, 50, 0) + br(cx + 60, 200, Math.PI * 0.38, 50, 0);
     for (let i = 0; i < 6; i++) { const y = 150 + i * 46; g += `<path d="M${cx - 210} ${y + 20}Q${cx - 120} ${y - 10} ${cx - 40} ${y}M${cx + 210} ${y + 20}Q${cx + 120} ${y - 10} ${cx + 40} ${y}" fill="none" stroke="#e8e2d0" stroke-width="10" opacity=".55"/>`; }
     g += `<path d="M${cx - 220} 440Q${cx} 380 ${cx + 220} 440" fill="none" stroke="#c46a5e" stroke-width="10"/>`;
-    const labs = [{ x: cx, y: 70, t: 'Trachea (windpipe)', side: 'r', ly: 60 }, { x: cx, y: 70, t: 'Rings of cartilage', side: 'l', ly: 60 }, { x: cx + 40, y: 172, t: 'Bronchus', side: 'r', ly: 130 }, { x: cx + 110, y: 260, t: 'Bronchioles', side: 'r', ly: 220 }, { x: cx - 150, y: 340, t: 'Alveoli (air sacs) at the ends', side: 'l', ly: 330 }, { x: cx + 190, y: 330, t: 'Lung', side: 'r', ly: 300 }, { x: cx - 205, y: 196, t: 'Ribs', side: 'l', ly: 190 }, { x: cx - 205, y: 230, t: 'Intercostal muscles', side: 'l', ly: 240 }, { x: cx + 120, y: 420, t: 'Diaphragm', side: 'r', ly: 430 }];
+    const labs = [{ x: cx + 7, y: 49, t: 'Trachea (windpipe)', side: 'r', ly: 50 }, { x: cx - 8, y: 76, t: 'Rings of cartilage', side: 'l', ly: 76 }, { x: cx + 40, y: 172, t: 'Bronchus', side: 'r', ly: 130 }, { x: cx + 110, y: 260, t: 'Bronchioles', side: 'r', ly: 220 }, { x: cx - 150, y: 340, t: 'Alveoli (air sacs) at the ends', side: 'l', ly: 330 }, { x: cx + 150, y: 300, t: 'Lung', side: 'r', ly: 300 }, { x: cx - 192, y: 210, t: 'Ribs', side: 'l', ly: 195 }, { x: cx - 192, y: 233, t: 'Intercostal muscles (between the ribs)', side: 'l', ly: 245 }, { x: cx + 120, y: 420, t: 'Diaphragm', side: 'r', ly: 430 }];
     return wrap(W, H, o.aria || 'The human breathing system', '', g + labels(labs, { W, H, lx: 190, rx: 690, size: 14 }));
   }
   /* ---------- structure of the Earth ---------- */
@@ -585,7 +608,7 @@
   const REG = { animalCell, plantCell, bacterialCell, atom, neurone, heart, leaf, alveolus, eye, specialised, dna, nephron, synapse, mitochondrion, chloroplast, ionicBond, covalent, lattice, metallic, giantCovalent, atomModels, isotopes, states, flower, digestive, lungs, earth };
   const svg = (name, o) => { if (!REG[name]) return ''; o = o || {}; LAB_K = o.labelScale || 1; ONLY = o.only || null; EXT = LAB_K > 1 ? { l: 1e9, r: -1e9, t: 1e9, b: -1e9 } : null; try { return REG[name](o); } finally { LAB_K = 1; ONLY = null; EXT = null; } };
   const fig = (name, o = {}) => `<figure class="fig sf-fig">${svg(name, o)}${o.caption ? `<figcaption>${o.caption}</figcaption>` : ''}</figure>`;
-  const api = { svg, fig, register: (n, fn) => { REG[n] = fn; }, _labels: labels, _wrap: wrap, _LV: LV, _f: f, _esc: esc, _rnd: rnd, _grad: gradDefs, _mito: mito, _chloro: chloro, _nucleus: nucleus };
+  const api = { svg, fig, register: (n, fn) => { REG[n] = fn; }, _labels: labels, _tag: tag, _near: near, _wrap: wrap, _LV: LV, _f: f, _esc: esc, _rnd: rnd, _grad: gradDefs, _mito: mito, _chloro: chloro, _nucleus: nucleus };
   root.SciFig = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window === 'undefined' ? globalThis : window);
