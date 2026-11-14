@@ -36,7 +36,7 @@ function verify() {
     d.ex.forEach(([title, q, steps, meta], i) => {
       const tag = `${id} example ${i + 1} "${title}"`;
       if (!title || !q || !Array.isArray(steps) || steps.length < 2) bad(tag, 'needs a title, a question and at least two steps');
-      steps.forEach(s => { if (!Array.isArray(s) || s.length !== 3 || !Array.isArray(s[2]) || !s[2].length) bad(tag, 'each step is [title, why, [lines]]'); });
+      steps.forEach(s => { if (!Array.isArray(s) || s.length !== 3 || !Array.isArray(s[2]) || !s[2].length || s[2].some(l => !String(l).trim())) bad(tag, 'each step is [title, why, [lines]] with no empty lines'); });
       if (!meta || (!meta.desc && !(meta.chk && meta.chk.length))) return bad(tag, 'needs {chk:[[expr, value]]} or {desc:true}');
       (meta.chk || []).forEach(([expr, val, rel]) => { asserts++; let got; try { got = calc(expr); } catch (e) { return bad(tag, `calc failed: ${expr} (${e.message})`); } if (!close(val, got, rel || 0.006)) bad(tag, `${expr} = ${got}, but the example quotes ${val}`); });
     });
