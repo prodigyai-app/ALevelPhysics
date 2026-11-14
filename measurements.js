@@ -33,8 +33,9 @@
         {q:"Convert 2.4 mm² into m².",a:2.4e-6,unit:"m²",why:"(10⁻³)² = 10⁻⁶, so 2.4 mm² = 2.4 × 10⁻⁶ m²."},
         {q:"Convert 35 cm³ into m³.",a:3.5e-5,unit:"m³",why:"35 × 10⁻⁶ = 3.5 × 10⁻⁵ m³."},
         {q:"How many significant figures are in 0.00450?",a:3,tol:0,why:"4, 5 and the final 0 are significant; the leading zeros are not."},
-        {q:"An equation has matching units on both sides. What can you conclude?",opts:["It must be correct","It is homogeneous, but could still be incorrect","Its numerical constant must be 1","It applies at all speeds"],a:1,why:"A dimensionless constant or a condition of validity can still be wrong."}
+        {q:"An equation has matching units on both sides. What can you conclude?",opts:["It must be correct, because both sides have the same units","It is homogeneous, but could still be incorrect","Its numerical constant must be exactly 1","It applies at every speed and every temperature"],a:1,why:"A dimensionless constant or a condition of validity can still be wrong."}
       ]),
+      B.keypoints(["Convert every quantity to SI base units before substituting; a prefix is a power of ten, and it is squared or cubed with the unit (1 mm² = 10⁻⁶ m², 1 cm³ = 10⁻⁶ m³).","An equation must be homogeneous: both sides reduce to the same base units. That is necessary but does not prove the equation is correct.","Keep extra digits during working and round only the final answer, to the fewest significant figures in the data."]),
       B.mistakes(["Converting mm² using 10⁻³ instead of 10⁻⁶.","Using a diameter as a radius.","Rounding each intermediate result.","Confusing significant figures with decimal places."])
     ]);
 
@@ -56,7 +57,8 @@
         {q:"A measured time for 20 oscillations is (30.0 ± 0.2) s. What is the uncertainty in one period?",a:.01,unit:"s",why:"Divide the time and its absolute uncertainty by 20: 0.2/20 = 0.01 s."},
         {q:"Repeated readings have little scatter but are far from the accepted value. They are…",opts:["accurate and precise","precise but inaccurate","accurate but imprecise","evidence that there is no uncertainty"],a:1,why:"Small spread means precision; proximity to the true value determines accuracy."}
       ]),
-      B.keypoints(["Repeated readings reveal random scatter; averaging does not remove a systematic offset.","Half-range uncertainty = (maximum − minimum)/2; do not use a zero range as proof of zero uncertainty.","Time many oscillations to reduce the percentage effect of reaction time; use a consistent reference point."]), source
+      B.keypoints(["Repeated readings reveal random scatter; averaging does not remove a systematic offset.","Half-range uncertainty = (maximum − minimum)/2; do not use a zero range as proof of zero uncertainty.","Time many oscillations to reduce the percentage effect of reaction time; use a consistent reference point."]),
+      B.mistakes(["Expecting averaging to remove a systematic (zero) error; it only reduces random scatter.","Treating a range of zero as zero uncertainty: the resolution of the instrument still limits the reading.","Timing one oscillation instead of many, or starting and stopping the timer at different points of the swing."]), source
     ]);
 
   const uncertaintyControls = `<div class="lcard"><h3>Interactive: uncertainty in g = 2h/t²</h3><p>Change the readings and their absolute uncertainties. The factor 2 is exact.</p><div class="row"><label>Height h / m <input id="mu-h" type="number" min="0.001" step="0.001" value="0.800"></label><label>Δh / m <input id="mu-dh" type="number" min="0" step="0.001" value="0.002"></label><label>Time t / s <input id="mu-t" type="number" min="0.001" step="0.001" value="0.404"></label><label>Δt / s <input id="mu-dt" type="number" min="0" step="0.001" value="0.005"></label></div><p id="mu-calc" role="status" aria-live="polite"></p></div>`;
@@ -77,7 +79,7 @@
         {q:"V has 3% uncertainty and I has 2%. What is the percentage uncertainty in R = V/I?",a:5,unit:"%",why:"Add percentage uncertainties for division: 3 + 2 = 5%."},
         {q:"h has 1% uncertainty and t has 2%. What is the percentage uncertainty in g = 2h/t²?",a:5,unit:"%",why:"%Δg = %Δh + 2 × %Δt = 1 + 4 = 5%."},
         {q:"A result is 9.8 m s⁻² with 3% uncertainty. What is its absolute uncertainty before rounding?",a:.294,unit:"m s⁻²",tol:.001,why:"0.03 × 9.8 = 0.294 m s⁻², normally reported as ±0.3 m s⁻²."}
-      ]), B.mistakes(["Subtracting uncertainties when subtracting readings or dividing quantities.","Dividing by an original length when the required percentage uncertainty is in the extension.","Forgetting to multiply percentage uncertainty by the power."])
+      ]), B.keypoints(["Sums and differences: add the absolute uncertainties.","Products and quotients: add the percentage uncertainties. Powers: multiply the percentage uncertainty by the power.","Quote the uncertainty to one significant figure (two when appropriate) and round the value to the same decimal place."]), B.mistakes(["Subtracting uncertainties when subtracting readings or dividing quantities.","Dividing by an original length when the required percentage uncertainty is in the extension.","Forgetting to multiply percentage uncertainty by the power."])
     ]);
   function updateUncertainty() {
     const [h, dh, t, dt] = ["mu-h","mu-dh","mu-t","mu-dt"].map(id => document.getElementById(id).valueAsNumber);
@@ -109,7 +111,9 @@
         {q:"Which line is a valid worst acceptable line?",opts:["Any line joining the first and last readings","The steepest or shallowest line that crosses every error bar","A line through the origin even if it misses the bars","A curve through every point"],a:1,why:"Every supplied error bar constrains the acceptable straight line."},
         {q:"What are the units of the gradient of force / N against extension / m?",opts:["N m","N m⁻¹","m N⁻¹","J"],a:1,why:"Vertical unit divided by horizontal unit: N/m."},
         {q:"Which points should you normally use for a gradient triangle?",opts:["Two adjacent measured points","Two well-separated points on the best-fit line","The origin and any point","The largest and smallest y values regardless of the line"],a:1,why:"A large triangle reduces the percentage effect of reading coordinates."}
-      ])
+      ]),
+      B.keypoints(["Plot the quantity you change on the x-axis and linearise the relationship so the gradient and intercept mean something (h against t² has gradient g/2).","Take gradient points from the best-fit line, well separated, and draw a large triangle showing both coordinates.","A worst acceptable line must cross every error bar. The gradient uncertainty is the difference between the worst and best gradients."]),
+      B.mistakes(["Reading gradient points from the data table instead of from the line.","Drawing a worst line that misses an error bar, or one through only the end points.","Leaving the unit of the gradient out (y unit ÷ x unit) or forgetting an exact factor, such as the 2 in g = 2 × gradient."])
     ], () => drawGraph());
   function drawGraph() {
     const tight = document.getElementById("mu-tight").checked, anomaly = document.getElementById("mu-anomaly").checked;
@@ -137,8 +141,10 @@
         {q:"When investigating resistance against wire length, which variable should be controlled?",opts:["Wire length","Resistance","Temperature of the wire","The plotted gradient"],a:2,why:"Heating changes resistivity, so temperature should be kept as constant as practicable."},
         {q:"Which is an appropriate table heading?",opts:["Length (with m written in every cell)","L / m","L + m","Numbers"],a:1,why:"A heading identifies the quantity and unit; the entries contain the numerical readings."},
         {q:"A result is (9.7 ± 0.3) m s⁻². Is the accepted value 9.81 m s⁻² within this interval?",opts:["Yes: 9.4 to 10.0 includes 9.81","No: the central values differ","Only if they have identical digits","Uncertainty cannot be used for comparisons"],a:0,why:"The accepted value lies within the estimated interval, so it is consistent with the result at this uncertainty."},
-        {q:"Which improvement directly reduces the percentage effect of stopwatch reaction time?",opts:["Write more decimal places","Time one oscillation instead of twenty","Time twenty complete oscillations and divide by twenty","Use a smaller graph"],a:2,why:"The measured interval becomes larger while the start/stop reaction uncertainty is similar."}
-      ]), source
+        {q:"Which improvement directly reduces the percentage effect of stopwatch reaction time?",opts:["Write the stopwatch reading to more decimal places","Time one oscillation, then repeat the whole experiment","Time twenty complete oscillations and divide by twenty","Draw the results on a smaller, neater graph"],a:2,why:"The measured interval becomes larger while the start/stop reaction uncertainty is similar."}
+      ]), B.keypoints(["Link every measurement to the quantity you want: state what you change, what you measure and what you control, and how.","Choose a range and enough different values to show the trend, and repeat readings to find the scatter.","Evaluate with evidence: the largest uncertainty, any non-zero intercept, whether the accepted value lies in your interval, then a specific improvement and its effect."]),
+      B.mistakes(["Writing a vague method (\"measure it carefully\") with no instrument, range or number of repeats.","Controlling nothing, or listing a variable that is not relevant to the investigation.","Suggesting an improvement without explaining what it changes (for example, more repeats reduce random scatter, not a systematic error)."]),
+      source
     ]);
 
   const secA = [
@@ -151,7 +157,7 @@
     {tag:"mu3",q:"What is the uncertainty in the difference of (10.0 ± 0.1) cm and (8.0 ± 0.1) cm?",opts:["0 cm","0.1 cm","0.2 cm","2.0 cm"],a:2,why:"Add absolute uncertainties for a difference."},
     {tag:"mu4",q:"A worst acceptable straight line must…",opts:["pass through the origin","join every reading","intersect every error bar","use only the first and last bars"],a:2,why:"Intermediate error bars constrain the line too."},
     {tag:"mu4",q:"For T² = (4π²/k)m, the gradient of T² against m equals…",opts:["k","1/k","4π²/k","k/4π²"],a:2,why:"Compare with y = gradient × x."},
-    {tag:"mu5",q:"Why measure a wire diameter at different positions and orientations?",opts:["To remove all uncertainty","To detect variation and estimate a representative diameter","To make the wire longer","To eliminate the need to measure length"],a:1,why:"A wire may not be perfectly uniform or circular."}
+    {tag:"mu5",q:"Why measure a wire diameter at different positions and orientations?",opts:["To remove all the uncertainty from the diameter","To detect variation and estimate a representative diameter","To make the wire longer before it is measured","To avoid having to measure the length of the wire at all"],a:1,why:"A wire may not be perfectly uniform or circular."}
   ];
   const secB = [
     {stem:"<p>A student measures the diameter of a wire as (0.50 ± 0.01) mm and its length as (1.20 ± 0.01) m.</p>",parts:[

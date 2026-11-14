@@ -21,11 +21,21 @@
     bath: `<linearGradient id="${u}bath" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f4f7f9"/><stop offset="1" stop-color="#b9c2ca"/></linearGradient>`,
     shadow: `<radialGradient id="${u}shadow"><stop offset="0" stop-color="#000" stop-opacity=".38"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>`
   })[n] || '';
-  const wrap = (W, H, aria, defs, body) => {
+  const wrapIds = (W, H, aria, defs, body) => {
     if (body.indexOf('url(#LG') < 0) return wrap0(W, H, aria, defs, body);
     const u = id('L'), used = new Set();
     body = body.replace(/url\(#LG([A-Za-z]+)\)/g, (m, n) => { used.add(n); return `url(#${u}${n})`; });
     return wrap0(W, H, aria, (defs || '') + [...used].map(n => LGD(u, n)).join(''), body);
+  };
+  /* Every figure instance gets its own gradient/marker ids. Fixed ids such as #rsg were shared between two lessons' figures on one page, and a url(#id) that resolves into a hidden (display:none) copy paints nothing. */
+  let uidFig = 0;
+  const wrap = (W, H, aria, defs, body) => {
+    let svg = wrapIds(W, H, aria, defs, body);
+    const ids = [...new Set([...svg.matchAll(/\bid="([A-Za-z][\w-]*)"/g)].map(m => m[1]))];
+    if (!ids.length) return svg;
+    const sfx = '-f' + (++uidFig);
+    ids.forEach(n => { svg = svg.split('id="' + n + '"').join('id="' + n + sfx + '"').split('url(#' + n + ')').join('url(#' + n + sfx + ')').split('href="#' + n + '"').join('href="#' + n + sfx + '"'); });
+    return svg;
   };
   const lgShadow = (x, y, rx, ry = 5) => `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(rx)}" ry="${f(ry)}" fill="url(#LGshadow)"/>`;
   let uid = 0;
@@ -271,7 +281,7 @@
     const sx = 730; let coil = '';
     for (let i = 0; i < 9; i++) { const x = sx - 80 + i * 20; coil += `<ellipse cx="${x}" cy="${cy}" rx="8" ry="34" fill="none" stroke="#c8792a" stroke-width="4"/>`; }
     g += `<g>${loops(sx, 90)}</g>` + coil + `<path d="M${sx - 80} ${cy - 22}H${sx + 80}M${sx - 80} ${cy}H${sx + 80}M${sx - 80} ${cy + 22}H${sx + 80}" stroke="#7fb2ff" stroke-width="2"/>`;
-    g += arrow(sx + 14, cy, sx - 10, cy, '#7fb2ff', 0, 11) + T(sx - 108, cy + 58, 'N', { size: 20, w: 700, fill: '#e0453a' }) + T(sx + 108, cy + 58, 'S', { size: 20, w: 700, fill: '#3f6fd6' });
+    g += arrow(sx + 14, cy, sx - 10, cy, '#7fb2ff', 0, 11) + T(sx - 150, cy - 12, 'N', { size: 20, w: 700, fill: '#e0453a' }) + T(sx + 150, cy - 12, 'S', { size: 20, w: 700, fill: '#3f6fd6' });
     g += T(sx, 40, 'Solenoid (coil carrying a current)', { size: 17, w: 700 }) + T(sx, 400, 'Strong, uniform field inside; outside it looks like a bar magnet', { size: 14 });
     return wrap(W, H, o.aria || 'Magnetic field patterns of a bar magnet and of a solenoid', '', g);
   }
@@ -1143,7 +1153,7 @@
     // eureka can
     g += `<path d="M420 200V372H520V200" fill="none" stroke="${GL}" stroke-width="3"/><path d="M422 236H518V370H422Z" fill="${WATER}" fill-opacity=".45"/><path d="M520 236L590 270" stroke="${GL}" stroke-width="7"/><path d="M520 236L590 270" stroke="${WATER}" stroke-width="3" opacity=".7"/>`;
     g += `<path d="M470 120V280" stroke="#888" stroke-width="1.5"/><path d="M452 280Q470 262 490 284Q500 304 480 318Q456 326 448 306Q440 292 452 280Z" fill="#7d7468" stroke="#5a5248" stroke-width="2"/>`;
-    g += `<path d="M596 282q-3 10 0 18" stroke="${WATER}" stroke-width="3" fill="none"/><path d="M570 290V372Q570 378 576 378H620Q626 378 626 372V290" fill="none" stroke="${GL}" stroke-width="3"/><path d="M572 330H624V376H572Z" fill="${WATER}" fill-opacity=".5"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M626 ${300 + i * 13}h-10" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
+    g += `<path d="M596 281q-5 9 -5 13a5 5 0 1 0 10 0q0 -4 -5 -13z" fill="${WATER}" opacity=".85"/><path d="M570 290V372Q570 378 576 378H620Q626 378 626 372V290" fill="none" stroke="${GL}" stroke-width="3"/><path d="M572 330H624V376H572Z" fill="${WATER}" fill-opacity=".5"/>${[0, 1, 2, 3, 4, 5].map(i => `<path d="M626 ${300 + i * 13}h-10" stroke="${GL}" stroke-width="1.5"/>`).join('')}`;
     g += T(520, 40, 'Irregular solid', { size: 16, w: 700 }) + T(520, 62, 'volume = volume of water displaced', { size: 13 });
     g += T(800, 160, 'density = mass ÷ volume', { size: 16, w: 700 }) + T(800, 186, 'ρ = m ÷ V', { size: 15 }) + T(800, 214, 'units: g/cm³ or kg/m³', { size: 13 }) + T(800, 250, '1 cm³ = 1 ml', { size: 13 });
     const labs = [{ x: 421, y: 215, t: 'Eureka (displacement) can filled to the spout', side: 'l', ly: 140 }, { x: 610, y: 340, t: 'Measuring cylinder', side: 'r', ly: 320 }, { x: 470, y: 300, t: 'Object on a thread', side: 'r', ly: 120 }];
@@ -2566,18 +2576,28 @@
   }
 
   function hrDiagram(o = {}) {
-    const W = 900, H = 440, x0 = 110, y0 = 380, w = 620, h = 320;
+    /* Both axes are logarithmic. Star positions come from physical values: the main sequence from tabulated (T, L) pairs,
+       giants, supergiants and white dwarfs from L = (R/R☉)² (T/5800 K)⁴ (Stefan–Boltzmann, with the Sun at 5800 K). */
+    const W = 900, H = 470, x0 = 120, y0 = 385, w = 640, h = 320, Tmax = 40000, Tmin = 2500;
+    const lT = Math.log10, X = Tk => x0 + 14 + (lT(Tmax) - lT(Tk)) / (lT(Tmax) - lT(Tmin)) * (w - 28), Y = L => y0 - (lT(L) + 4) / 10 * h;
+    const colour = Tk => Tk > 20000 ? '#9fc6ff' : Tk > 9000 ? '#cfe0ff' : Tk > 6500 ? '#ffffff' : Tk > 5000 ? '#ffe680' : Tk > 3900 ? '#ffb86a' : '#ff8a5a';
     let g = `<rect x="${x0}" y="${y0 - h}" width="${w}" height="${h}" fill="#0c1020" stroke="currentColor"/>`;
-    g += T(x0 + w / 2, y0 + 28, 'Temperature (K):  hot ← → cool', { size: 13 }) + T(x0 - 50, y0 - h / 2, 'Luminosity', { size: 13 }).replace('<text', `<text transform="rotate(-90 ${x0 - 50} ${y0 - h / 2})"`);
-    ['40 000', '10 000', '6 000', '3 000'].forEach((t, i) => { g += T(x0 + 20 + i * 190, y0 + 46, t, { size: 11 }); });
-    const rnd = S._rnd(9);
-    for (let i = 0; i < 70; i++) { const t = rnd(); const x = x0 + 30 + t * (w - 60), y = y0 - h + 30 + t * (h - 60) + (rnd() - 0.5) * 30; const c = t < 0.3 ? '#9fc6ff' : t < 0.55 ? '#ffffff' : t < 0.75 ? '#ffe680' : '#ff9a5a'; g += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(6 - t * 3)}" fill="${c}"/>`; }
-    for (let i = 0; i < 14; i++) g += `<circle cx="${f(x0 + 420 + rnd() * 160)}" cy="${f(y0 - h + 50 + rnd() * 80)}" r="${f(6 + rnd() * 6)}" fill="#ff8a4a"/>`;
-    for (let i = 0; i < 12; i++) g += `<circle cx="${f(x0 + 60 + rnd() * 160)}" cy="${f(y0 - 50 - rnd() * 50)}" r="3" fill="#dfe8ff"/>`;
-    g += `<circle cx="${x0 + 360}" cy="${y0 - 170}" r="8" fill="#ffe680" stroke="#fff" stroke-width="2"/>` + T(x0 + 374, y0 - 166, 'the Sun', { size: 12, a: 'start', fill: '#e8ecf5' });
-    g += T(x0 + 200, y0 - 180, 'main sequence', { size: 13, w: 700, a: 'start', fill: '#e8ecf5' }).replace('<text', `<text transform="rotate(34 ${x0 + 200} ${y0 - 180})"`) + T(x0 + 500, y0 - h + 34, 'red giants and supergiants', { size: 12, fill: '#e8ecf5' }) + T(x0 + 140, y0 - 20, 'white dwarfs', { size: 12, fill: '#e8ecf5' });
+    for (let e = -4; e <= 6; e += 2) { g += `<path d="M${x0} ${f(Y(10 ** e))}H${x0 + w}" stroke="currentColor" stroke-width="1" opacity=".18"/>` + T(x0 - 8, Y(10 ** e) + 4, e === 0 ? '1' : '10' + (e < 0 ? '⁻' : '') + String(Math.abs(e)).replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]), { size: 12, a: 'end' }); }
+    [40000, 20000, 10000, 6000, 3000].forEach(Tk => { g += `<path d="M${f(X(Tk))} ${y0}v-${h}" stroke="currentColor" stroke-width="1" opacity=".18"/>` + T(X(Tk), y0 + 18, Tk.toLocaleString('en-GB').replace(/,/g, ' '), { size: 12 }); });
+    g += T(x0 + w / 2, y0 + 42, 'Surface temperature T / K  (logarithmic: hot on the left)', { size: 13 }) + T(x0 - 78, y0 - h / 2, 'Luminosity L / L☉  (logarithmic)', { size: 13 }).replace('<text', `<text transform="rotate(-90 ${x0 - 78} ${y0 - h / 2})"`);
+    const rnd = S._rnd(9), ms = [[40000, 3e5], [30000, 3e4], [20000, 3e3], [10000, 40], [7200, 6], [5800, 1], [5200, 0.4], [3800, 0.07], [3000, 0.003]];
+    const onMS = u => { const k = Math.min(ms.length - 2, Math.floor(u * (ms.length - 1))), t = u * (ms.length - 1) - k; return [10 ** (lT(ms[k][0]) * (1 - t) + lT(ms[k + 1][0]) * t), 10 ** (lT(ms[k][1]) * (1 - t) + lT(ms[k + 1][1]) * t)]; };
+    const dot = (Tk, L, r) => `<circle cx="${f(X(Tk))}" cy="${f(Y(L))}" r="${r}" fill="${colour(Tk)}"/>`;
+    for (let i = 0; i < 70; i++) { const [Tk, L] = onMS(rnd()); g += dot(Tk, L * 10 ** ((rnd() - .5) * .35), 4.5); }
+    for (let i = 0; i < 14; i++) { const Tk = 3900 + rnd() * 1300, R = 12 + rnd() * 20; g += dot(Tk, R * R * (Tk / 5800) ** 4, 6.5); }
+    for (let i = 0; i < 8; i++) { const Tk = 3200 + rnd() * 900, R = 400 + rnd() * 500; g += dot(Tk, R * R * (Tk / 5800) ** 4, 8.5); }
+    for (let i = 0; i < 4; i++) { const Tk = 11000 + rnd() * 9000, R = 40 + rnd() * 40; g += dot(Tk, R * R * (Tk / 5800) ** 4, 7); }
+    for (let i = 0; i < 12; i++) { const Tk = 7000 + rnd() * 18000, R = .008 + rnd() * .006; g += dot(Tk, R * R * (Tk / 5800) ** 4 * 1, 3.2); }
+    g += `<circle cx="${f(X(5800))}" cy="${f(Y(1))}" r="8" fill="#ffe680" stroke="#fff" stroke-width="2"/>` + T(X(5800) - 14, Y(1) + 26, 'the Sun', { size: 12, a: 'end', fill: '#e8ecf5' }) + `<path d="M${f(X(5800) - 10)} ${f(Y(1) + 20)}L${f(X(5800) - 3)} ${f(Y(1) + 8)}" stroke="#e8ecf5" stroke-width="1"/>`;
+    g += T(X(14500), Y(6), 'main sequence', { size: 13, w: 700, a: 'middle', fill: '#e8ecf5' }).replace('<text', `<text transform="rotate(24 ${f(X(14500))} ${f(Y(6))})"`);
+    g += T(X(4600), Y(1.1e5), 'red supergiants', { size: 12, a: 'end', fill: '#e8ecf5' }) + T(X(3500), Y(30) + 4, 'red giants', { size: 12, a: 'start', fill: '#e8ecf5' }) + T(X(16000), Y(8e-3), 'white dwarfs', { size: 12, a: 'start', fill: '#e8ecf5' });
     g += T(450, 30, 'Hertzsprung–Russell diagram', { size: 15, w: 700 });
-    return wrap(W, H, o.aria || 'Hertzsprung–Russell diagram with the main sequence, giants and white dwarfs', '', g);
+    return wrap(W, H, o.aria || 'Hertzsprung–Russell diagram on logarithmic axes of luminosity and surface temperature, with the main sequence, giants, supergiants and white dwarfs', '', g);
   }
 
   function lineSpectra(o = {}) {
@@ -2654,10 +2674,17 @@
   }
 
   function bindingEnergy(o = {}) {
-    const W = 920, H = 380, x0 = 90, y0 = 330;
-    let g = axes(x0, y0, 520, 260, 'Nucleon number A', 'Binding energy per nucleon (MeV)');
-    g += `<path d="M${x0 + 4} ${y0 - 40}Q${x0 + 20} ${y0 - 210} ${x0 + 80} ${y0 - 230}Q${x0 + 120} ${y0 - 236} ${x0 + 200} ${y0 - 226}L${x0 + 500} ${y0 - 190}" stroke="#3f7fd6" stroke-width="3" fill="none"/><circle cx="${x0 + 82}" cy="${y0 - 232}" r="6" fill="#e0a64a"/>` + T(x0 + 92, y0 - 242, 'iron-56: most stable', { size: 12, a: 'start', fill: '#e0a64a' });
-    g += arrow(x0 + 14, y0 - 120, x0 + 50, y0 - 200, '#3fb27f', 2.5) + T(x0 + 26, y0 - 100, 'fusion', { size: 12, w: 700, fill: '#3fb27f', a: 'start' }) + arrow(x0 + 480, y0 - 160, x0 + 330, y0 - 186, '#ef5b4c', 2.5) + T(x0 + 420, y0 - 140, 'fission', { size: 12, w: 700, fill: '#ef5b4c' });
+    /* Tabulated binding energies per nucleon (MeV) for real nuclides, plotted at their nucleon numbers. */
+    const W = 920, H = 400, x0 = 90, y0 = 340, pw = 520, ph = 270, Amax = 250, Emax = 10;
+    const X = A => x0 + A / Amax * pw, Y = E => y0 - E / Emax * ph;
+    const data = [[2, 1.11], [3, 2.83], [4, 7.07], [6, 5.33], [7, 5.61], [9, 6.46], [12, 7.68], [14, 7.48], [16, 7.98], [20, 8.03], [24, 8.26], [28, 8.45], [32, 8.49], [40, 8.55], [56, 8.79], [62, 8.79], [84, 8.72], [107, 8.55], [120, 8.51], [138, 8.39], [160, 8.22], [184, 8.0], [208, 7.87], [235, 7.59], [238, 7.57]];
+    let g = axes(x0, y0, pw + 10, ph + 10, 'Nucleon number A', 'Binding energy per nucleon (MeV)');
+    for (let E = 2; E <= 10; E += 2) g += `<path d="M${x0} ${f(Y(E))}H${x0 + pw}" stroke="currentColor" stroke-width="1" opacity=".18"/>` + T(x0 - 8, Y(E) + 4, String(E), { size: 12, a: 'end' });
+    for (let A = 50; A <= 250; A += 50) g += `<path d="M${f(X(A))} ${y0}v5" stroke="currentColor" stroke-width="1.5"/>` + T(X(A), y0 + 20, String(A), { size: 12 });
+    g += `<path d="M${data.map(([A, E], k) => (k ? 'L' : 'M') + f(X(A)) + ' ' + f(Y(E))).join('')}" stroke="#3f7fd6" stroke-width="3" fill="none" stroke-linejoin="round"/>` + data.map(([A, E]) => `<circle cx="${f(X(A))}" cy="${f(Y(E))}" r="3.5" fill="#3f7fd6"/>`).join('');
+    g += `<circle cx="${f(X(56))}" cy="${f(Y(8.79))}" r="6" fill="#e0a64a"/>` + T(X(56) + 12, Y(8.79) - 12, 'iron-56: 8.8 MeV, most stable', { size: 12, a: 'start', fill: '#e0a64a' });
+    g += `<path d="M${f(X(4))} ${f(Y(7.07) - 8)}V${f(Y(9.3) + 6)}" stroke="currentColor" stroke-width="1" opacity=".6"/>` + T(X(4) + 4, Y(9.3), 'helium-4: 7.1 MeV', { size: 12, a: 'start' }) + T(X(244), Y(8.6), 'uranium-235 / 238: about 7.6 MeV', { size: 12, a: 'end' }) + `<path d="M${f(X(236))} ${f(Y(7.6) - 8)}V${f(Y(8.6) + 6)}" stroke="currentColor" stroke-width="1" opacity=".6"/>`;
+    g += arrow(X(18), Y(3.2), X(34), Y(6.3), '#3fb27f', 2.5) + T(X(20), Y(2.4), 'fusion', { size: 12, w: 700, fill: '#3fb27f', a: 'start' }) + arrow(X(225), Y(5.6), X(150), Y(6.9), '#ef5b4c', 2.5) + T(X(205), Y(5.0), 'fission', { size: 12, w: 700, fill: '#ef5b4c' });
     g += T(760, 110, 'mass defect Δm:', { size: 13, w: 700 }) + T(760, 130, 'nucleus has less mass than', { size: 12 }) + T(760, 146, 'its separate nucleons', { size: 12 }) + T(760, 186, 'binding energy = Δm c²', { size: 14, w: 700 }) + T(760, 220, 'moving towards iron releases', { size: 12 }) + T(760, 236, 'energy', { size: 12 });
     return wrap(W, H, o.aria || 'Binding energy per nucleon against nucleon number with iron-56 at the peak', '', g);
   }
