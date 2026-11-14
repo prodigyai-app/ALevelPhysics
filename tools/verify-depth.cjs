@@ -8,7 +8,7 @@ const fs = require('node:fs'), path = require('node:path'), vm = require('node:v
 const root = path.join(__dirname, '..');
 const NT = require(path.join(root, 'numeric-tools.js'));
 const SCOPE = {
-  g: 9.81, c: 3.00e8, h: 6.63e-34, e: 1.60e-19, k: 1.38e-23, R: 8.31, NA: 6.02e23, G: 6.67e-11, eps0: 8.85e-12, me: 9.11e-31, mp: 1.673e-27, mn: 1.675e-27, u: 1.661e-27, sigma: 5.67e-8, wien: 2.9e-3,
+  g: 9.81, c: 3.00e8, h: 6.63e-34, e: 1.60e-19, k: 1.38e-23, R: 8.31, NA: 6.02e23, G: 6.67e-11, eps0: 8.85e-12, me: 9.11e-31, mp: 1.673e-27, mn: 1.675e-27, u: 1.661e-27, sigma: 5.67e-8, wien: 2.9e-3, kC: 8.99e9, MeV: 1.60e-13, yr: 3.16e7,
   pi: Math.PI, sqrt: Math.sqrt, cbrt: Math.cbrt, exp: Math.exp, ln: Math.log, lg: Math.log10, abs: Math.abs, pow: Math.pow, atan: Math.atan, asin: Math.asin, acos: Math.acos, sin: Math.sin, cos: Math.cos, tan: Math.tan,
   sind: d => Math.sin(d * Math.PI / 180), cosd: d => Math.cos(d * Math.PI / 180), tand: d => Math.tan(d * Math.PI / 180), asind: x => Math.asin(x) * 180 / Math.PI, atand: x => Math.atan(x) * 180 / Math.PI, acosd: x => Math.acos(x) * 180 / Math.PI,
   mean: (...a) => a.reduce((s, x) => s + x, 0) / a.length, max: Math.max, min: Math.min, round: Math.round
