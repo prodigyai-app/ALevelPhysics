@@ -343,4 +343,34 @@
   add('a10', { gaps: [
     { q: 'A hydrogen line emitted at 656 nm is observed at 689 nm.', lines: ['z = Δλ ÷ λ = [[0.0503]]', 'v = zc = [[1.51e7]] m s⁻¹'], calc: ['33/656', '33/656*c'], why: 'Valid because v is much less than c.' }
   ] });
+
+  /* ---------------- a11 Review ---------------- */
+  add('a11', {
+    ex: [
+      ['A model answer: evidence for the Big Bang', 'Describe two pieces of evidence for the Big Bang model. (4 marks)', [
+        ['Galactic redshift', '', [`Light from distant galaxies is ${mp('redshifted')}, and the ${mp('recession speed is proportional to distance')} (Hubble’s law): the universe is expanding.`]],
+        ['Running the expansion backwards', '', ['Everything was once together in a hot, dense state; 1 ÷ H₀ estimates its age.']],
+        ['The cosmic microwave background', '', [`Microwave radiation arrives ${mp('from all directions')} with a ${mp('black-body spectrum at about 2.7 K')}: radiation from the early hot universe, stretched by the expansion.`]]
+      ], { desc: true }],
+      ['Synoptic: measuring a redshift with a grating', 'Light from a galaxy passes through a grating of 600 lines per mm. The Hα line (656.3 nm in the laboratory) appears in the first order at 24.0°. Find the recession speed.', [
+        ['Grating spacing', '', ['d = 1 ÷ 600 000 = 1.667 × 10⁻⁶ m']],
+        ['Observed wavelength', 'dsin θ = nλ, n = 1.', ['λ = 1.667 × 10⁻⁶ × sin 24.0° = 678 nm']],
+        ['Redshift and speed', '', ['z = (678 − 656.3) ÷ 656.3 = 0.033', res('v = zc = 9.9 × 10⁶ m s⁻¹')]]
+      ], { chk: [['sind(24)/6e5', 6.779e-7], ['(sind(24)/6e5-656.3e-9)/656.3e-9*c', 9.87e6]] }]
+    ],
+    gaps: [
+      { q: 'An electron in hydrogen falls from −1.51 eV to −3.40 eV.', lines: ['photon energy = [[1.89]] eV = [[3.02e-19]] J'], calc: ['3.40-1.51', '1.89*e'], why: 'This is the red Hα line.' },
+      { q: 'A star’s spectrum peaks at 400 nm.', lines: ['T = 2.9 × 10⁻³ ÷ λ_max = [[7250]] K'], calc: ['wien/400e-9'], why: 'Wien’s law.' },
+      { q: 'A star has a parallax angle of 0.25 arcseconds.', lines: ['distance = [[4]] pc'], calc: ['1/0.25'], why: 'd (pc) = 1 ÷ p (arcseconds).' }
+    ],
+    exam: [
+      { stem: '<p>Light from a distant galaxy is passed through a diffraction grating with 500 lines per mm. The hydrogen line that has a laboratory wavelength of 656.3 nm is seen in the first order at an angle of 20.0°. Take H₀ = 2.3 × 10⁻¹⁸ s⁻¹.</p>', parts: [
+        { q: 'Calculate the observed wavelength of the line.', m: 2, ans: { a: 684, unit: 'nm', tol: 0.01 }, calc: 'sind(20)/5e5*1e9', ms: [['C1', 'd = 1 ÷ (500 × 10³) = 2.00 × 10⁻⁶ m; λ = d sin θ'], ['A1', 'λ = 684 nm']] },
+        { q: 'Calculate the recession speed of the galaxy.', m: 1, ans: { a: 1.27e7, unit: 'm s⁻¹', tol: 0.03 }, calc: '(sind(20)/5e5-656.3e-9)/656.3e-9*c', ms: [['B1', 'v = (Δλ ÷ λ)c = 0.042 × 3.00 × 10⁸ = 1.3 × 10⁷ m s⁻¹']] },
+        { q: 'Calculate the distance to the galaxy.', m: 2, ans: { a: 5.50e24, unit: 'm', tol: 0.03 }, calc: '(sind(20)/5e5-656.3e-9)/656.3e-9*c/2.3e-18', ms: [['C1', 'd = v ÷ H₀'], ['A1', 'd = 5.5 × 10²⁴ m']] },
+        { q: 'Explain why the redshift of distant galaxies is evidence that the universe is expanding.', m: 1, lines: 2, ms: [['B1', 'Almost all galaxies are receding, with speed proportional to distance, so space itself must be expanding']] }] },
+      { stem: '<p>Two stars have masses of 1 M☉ and 20 M☉.</p>', parts: [
+        { q: 'State two differences between the final stages of the two stars.', m: 2, lines: 3, ms: [['B1', '1 M☉: becomes a red giant, then loses its outer layers as a planetary nebula'], ['B1', 'and leaves a white dwarf; 20 M☉: becomes a red supergiant, explodes as a supernova and leaves a neutron star or black hole']] }] }
+    ]
+  });
 })();

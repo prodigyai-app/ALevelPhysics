@@ -384,4 +384,17 @@
     { q: 'A ball is thrown horizontally at 12 m s⁻¹ from a 20 m cliff.', lines: ['time to fall = √(2 × 20 ÷ 9.81) = [[2.02]] s', 'horizontal distance = [[24.2]] m'], calc: ['sqrt(40/g)', '12*sqrt(40/g)'], why: 'Horizontal and vertical motions are independent.' },
     { q: 'A car at 20 m s⁻¹ decelerates at 5.0 m s⁻².', lines: ['braking distance = u² ÷ 2a = [[40]] m'], calc: ['400/10'], why: 'v² = u² + 2as with v = 0.' }
   ] });
+
+  /* ---- moved from the module paper (m14) when it was rebalanced to 36 marks ---- */
+  add('m13', { exam: [
+    { stem: '<p>A ball is dropped from rest from a height of 2.0 m onto a hard floor. It rebounds to a height of 1.4 m. The ball is in contact with the floor for 0.020 s. Ignore air resistance.</p>', parts: [
+      { q: 'Calculate the speed of the ball just before it hits the floor.', m: 2, ans: { a: 6.26, unit: 'm s⁻¹', tol: 0.02 }, calc: 'sqrt(2*g*2)', ms: [['C1', 'v² = 2 × 9.81 × 2.0'], ['A1', 'v = 6.3 m s⁻¹']] },
+      { q: 'Calculate the speed of the ball just after it leaves the floor.', m: 1, ans: { a: 5.24, unit: 'm s⁻¹', tol: 0.02 }, calc: 'sqrt(2*g*1.4)', ms: [['B1', 'u = √(2 × 9.81 × 1.4) = 5.2 m s⁻¹']] },
+      { q: 'Calculate the magnitude of the average acceleration of the ball while it is in contact with the floor.', m: 3, ans: { a: 575, unit: 'm s⁻²', tol: 0.03, abs: true, hint: 'The ball changes direction, so the speeds add.' }, calc: '(sqrt(2*g*2)+sqrt(2*g*1.4))/0.02', ms: [['C1', 'Δv = 5.24 − (−6.26) = 11.5 m s⁻¹ (recognises change of direction)'], ['C1', 'a = 11.5 ÷ 0.020'], ['A1', '= 580 m s⁻² (upwards)']] },
+      { q: 'Describe the velocity–time graph from release until the top of the first bounce, taking downwards as positive.', m: 2, lines: 4, ms: [['B1', 'Straight line from 0 to +6.3 m s⁻¹ with gradient g, then a (near-)vertical drop to −5.2 m s⁻¹'], ['B1', 'Then a straight line of the same gradient (parallel to the first) from −5.2 m s⁻¹ to 0']] }] }
+  ] });
+  add('m10', { exam: [
+    { stem: '<p>A driver has a reaction time of 0.70 s, and the car’s maximum deceleration is 7.0 m s⁻². The driver sees a hazard 60 m ahead.</p>', parts: [
+      { q: 'Calculate the maximum initial speed at which the car could stop in 60 m.', m: 3, lines: 5, ans: { a: 24.5, unit: 'm s⁻¹', tol: 0.02 }, calc: '(-9.8+sqrt(9.8**2+4*840))/2', ms: [['C1', '60 = 0.70u + u² ÷ 14'], ['C1', 'u² + 9.8u − 840 = 0, solved with the quadratic formula'], ['A1', 'u = 24.5 m s⁻¹']] }] }
+  ] });
 })();
