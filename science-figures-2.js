@@ -3787,5 +3787,5 @@
   }
   Object.assign(add, { wireField: wireField3, terminalVelocity: terminalVelocity3, earFig: earFig3, armMuscles: armMuscles3, adaptations: adaptations3 });
   for (const k of Object.keys(add)) S.register(k, add[k]);
-  S._more = { T, arrow, dbl, wavy, id };
+  S._more = { T, arrow, dbl, wavy, id, wrap, axes, curveP, panelT, f, esc };
 })(typeof window === 'undefined' ? globalThis : window);

@@ -4,7 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-function loadLibrary() {
+function loadLibrary() { return loadLibraryWith(); }
+function loadLibraryWith(...extra) {
   const sandbox = {console, Math, Date, JSON, Set, Map, Array, Object, String, Number, RegExp};
   sandbox.window = sandbox; sandbox.globalThis = sandbox;
   sandbox.document = {createElement: () => ({style: {}, setAttribute() {}, appendChild() {}}), getElementById: () => null, querySelector: () => null, querySelectorAll: () => [], addEventListener() {}, head: {appendChild() {}}, body: {appendChild() {}}};
@@ -15,6 +16,7 @@ function loadLibrary() {
   const S = sandbox.SciFig, reg = S.register;
   S.register = (n, fn) => { names.push(n); reg(n, fn); };
   run('science-figures-2.js');
+  extra.forEach(run);
   S.names = names;
   return S;
 }
@@ -49,4 +51,30 @@ test('the HR diagram and binding-energy figures carry numerical axes', () => {
   const hr = S.svg('hrDiagram', {}), be = S.svg('bindingEnergy', {});
   ['10⁻⁴', '10⁶', '40 000', '3 000'].forEach(t => assert.ok(hr.includes(t), 'HR diagram missing axis label ' + t));
   ['>10<', '>8<', '>250<'].forEach(t => assert.ok(be.includes(t), 'binding-energy figure missing axis label ' + t));
+});
+
+test('no two lessons show the same figure', () => {
+  const S = loadLibraryWith('physics-figures.js');
+  const src = fs.readFileSync(path.join(__dirname, '..', 'lesson-visuals-data-2.js'), 'utf8');
+  const A = JSON.parse(src.match(/A=(\{.*\});for/s)[1]);
+  const seen = new Map(), dup = [];
+  for (const [lesson, list] of Object.entries(A)) for (const v of list) {
+    if (!v.fig) continue;
+    const svg = S.svg(v.fig[0], v.fig[1] || {});
+    assert.ok(svg.includes('<svg'), `${lesson}: figure ${v.fig[0]} did not draw`);
+    const text = svg.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), key = text + '|' + (svg.match(/<[a-z]/g) || []).length;
+    if (seen.has(key) && seen.get(key) !== lesson) dup.push(`${seen.get(key)} and ${lesson} (${v.fig[0]})`); else seen.set(key, lesson);
+  }
+  assert.deepEqual(dup, [], 'lessons sharing an identical figure');
+});
+
+test('the lesson-specific figures carry role="img" and an aria-label', () => {
+  const S = loadLibraryWith('physics-figures.js');
+  assert.ok(S._physicsFigures.length >= 36);
+  for (const n of S._physicsFigures) {
+    const svg = S.svg(n, {});
+    assert.match(svg, /role="img"/, n);
+    assert.match(svg, /aria-label="[^"]{20,}"/, n);
+    assert.doesNotMatch(svg, /NaN|undefined|Infinity/, n);
+  }
 });
