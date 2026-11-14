@@ -273,4 +273,13 @@
         { q: 'Explain, in terms of molecules, why the pressure rises.', m: 1, lines: 2, ms: [['B1', 'The molecules move faster, so they hit the walls more often and with a greater change of momentum each time, increasing the force per unit area']] }] }
     ]
   });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('t8', { gaps: [
+    { q: '2.4 × 10²² helium atoms (mass 6.6 × 10⁻²⁷ kg) with c_rms = 1300 m s⁻¹ fill 1.0 × 10⁻³ m³.', lines: ['p = Nm⟨c²⟩ ÷ 3V = [[8.92e4]] Pa'], calc: ['2.4e22*6.6e-27*1300**2/(3*1e-3)'], why: 'pV = ⅓Nm⟨c²⟩.' }
+  ] });
+  add('t10', { gaps: [
+    { q: '0.20 kg of water is heated by 30 K.', lines: ['energy = mcΔθ = [[25200]] J'], calc: ['0.2*4200*30'], why: 'c = 4200 J kg⁻¹ K⁻¹.' },
+    { q: 'A gas occupies 5.0 × 10⁻³ m³ at 1.0 × 10⁵ Pa and 290 K.', lines: ['n = pV ÷ RT = [[0.208]] mol'], calc: ['1e5*5e-3/(R*290)'], why: 'Convert litres and °C first.' }
+  ] });
 })();

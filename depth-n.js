@@ -298,4 +298,25 @@
         { q: 'Explain why an alpha emitter is a good choice for this generator.', m: 2, lines: 3, ms: [['B1', 'Alpha particles are absorbed within the material and casing, so their kinetic energy is transferred to thermal energy where it is needed'], ['B1', 'Little shielding is needed to protect the probe’s electronics (no penetrating radiation to absorb)']] }] }
     ]
   });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('n1', { gaps: [
+    { q: 'An alpha particle is 3.93 × 10⁻¹⁴ m from a lead nucleus (Z = 82).', lines: ['electric force = k(2e)(82e) ÷ r² = [[24.4]] N'], calc: ['kC*2*82*e*e/3.93e-14**2'], why: 'Enormous for a single particle.' }
+  ] });
+  add('n3', { gaps: [
+    { q: 'The antiproton is made of the antiquarks ū ū d̄.', lines: ['charge = −⅔ − ⅔ + ⅓ = [[-1]] e'], calc: ['-1'], why: 'Opposite to the proton.' }
+  ] });
+  add('n6', { gaps: [
+    { q: 'A source has activity 2000 Bq and decay constant 1.0 × 10⁻⁴ s⁻¹.', lines: ['number of undecayed nuclei N = A ÷ λ = [[2e7]]'], calc: ['2000/1e-4'], why: 'A = λN.' }
+  ] });
+  add('n8', { gaps: [
+    { q: 'A reactor produces 1000 MW of thermal power at 3.2 × 10⁻¹¹ J per fission.', lines: ['fissions per second = [[3.13e19]]', 'mass of U-235 used per day = [[1.05]] kg'], calc: ['1e9/3.2e-11', '1e9/3.2e-11*86400/NA*0.235'], why: 'Molar mass of U-235 is 0.235 kg mol⁻¹.' }
+  ] });
+  add('n9', { gaps: [
+    { q: 'The Sun radiates 3.83 × 10²⁶ W.', lines: ['mass converted each second = P ÷ c² = [[4.26e9]] kg'], calc: ['3.83e26/c**2'], why: 'ΔE = Δmc².' }
+  ] });
+  add('n10', { gaps: [
+    { q: 'A helium-4 nucleus has a mass defect of 0.0304 u.', lines: ['binding energy = [[28.3]] MeV', 'per nucleon = [[7.08]] MeV'], calc: ['0.0304*931.5', '0.0304*931.5/4'], why: '1 u ↔ 931.5 MeV.' },
+    { q: 'Take r₀ = 1.2 × 10⁻¹⁵ m.', lines: ['radius of an aluminium-27 nucleus = r₀A^(1/3) = [[3.6e-15]] m'], calc: ['1.2e-15*3'], why: '∛27 = 3.' }
+  ] });
 })();

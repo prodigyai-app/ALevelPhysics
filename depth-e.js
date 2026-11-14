@@ -361,4 +361,10 @@
   add('e3', { gaps: [{ q: 'Two wires of the same metal carry the same current. Wire P has twice the diameter of wire Q.', lines: ['area of P ÷ area of Q = [[4]]', 'drift velocity in P ÷ drift velocity in Q = [[0.25]]'], calc: ['4', '0.25'], why: 'v = I ÷ nAe, and area goes as diameter squared.' }] });
   add('e9', { gaps: [{ q: 'A 9.0 V and a 3.0 V cell are connected in series but facing opposite ways, with a 4.0 Ω resistor.', lines: ['net e.m.f. = [[6]] V', 'current = [[1.5]] A'], calc: ['9-3', '6/4'], why: 'Opposing e.m.f.s subtract around the loop.' }] });
   add('e12', { gaps: [{ q: 'In a divider on 6.0 V, a thermistor of 3.0 kΩ is in series with a 1.0 kΩ resistor. The output is across the 1.0 kΩ resistor.', lines: ['output = [[1.5]] V', 'when the thermistor falls to 1.0 kΩ, output = [[3]] V'], calc: ['6*1/4', '6*1/2'], why: 'Hotter: the thermistor resistance falls, so the output across the fixed resistor rises.' }] });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('e13', { gaps: [
+    { q: 'A 12 V supply drives 6.0 Ω in series with (6.0 Ω ∥ 3.0 Ω); the supply current is 1.5 A.', lines: ['p.d. across the parallel pair = 1.5 × 2.0 = [[3]] V', 'current in the 3.0 Ω resistor = [[1]] A'], calc: ['1.5*2', '1'], why: 'The parallel pair is 2.0 Ω.' },
+    { q: 'A wire is 2.0 m long with cross-sectional area 1.0 × 10⁻⁷ m² and resistivity 4.9 × 10⁻⁷ Ω m.', lines: ['R = ρL ÷ A = [[9.8]] Ω'], calc: ['4.9e-7*2/1e-7'], why: 'Double the length doubles R; double the area halves it.' }
+  ] });
 })();

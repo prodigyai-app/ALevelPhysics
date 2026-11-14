@@ -326,4 +326,21 @@
         { q: 'State what the data in the table suggest about how the mass inside radius r depends on r.', m: 1, lines: 2, ms: [['B1', 'v is constant, so M = v²r ÷ G is proportional to r: the enclosed mass keeps increasing well beyond the visible stars (dark matter)']] }] }
     ]
   });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('a1', { gaps: [
+    { q: 'A light-year is the distance light travels in one year (3.16 × 10⁷ s).', lines: ['1 ly = [[9.48e15]] m'], calc: ['c*yr'], why: 'd = ct.' }
+  ] });
+  add('a2', { gaps: [
+    { q: 'The core of a star of radius 7.0 × 10⁸ m collapses to a white dwarf of radius 7.0 × 10⁶ m.', lines: ['the radius falls by a factor of [[100]]', 'so, for the same mass, the density rises by a factor of [[1e6]]'], calc: ['7e8/7e6', '(7e8/7e6)**3'], why: 'Density ∝ 1 ÷ r³.' }
+  ] });
+  add('a3', { gaps: [
+    { q: 'The Sun has radius 6.96 × 10⁸ m and surface temperature 5800 K.', lines: ['L = 4πr²σT⁴ = [[3.91e26]] W'], calc: ['4*pi*6.96e8**2*sigma*5800**4'], why: 'Close to the measured 3.8 × 10²⁶ W.' }
+  ] });
+  add('a9', { gaps: [
+    { q: 'A galaxy is 3.09 × 10²⁴ m (100 Mpc) away. Take H₀ = 2.3 × 10⁻¹⁸ s⁻¹.', lines: ['recession speed v = H₀d = [[7.11e6]] m s⁻¹'], calc: ['2.3e-18*3.09e24'], why: 'Hubble’s law.' }
+  ] });
+  add('a10', { gaps: [
+    { q: 'A hydrogen line emitted at 656 nm is observed at 689 nm.', lines: ['z = Δλ ÷ λ = [[0.0503]]', 'v = zc = [[1.51e7]] m s⁻¹'], calc: ['33/656', '33/656*c'], why: 'Valid because v is much less than c.' }
+  ] });
 })();

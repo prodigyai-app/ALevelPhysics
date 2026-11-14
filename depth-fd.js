@@ -370,4 +370,9 @@
         { q: 'Explain why gravity can be ignored inside the nucleus but dominates on the scale of planets.', m: 1, lines: 2, ms: [['B1', 'Between particles the electric force is vastly larger; but large bodies are electrically neutral, so only gravity (always attractive, adding up) remains']] }] }
     ]
   });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('fd12', { gaps: [
+    { q: 'A 0.40 m rod moves at 5.0 m s⁻¹ at right angles to a 0.10 T field.', lines: ['induced e.m.f. = BLv = [[0.2]] V'], calc: ['0.1*0.4*5'], why: 'The rate at which the rod cuts flux.' }
+  ] });
 })();

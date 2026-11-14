@@ -265,4 +265,28 @@
         { q: 'Explain why the cyst shows clearly on the ultrasound image but not on an X-ray image.', m: 2, lines: 3, ms: [['B1', 'X-rays: the fluid and the surrounding soft tissue have similar attenuation coefficients, so there is little contrast'], ['B1', 'Ultrasound: the acoustic impedance of the fluid differs from that of tissue, so its boundaries reflect pulses and are located from the echo times']] }] }
     ]
   });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('md1', { gaps: [
+    { q: 'An X-ray tube runs at 60 kV and 12 mA, and is 1.0 % efficient.', lines: ['electrical power = [[720]] W', 'X-ray power = [[7.2]] W'], calc: ['60e3*12e-3', '7.2'], why: 'The rest heats the anode, which must be cooled.' }
+  ] });
+  add('md3', { gaps: [
+    { q: 'X-rays pass through 5.0 cm of tissue with μ = 0.35 cm⁻¹.', lines: ['fraction transmitted = e^(−μx) = [[0.174]]'], calc: ['exp(-1.75)'], why: 'μx has no units when μ and x use the same length unit.' }
+  ] });
+  add('md4', { gaps: [
+    { q: 'A gamma photon from technetium-99m has energy 2.24 × 10⁻¹⁴ J.', lines: ['wavelength = hc ÷ E = [[8.88e-12]] m'], calc: ['h*c/2.24e-14'], why: 'Shorter than visible light by a factor of about 10⁵.' }
+  ] });
+  add('md5', { gaps: [
+    { q: 'Each annihilation photon has energy 8.19 × 10⁻¹⁴ J.', lines: ['wavelength = hc ÷ E = [[2.43e-12]] m'], calc: ['h*c/8.19e-14'], why: 'Gamma rays.' }
+  ] });
+  add('md7', { gaps: [
+    { q: 'Ultrasound meets an air–skin boundary (Z = 430 and 1.7 × 10⁶ kg m⁻² s⁻¹).', lines: ['fraction reflected = [[0.999]]'], calc: ['((1.7e6-430)/(1.7e6+430))**2'], why: 'Almost total reflection: hence coupling gel.' }
+  ] });
+  add('md8', { gaps: [
+    { q: 'An echo returns 65 μs after the pulse is sent. (c = 1540 m s⁻¹)', lines: ['depth = ct ÷ 2 = [[0.05]] m'], calc: ['1540*65e-6/2'], why: 'Halve it: the pulse goes there and back.' }
+  ] });
+  add('md9', { gaps: [
+    { q: 'Ultrasound of 3.5 MHz travels through tissue at 1540 m s⁻¹.', lines: ['wavelength = [[4.4e-4]] m'], calc: ['1540/3.5e6'], why: 'This limits the smallest detail that can be resolved.' },
+    { q: 'X-rays pass through three half-value thicknesses of bone.', lines: ['fraction of intensity left = [[0.125]]'], calc: ['0.5**3'], why: '(½)³.' }
+  ] });
 })();

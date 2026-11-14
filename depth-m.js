@@ -372,4 +372,16 @@
   add('m10', { gaps: [{ q: 'A ruler falls 0.15 m before it is caught.', lines: ['reaction time = √(2 × 0.15 ÷ 9.81) = [[0.175]] s'], calc: ['sqrt(0.3/g)'], why: 'The ruler falls freely from rest.' }, { q: 'A car at 15 m s⁻¹ stops in a braking distance of 18 m.', lines: ['deceleration = 15² ÷ (2 × 18) = [[6.25]] m s⁻²'], calc: ['225/36'], why: 'From v² = u² + 2as with v = 0.' }] });
   add('m11', { gaps: [{ q: 'A stone is thrown horizontally at 12 m s⁻¹ from a cliff and lands 1.8 s later.', lines: ['horizontal distance = [[21.6]] m', 'height of the cliff = ½ × 9.81 × 1.8² = [[15.9]] m'], calc: ['12*1.8', '4.905*3.24'], why: 'The horizontal speed does not affect the fall time.' }] });
   add('m12', { gaps: [{ q: 'A ball is thrown at 18 m s⁻¹ at 55° from level ground.', lines: ['vertical component = [[14.7]] m s⁻¹', 'time to the highest point = [[1.5]] s', 'maximum height = [[11.1]] m'], calc: ['18*sind(55)', '18*sind(55)/g', '(18*sind(55))**2/(2*g)'], why: 'At the highest point the vertical velocity is zero; the horizontal velocity is unchanged.' }] });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('m5', { gaps: [
+    { q: 'A v–t graph rises in a straight line from 3.0 m s⁻¹ to 9.0 m s⁻¹ in 4.0 s.', lines: ['displacement = area = [[24]] m', 'acceleration = gradient = [[1.5]] m s⁻²'], calc: ['(3+9)/2*4', '6/4'], why: 'Area for displacement, gradient for acceleration.' }
+  ] });
+  add('m9', { gaps: [
+    { q: 'A falling card passes two light gates 0.50 m apart at 1.2 m s⁻¹ and 3.4 m s⁻¹.', lines: ['g = (v² − u²) ÷ 2s = [[10.1]] m s⁻²'], calc: ['(3.4**2-1.2**2)/(2*0.5)'], why: 'A high value suggests a systematic error, e.g. in the card length.' }
+  ] });
+  add('m13', { gaps: [
+    { q: 'A ball is thrown horizontally at 12 m s⁻¹ from a 20 m cliff.', lines: ['time to fall = √(2 × 20 ÷ 9.81) = [[2.02]] s', 'horizontal distance = [[24.2]] m'], calc: ['sqrt(40/g)', '12*sqrt(40/g)'], why: 'Horizontal and vertical motions are independent.' },
+    { q: 'A car at 20 m s⁻¹ decelerates at 5.0 m s⁻².', lines: ['braking distance = u² ÷ 2a = [[40]] m'], calc: ['400/10'], why: 'v² = u² + 2as with v = 0.' }
+  ] });
 })();

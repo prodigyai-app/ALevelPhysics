@@ -277,4 +277,9 @@
         { q: 'Hence state the minimum energy that the rockets must supply.', m: 2, ans: { a: 4.74e9, unit: 'J', tol: 0.02 }, calc: '3.98e14*200*(1/7e6-1/4.2e7)/2', ms: [['C1', 'energy = ΔE_p + ΔE_k = 9.5 × 10⁹ − 4.7 × 10⁹'], ['A1', '4.7 × 10⁹ J']] }] }
     ]
   });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('cg9', { gaps: [
+    { q: 'A simple pendulum is 0.80 m long.', lines: ['T = 2π√(L ÷ g) = [[1.79]] s'], calc: ['2*pi*sqrt(0.8/g)'], why: 'Independent of the mass of the bob.' }
+  ] });
 })();

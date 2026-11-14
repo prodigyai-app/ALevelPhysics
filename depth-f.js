@@ -388,4 +388,16 @@
   add('f11', { gaps: [{ q: 'A cube of side 3.0 cm has mass 72.9 g.', lines: ['volume = [[27]] cm³', 'density = [[2.7]] g cm⁻³ = 2700 kg m⁻³'], calc: ['27', '72.9/27'], why: 'Aluminium.' }] });
   add('f12', { gaps: [{ q: 'A diver is 12 m below the surface of a lake (ρ = 1000 kg m⁻³). Atmospheric pressure is 1.01 × 10⁵ Pa.', lines: ['pressure due to the water = [[1.18e5]] Pa', 'total pressure = [[2.19e5]] Pa'], calc: ['12*1000*g', '12*1000*g+1.01e5'], why: 'About 10 m of water adds one atmosphere.' }] });
   add('f13', { gaps: [{ q: 'A boat of mass 400 kg floats in fresh water.', lines: ['upthrust = [[3924]] N', 'volume of water displaced = [[0.4]] m³'], calc: ['400*g', '400/1000'], why: 'A floating object displaces its own mass of fluid.' }] });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('f2', { gaps: [
+    { q: 'Forces of 3.0 N east and 4.0 N north act on a ball.', lines: ['resultant = [[5]] N', 'at [[53.1]]° north of east'], calc: ['5', 'atand(4/3)'], why: 'Pythagoras and tan⁻¹.' }
+  ] });
+  add('f9', { gaps: [
+    { q: 'A uniform beam is 3.0 m long and has a mass of 12 kg.', lines: ['its centre of gravity is [[1.5]] m from either end', 'moment of its weight about one end = [[176.6]] N m'], calc: ['1.5', '12*g*1.5'], why: 'For a uniform beam the weight acts at the midpoint.' }
+  ] });
+  add('f14', { gaps: [
+    { q: 'A 75 kg skydiver falls at terminal velocity.', lines: ['drag force = [[735.8]] N'], calc: ['75*g'], why: 'At terminal velocity the resultant force is zero.' },
+    { q: 'A 2.0 × 10⁻³ m³ block is fully submerged in water (density 1000 kg m⁻³).', lines: ['upthrust = ρVg = [[19.62]] N'], calc: ['1000*2e-3*g'], why: 'Equal to the weight of water displaced.' }
+  ] });
 })();

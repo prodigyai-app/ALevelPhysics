@@ -372,4 +372,10 @@
   add('ep7', { gaps: [{ q: 'A copper wire of diameter 0.50 mm has ultimate tensile strength 2.2 × 10⁸ Pa.', lines: ['area = [[1.96e-7]] m²', 'breaking force = [[43.2]] N'], calc: ['pi*0.25e-3**2', '2.2e8*pi*0.25e-3**2'], why: 'Convert the diameter to a radius in metres.' }] });
   add('ep9', { gaps: [{ q: 'A 0.20 kg ball at 5.0 m s⁻¹ hits a 0.30 kg ball at rest. Afterwards the 0.20 kg ball moves at −1.0 m s⁻¹.', lines: ['momentum before = [[1]] kg m s⁻¹', 'velocity of the 0.30 kg ball = (1.0 + 0.20) ÷ 0.30 = [[4]] m s⁻¹'], calc: ['0.2*5', '1.2/0.3'], why: 'The negative sign means the first ball bounced back.' }] });
   add('ep10', { gaps: [{ q: 'A 2.0 kg puck at 3.0 m s⁻¹ east hits a puck at rest. Afterwards it moves at 1.5 m s⁻¹ at 60° north of east.', lines: ['its east momentum after = 2.0 × 1.5 cos 60° = [[1.5]] kg m s⁻¹', 'east momentum of the other puck = 6.0 − 1.5 = [[4.5]] kg m s⁻¹'], calc: ['2*1.5*cosd(60)', '6-2*1.5*cosd(60)'], why: 'Conserve each component separately.' }] });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('ep12', { gaps: [
+    { q: 'A 3.0 kg trolley at 4.0 m s⁻¹ hits and sticks to a 1.0 kg trolley at rest.', lines: ['common velocity = 12 ÷ 4.0 = [[3]] m s⁻¹', 'kinetic energy lost = 24 − 18 = [[6]] J'], calc: ['12/4', '24-0.5*4*9'], why: 'Momentum is conserved; kinetic energy is not (inelastic).' },
+    { q: 'A crane lifts 200 kg through 15 m in 20 s at steady speed.', lines: ['useful power = mgh ÷ t = [[1472]] W'], calc: ['200*g*15/20'], why: 'P = work done ÷ time.' }
+  ] });
 })();

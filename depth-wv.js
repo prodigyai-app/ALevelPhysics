@@ -367,4 +367,10 @@
   });
 
   add('wv9', { gaps: [{ q: 'An LED emits light of wavelength 590 nm.', lines: ['photon energy = [[3.37e-19]] J', 'minimum p.d. to light it = [[2.11]] V'], calc: ['h*c/590e-9', 'h*c/590e-9/e'], why: 'eV = hc ÷ λ at the threshold.' }] });
+
+  /* ---- top-up fill-the-gaps ---- */
+  add('wv12', { gaps: [
+    { q: 'Light of 450 nm falls on a metal with work function 2.3 eV.', lines: ['photon energy = [[4.42e-19]] J', 'maximum kinetic energy of the electrons = [[7.4e-20]] J'], calc: ['h*c/450e-9', 'h*c/450e-9-2.3*e'], why: 'hf = φ + KE_max.' },
+    { q: 'An electron moves at 2.0 × 10⁶ m s⁻¹.', lines: ['de Broglie wavelength = h ÷ mv = [[3.64e-10]] m'], calc: ['h/(me*2e6)'], why: 'Similar to atomic spacings, so electrons diffract from crystals.' }
+  ] });
 })();
