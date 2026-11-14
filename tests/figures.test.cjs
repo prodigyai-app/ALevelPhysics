@@ -78,3 +78,11 @@ test('the lesson-specific figures carry role="img" and an aria-label', () => {
     assert.doesNotMatch(svg, /NaN|undefined|Infinity/, n);
   }
 });
+
+test('no figure contains a malformed path', () => {
+  const S = loadLibraryWith('physics-figures.js');
+  for (const name of [...S.names, ...S._physicsFigures]) {
+    let svg; try { svg = S.svg(name, {}); } catch (e) { continue; }
+    for (const m of svg.matchAll(/\sd="([^"]*)"/g)) assert.match(m[1], /^[Mm]\s*-?[\d.]/, `${name}: path starts "${m[1].slice(0, 20)}"`);
+  }
+});

@@ -5973,6 +5973,8 @@ function cardHTML(cid){ const c=CARDS[cid]; let qn=c.start||1;
 function build(cid,cfg){ let k=0; CARDS[cid]=cfg; cfg.qs.forEach((q,qi)=>q.parts.forEach((p,pi)=>{ p.id=`${cid}q${qi}${L[pi]}`; if(q.parts.length>1&&p.l==null) p.l=L[pi]; if(!p.opts&&!p.lor&&p.ms&&p.ms.length!==p.m) console.warn("mark count",p.id); p.card=cid; p.tag=p.tag||cfg.tag; PARTS[p.id]=p; }));
   const el=document.createElement("div"); el.className="lcard exam"; el.id=cid; el.innerHTML=cardHTML(cid); return el; }
 function rerender(cid){ $("#"+cid).innerHTML=cardHTML(cid); refresh(cid); }
+/* add questions to an existing card: ids continue from the last question, so saved answers keep their place */
+function extend(cid,qs){ const c=CARDS[cid]; if(!c) return false; const n0=c.qs.length; qs.forEach((q,k)=>{ q.parts.forEach((p,pi)=>{ p.id=`${cid}q${n0+k}${L[pi]}`; if(q.parts.length>1&&p.l==null) p.l=L[pi]; if(!p.opts&&!p.lor&&p.ms&&p.ms.length!==p.m) console.warn("mark count",p.id); p.card=cid; p.tag=p.tag||c.tag; PARTS[p.id]=p; }); c.qs.push(q); }); rerender(cid); return true; }
 function allParts(cid){ return CARDS[cid].qs.flatMap(q=>q.parts); }
 function refresh(cid){ const ps=allParts(cid), T=ps.reduce((a,p)=>a+p.m,0); let got=0,mk=0,mt=0;
   ps.forEach(p=>{ const v=pscore(p); if(v!=null){ got+=v; mk++; mt+=p.m; } const e=$(`#${p.id}-pm`); if(e&&!p.lor){ const s=saved[p.id]; e.textContent=s&&s.done?`${pscore(p)} / ${p.m}`:""; } });
@@ -6000,7 +6002,7 @@ document.addEventListener("change",e=>{ const t=e.target;
 document.addEventListener("input",e=>{ const t=e.target, id=t.dataset.xw||t.dataset.xin; if(!id) return; const s=saved[id]=saved[id]||{}; if(t.dataset.xw) s.w=t.value; else s.f=t.value; save(); });
 window.addEventListener("pagehide",()=>{ clearTimeout(st); store.set(KEY,saved); });
 
-return {graph,attach,build,refresh,allParts,pscore,PARTS,CARDS,saved,save,rerender};
+return {graph,attach,build,extend,refresh,allParts,pscore,PARTS,CARDS,saved,save,rerender};
 })();
 
 </script>
@@ -14983,14 +14985,17 @@ window.ALP_ACCOUNTS={sb,merge,stats,get user(){ return user; },get profile(){ re
 <link rel="stylesheet" href="diagram-fit.css?v=20261025-labs">
 <link rel="stylesheet" href="flow-diagrams.css?v=20261031-diagrams">
 <link rel="stylesheet" href="lesson-practicals.css?v=20261031-inline">
+<script src="physics-depth.js?v=20261114"></script>
+<script src="depth-mu.js?v=20261114"></script>
+<script>PhysDepth.apply();</script>
 <script src="lesson-practical-map.js?v=20261031-inline"></script>
 <script src="lesson-practicals.js?v=20261031-inline"></script>
-<script src="simple-layout.js?v=20261024-all"></script>
+<script src="simple-layout.js?v=20261114-fill"></script>
 <link rel="stylesheet" href="desktop-units.css?v=20261031-fill">
 <script src="desktop-units.js?v=20261031-fill"></script>
 <script src="lesson-summary.js?v=20261026-summary"></script>
 <script src="science-figures.js?v=20261109-labels"></script>
-<script src="science-figures-2.js?v=20261114-helpers"></script><script src="science-figures-img.js?v=20261103-ai"></script><script src="physics-figures.js?v=20261114"></script>
+<script src="science-figures-2.js?v=20261114-be"></script><script src="science-figures-img.js?v=20261103-ai"></script><script src="physics-figures.js?v=20261114"></script>
 <script src="flow-diagrams.js?v=20261031-diagrams"></script>
 <script src="lesson-visuals-data-2.js?v=20261114-opus"></script>
 <script src="lesson-visuals.js?v=20261031-diagrams"></script>

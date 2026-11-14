@@ -104,7 +104,7 @@
     }
     for (const block of blocks) {
       const label = block.querySelector('.kind')?.textContent.trim();
-      const key = block.matches('.exam') || block.querySelector('.qz') || label === 'Practice' ? 'practice'
+      const key = block.matches('.exam,.fill') || block.querySelector('.qz') || label === 'Practice' ? 'practice'
         : block.matches('.sim') || block.querySelector('.prac-link,.pe-model,.ks-model') ? 'lab' : 'learn';
       // Objectives remain available without pushing the explanation below the fold.
       if (block.querySelector('.lo')) {
