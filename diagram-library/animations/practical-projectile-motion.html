@@ -768,6 +768,118 @@ body.anim-standalone .anim-head .muted{margin:4px 0 0}
 <header class="anim-head"><span class="eyebrow">A level Physics · Extension practical</span></header>
 <nav id="switcher" hidden></nav>
 
+<section class="lab" id="lab-projectile" role="tabpanel" aria-labelledby="tab-projectile" hidden>
+    <div class="lab-head">
+      <span class="eyebrow">A level Physics · Motion · Projectile motion</span>
+      <h2>Projectile motion</h2>
+      <p class="muted">Fire a projectile horizontally from a cliff, at an angle from a cliff, or at an angle from level ground. The horizontal and vertical motions are independent: constant velocity across, constant acceleration <i>g</i> downwards. Air resistance is ignored.</p>
+    </div>
+
+    <div class="bench">
+      <div class="stage">
+        <canvas id="pj-canvas" width="900" height="500" aria-label="Projectile motion scene showing the launcher, terrain and the path of the projectile"></canvas>
+        <div class="stage-bar">
+          <span>Scale <b id="pj-scale">1 : 1</b></span>
+          <span>Strobe images every <b id="pj-strobe-o">0.20 s</b></span>
+          <span id="pj-status">Set the launch conditions, then fire.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="field">
+          <div class="lbl">Launch type</div>
+          <div class="seg c1" id="pj-modes"></div>
+        </div>
+        <div class="field">
+          <div class="lbl">Launch speed <i>u</i> <output id="pj-u-o">15.0 m s⁻¹</output></div>
+          <div class="slider"><input type="range" id="pj-u" min="1" max="40" step="0.5" value="15" aria-label="Launch speed"><input type="number" id="pj-u-n" min="1" max="40" step="0.5" value="15" aria-label="Launch speed in metres per second"></div>
+        </div>
+        <div class="field" id="pj-th-f">
+          <div class="lbl">Angle above horizontal <i>θ</i> <output id="pj-th-o">30°</output></div>
+          <div class="slider"><input type="range" id="pj-th" min="-30" max="80" step="1" value="30" aria-label="Launch angle"><input type="number" id="pj-th-n" min="-30" max="80" step="1" value="30" aria-label="Launch angle in degrees"></div>
+        </div>
+        <div class="field" id="pj-h-f">
+          <div class="lbl">Cliff height <i>h</i> <output id="pj-h-o">20.0 m</output></div>
+          <div class="slider"><input type="range" id="pj-h" min="1" max="80" step="0.5" value="20" aria-label="Cliff height"><input type="number" id="pj-h-n" min="1" max="80" step="0.5" value="20" aria-label="Cliff height in metres"></div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1">
+            <div class="lbl">Gravity <i>g</i></div>
+            <select id="pj-g"><option value="9.81" selected>Earth 9.81 m s⁻²</option><option value="3.71">Mars 3.71 m s⁻²</option><option value="1.62">Moon 1.62 m s⁻²</option></select>
+          </div>
+          <div class="field" style="flex:1">
+            <div class="lbl">Playback</div>
+            <select id="pj-speed"><option value="0.25">¼ speed</option><option value="0.5">½ speed</option><option value="1" selected>Real time</option><option value="2">2×</option><option value="4">4×</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <div class="lbl">Strobe interval</div>
+          <select id="pj-strobe"><option value="0">Off</option><option value="0.1">0.10 s</option><option value="0.2" selected>0.20 s</option><option value="0.5">0.50 s</option></select>
+        </div>
+        <div class="seg c2">
+          <label class="check"><input type="checkbox" id="pj-comps" checked> Velocity arrows</label>
+          <label class="check"><input type="checkbox" id="pj-grid" checked> Grid</label>
+          <label class="check"><input type="checkbox" id="pj-keep" checked> Keep old paths</label>
+          <label class="check"><input type="checkbox" id="pj-predict"> Predict first</label>
+        </div>
+        <div class="btns">
+          <button class="btn primary" id="pj-fire">Fire</button>
+          <button class="btn" id="pj-clear" title="Remove previous paths">Clear paths</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="readout c5" aria-live="off">
+      <div><span><i>t</i> / s</span><b id="pj-r-t">0.00</b></div>
+      <div><span><i>x</i> / m</span><b id="pj-r-x">0.0</b></div>
+      <div><span>height / m</span><b id="pj-r-y">0.0</b></div>
+      <div><span><i>v</i><sub>x</sub> / m s⁻¹</span><b id="pj-r-vx">0.0</b></div>
+      <div><span><i>v</i><sub>y</sub> / m s⁻¹</span><b id="pj-r-vy">0.0</b></div>
+    </div>
+
+    <div class="lower">
+      <div class="card">
+        <div class="card-h"><h3>Worked solution</h3><span class="muted" style="font-size:.85rem">Up is positive · origin at the launch point</span></div>
+        <div id="pj-veil">
+          <div class="veil-body">
+            <div class="sum" id="pj-sum"></div>
+            <div class="work" id="pj-work" style="margin-top:14px"></div>
+          </div>
+          <div class="veil-msg"><span>Work out your predictions, enter them on the right, then fire to reveal the solution.</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div class="card">
+          <h3>Your predictions</h3>
+          <p class="muted" style="font-size:.92rem">Calculate before you fire. Answers within 2% count as correct.</p>
+          <div class="pred">
+            <label>Flight time / s<input type="number" id="pj-p-t" step="any" inputmode="decimal"></label>
+            <label>Range / m<input type="number" id="pj-p-R" step="any" inputmode="decimal"></label>
+            <label>Max height / m<input type="number" id="pj-p-H" step="any" inputmode="decimal"></label>
+          </div>
+          <div class="pred-res" id="pj-p-res"><span class="muted">Results appear after the projectile lands.</span></div>
+        </div>
+        <div class="card">
+          <h3>Try these</h3>
+          <div class="presets" id="pj-presets"></div>
+        </div>
+        <div class="card">
+          <details open>
+            <summary>Key equations</summary>
+            <div class="prose">
+              <div class="eqs">
+                <div class="eq"><i>v</i> = <i>u</i> + <i>at</i></div>
+                <div class="eq"><i>s</i> = <i>ut</i> + ½<i>at</i>²</div>
+                <div class="eq"><i>v</i>² = <i>u</i>² + 2<i>as</i></div>
+                <div class="eq"><i>s</i> = ½(<i>u</i> + <i>v</i>)<i>t</i></div>
+              </div>
+              <p>Use them separately for each direction. Horizontally <i>a</i> = 0, so <i>s</i> = <i>u</i><sub>x</sub><i>t</i>. Vertically <i>a</i> = −<i>g</i>. Time <i>t</i> is the only quantity shared by both directions.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script>

@@ -63,6 +63,8 @@ blocks.forEach((b, i) => {
 
 const slug = s => s.replace(/γ/g, 'gamma').replace(/α/g, 'alpha').replace(/β/g, 'beta').toLowerCase().replace(/[’'“”]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 items.sort((a, b) => (a.kind === 'lab') - (b.kind === 'lab') || (a.kind === 'lab' ? (!!b.pag - !!a.pag) || a.num - b.num : 0));
+// Labs whose page is written as static markup in the body (not built by script) need that markup too.
+const staticSection = id => { const i = html.indexOf(`<section class="lab" id="lab-${id}"`); return i < 0 ? '' : html.slice(i, html.indexOf('</section>', i) + 10); };
 const fileOf = it => it.kind === 'lab' ? (it.pag ? `pag-${it.pag.replace('.', '-')}-${slug(it.title)}` : `practical-${slug(it.title)}`) : `${it.lesson}-${slug(it.title)}`;
 const labLabel = it => it.pag ? `OCR A Level Physics A · PAG ${it.pag}` : `A level Physics · ${it.lvl || 'Extension practical'}`;
 
@@ -108,6 +110,7 @@ ${themeScript}
 <header class="anim-head"><span class="eyebrow">${esc(it.kind === 'lab' ? labLabel(it) : `OCR A Level Physics A · ${it.topic} · ${it.lessonName}`)}</span></header>
 <nav id="switcher" hidden></nav>
 ${templates}
+${it.kind === 'lab' ? staticSection(it.id) : ''}
 </div>
 ${examBoard}
 ${[...core, ...it.scripts].map(s => `<script>${safeScript(s)}</script>`).join('\n')}
