@@ -47,7 +47,7 @@
    "level": "alevel"
   },
   "topic": "Practical skills",
-  "description": "I\u2013V characteristics: resistor, filament lamp and diode"
+  "description": "I–V characteristics: resistor, filament lamp and diode"
  },
  {
   "file": "practical-density",
@@ -79,14 +79,14 @@
   "figure": "springHooke",
   "options": {},
   "topic": "Motion and forces",
-  "description": "Spring extension and force\u2013extension graph"
+  "description": "Spring extension and force–extension graph"
  },
  {
   "file": "forces-pressure-in-a-liquid",
   "figure": "liquidPressure",
   "options": {},
   "topic": "Motion and forces",
-  "description": "Pressure increases with depth: p = h\u03c1g"
+  "description": "Pressure increases with depth: p = hρg"
  },
  {
   "file": "electricity-series-parallel",
@@ -317,7 +317,7 @@
   "figure": "stressStrain",
   "options": {},
   "topic": "Materials",
-  "description": "Stress\u2013strain graphs: ductile, brittle and polymeric"
+  "description": "Stress–strain graphs: ductile, brittle and polymeric"
  },
  {
   "file": "momentum-collisions",
@@ -331,7 +331,7 @@
   "figure": "forceTime",
   "options": {},
   "topic": "Momentum",
-  "description": "Impulse and force\u2013time graphs"
+  "description": "Impulse and force–time graphs"
  },
  {
   "file": "electricity-potential-divider",
@@ -394,7 +394,7 @@
   "figure": "boltzmannCurve",
   "options": {},
   "topic": "Thermal physics",
-  "description": "Maxwell\u2013Boltzmann distribution"
+  "description": "Maxwell–Boltzmann distribution"
  },
  {
   "file": "circular-motion",
@@ -408,7 +408,7 @@
   "figure": "hrDiagram",
   "options": {},
   "topic": "Gravitation and astrophysics",
-  "description": "Hertzsprung\u2013Russell diagram"
+  "description": "Hertzsprung–Russell diagram"
  },
  {
   "file": "astro-black-body",
@@ -422,7 +422,7 @@
   "figure": "redshiftHubble",
   "options": {},
   "topic": "Gravitation and astrophysics",
-  "description": "Redshift and Hubble\u2019s law"
+  "description": "Redshift and Hubble’s law"
  },
  {
   "file": "nuclear-binding-energy",
@@ -479,5 +479,855 @@
   "options": {},
   "topic": "Medical imaging",
   "description": "Doppler ultrasound"
+ },
+ {
+  "file": "fields-grid",
+  "figure": "grid",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity and fields",
+  "description": "The National Grid: power station, step-up transformer, transmission cables, step-down transformer and homes"
+ },
+ {
+  "file": "gravity-kepler-laws",
+  "figure": "keplerLaws",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "An elliptical orbit with three equal-area sectors swept in equal times, and a graph of T squared against r cubed for the inner planets on a straight line"
+ },
+ {
+  "file": "astro-grating-orders",
+  "figure": "gratingOrders",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "Laser light passing through a diffraction grating producing orders at angles computed from d sin theta equals n lambda"
+ },
+ {
+  "file": "waves-photo-ke",
+  "figure": "photoKE",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Waves and quantum",
+  "description": "Graph of maximum kinetic energy against frequency for copper and sodium: parallel lines of gradient h with intercepts at the threshold frequency and minus the work function"
+ },
+ {
+  "file": "fields-magnetic-path",
+  "figure": "magneticPath",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity and fields",
+  "description": "An electron moving in a circle in a magnetic field into the page with the force towards the centre, and a velocity selector with balanced electric and magnetic forces"
+ },
+ {
+  "file": "forces-lift-forces",
+  "figure": "liftForces",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Free-body diagram of a person in a lift accelerating upwards, and a trolley pulled by a hanging mass with tension and weight labelled"
+ },
+ {
+  "file": "forces-drag-speed",
+  "figure": "dragSpeed",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Graph of drag force against speed rising as v squared until it meets the weight line at terminal velocity"
+ },
+ {
+  "file": "forces-couple",
+  "figure": "couple",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Two equal and opposite forces on a tap handle forming a couple with perpendicular separation 6 centimetres, and the perpendicular distance between lines of action for forces at an angle"
+ },
+ {
+  "file": "energy-work-angle",
+  "figure": "workAngle",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "A sledge pulled by a rope at 35 degrees showing the horizontal and vertical components of the tension, friction and the displacement"
+ },
+ {
+  "file": "energy-ke-gpe",
+  "figure": "keGpe",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "A roller coaster transferring gravitational potential energy to kinetic energy"
+ },
+ {
+  "file": "energy-elastic-energy",
+  "figure": "elasticEnergy",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Force-extension graph with the triangle under it shaded as stored energy, and a rubber loading and unloading loop with the energy dissipated shaded"
+ },
+ {
+  "file": "momentum-explosion-elastic",
+  "figure": "explosionElastic",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Momentum",
+  "description": "Two trolleys pushed apart by a spring with equal and opposite momentum, and an elastic collision in which momentum and kinetic energy are both conserved"
+ },
+ {
+  "file": "momentum-collision-2d",
+  "figure": "collision2D",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Momentum",
+  "description": "Two pucks colliding at an angle with the momentum vectors drawn as a closed triangle and resolved into components"
+ },
+ {
+  "file": "electricity-network-solved",
+  "figure": "networkSolved",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity",
+  "description": "A 9 volt supply across 20 and 40 ohm resistors in series, in parallel with 30 ohms, with every current and potential difference labelled"
+ },
+ {
+  "file": "electricity-sensing-divider",
+  "figure": "sensingDivider",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity",
+  "description": "A potential divider with a fixed resistor and a thermistor, and a computed graph of output voltage falling as temperature rises"
+ },
+ {
+  "file": "waves-two-source",
+  "figure": "twoSource",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Waves and quantum",
+  "description": "Wavefronts from two coherent sources with the lines of maxima where the path difference is a whole number of wavelengths and the minima between them"
+ },
+ {
+  "file": "thermal-isotherms",
+  "figure": "isotherms",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Thermal physics",
+  "description": "Pressure against volume for a fixed amount of gas at 290 K and 350 K, computed from pV equals nRT"
+ },
+ {
+  "file": "circular-centripetal",
+  "figure": "centripetal",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "An object moving in a circle with velocity along the tangent and the resultant force towards the centre at two positions, and the velocity change pointing to the centre"
+ },
+ {
+  "file": "oscillations-shm-energy",
+  "figure": "shmEnergy",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Oscillations",
+  "description": "Kinetic, potential and total energy against displacement for simple harmonic motion: two parabolas that add to a constant"
+ },
+ {
+  "file": "gravity-grav-field",
+  "figure": "gravField",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "Radial gravitational field lines pointing into the Earth and a graph of g falling as one over r squared from the surface"
+ },
+ {
+  "file": "astro-hubble-age",
+  "figure": "hubbleAge",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "Hubble graph of recession speed against distance with gradient H0, and the separation of galaxies run backwards to zero at about 14 billion years ago"
+ },
+ {
+  "file": "fields-capacitor-combine",
+  "figure": "capacitorCombine",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity and fields",
+  "description": "Capacitor plates carrying equal and opposite charge, with 2 and 3 microfarad capacitors combined in series and in parallel across 10 volts"
+ },
+ {
+  "file": "fields-cap-energy",
+  "figure": "capEnergy",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity and fields",
+  "description": "Graph of p.d. against charge for a capacitor with the triangular area of 18 millijoules shaded and the 36 millijoule rectangle supplied by the battery outlined"
+ },
+ {
+  "file": "fields-potential-charge",
+  "figure": "potentialCharge",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity and fields",
+  "description": "Graphs of potential against distance for positive and negative point charges, and circular equipotentials around a positive charge at equal steps of 30 volts"
+ },
+ {
+  "file": "nuclear-nuclear-size",
+  "figure": "nuclearSize",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Nuclear and particle physics",
+  "description": "An alpha particle approaching a gold nucleus head-on to a distance of closest approach, and a straight-line graph of nuclear radius against the cube root of nucleon number"
+ },
+ {
+  "file": "nuclear-ln-activity",
+  "figure": "lnActivity",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Nuclear and particle physics",
+  "description": "Graph of the natural log of activity against time for protactinium-234m giving a straight line of gradient minus lambda"
+ },
+ {
+  "file": "forces-slope-forces",
+  "figure": "slopeForces",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "A block on a 30 degree slope with its weight resolved into components along and into the slope, the normal contact force and friction"
+ },
+ {
+  "file": "motion-suvat-chooser",
+  "figure": "suvatChooser",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Table showing which of s, u, v, a and t each of the five suvat equations contains and the one it leaves out"
+ },
+ {
+  "file": "motion-free-fall-graphs",
+  "figure": "freeFallGraphs",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Computed height-time and velocity-time graphs for a stone thrown upwards from a cliff, with the top of the flight and the impact marked"
+ },
+ {
+  "file": "energy-sankey-car",
+  "figure": "sankeyCar",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Motion and forces",
+  "description": "Sankey diagram with 50 kilowatts of fuel power in, 15 kilowatts useful and 35 kilowatts wasted, drawn to scale"
+ },
+ {
+  "file": "electricity-charge-carriers",
+  "figure": "chargeCarriers",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity",
+  "description": "Electrons drifting through a metal lattice from negative to positive against the conventional current, and positive and negative ions moving opposite ways in an electrolyte"
+ },
+ {
+  "file": "electricity-power-equations",
+  "figure": "powerEquations",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Electricity",
+  "description": "The power equations P equals VI, I squared R and V squared over R linked through V equals IR, with a kettle example"
+ },
+ {
+  "file": "astro-parallax",
+  "figure": "parallax",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "Stellar parallax: the Earth on opposite sides of its orbit sees a nearby star at angle p, defining the parsec"
+ },
+ {
+  "file": "astro-universe-timeline",
+  "figure": "universeTimeline",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Gravitation and astrophysics",
+  "description": "Schematic timeline from the Big Bang through inflation, nucleosynthesis, the CMB, the first galaxies and accelerating expansion to today, and a pie chart of dark energy, dark matter and ordinary matter"
+ },
+ {
+  "file": "measurements-prefix-scale",
+  "figure": "prefixScale",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "A powers-of-ten scale from pico to tera with each SI prefix and examples, and how to convert areas and volumes"
+ },
+ {
+  "file": "measurements-error-types",
+  "figure": "errorTypes",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Four sets of repeat readings of g showing accurate and precise, precise but not accurate from a systematic error, accurate but not precise from random error, and neither"
+ },
+ {
+  "file": "measurements-uncertainty-combine",
+  "figure": "uncertaintyCombine",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Bars showing the percentage uncertainty in h and in t, with t counted twice because it is squared, adding to the percentage uncertainty in g"
+ },
+ {
+  "file": "measurements-log-log-power",
+  "figure": "logLogPower",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "Log-log graph of pendulum period against length giving a straight line of gradient one half"
+ },
+ {
+  "file": "measurements-results-table",
+  "figure": "resultsTable",
+  "options": {
+   "level": "alevel"
+  },
+  "topic": "Practical skills",
+  "description": "A results table for resistance against length with headings, repeats, an anomaly circled, means and uncertainties, with annotations explaining each convention"
+ },
+ {
+  "file": "motion-distance-follows-the-path-actually-taken-displacement",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Distance follows the path actually taken. Displacement is measured in a straight line from start to finish, with a direction.",
+  "source": {
+   "page": "m1",
+   "lesson": "Distance, displacement, speed and velocity",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-if-velocity-and-acceleration-point-the-same",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "If velocity and acceleration point the same way the object speeds up; if they are opposite it slows down.",
+  "source": {
+   "page": "m2",
+   "lesson": "Acceleration",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-the-gradient-of-a-displacement-time-graph",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "The gradient of a displacement–time graph is the velocity. Steeper means faster; a negative gradient means moving in the negative direction.",
+  "source": {
+   "page": "m3",
+   "lesson": "Displacement–time graphs",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-exam-question-the-graph-shows-how-the-displacement-of",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Displacement–time graphs): The graph shows how the displacement of a remote-controlled car changes with time.",
+  "source": {
+   "page": "m3",
+   "lesson": "Displacement–time graphs",
+   "kind": "exam",
+   "question": "xm-m3q0a-fb"
+  }
+ },
+ {
+  "file": "motion-on-a-v-t-graph-the-gradient",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "On a v–t graph the gradient is the acceleration and the area between the line and the time axis is the displacement.",
+  "source": {
+   "page": "m4",
+   "lesson": "Velocity–time and acceleration–time graphs",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-exam-question-the-velocity-time-graph-shows-a-car",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Velocity–time and acceleration–time graphs): The velocity–time graph shows a car travelling between two sets of traffic lights. It accelerates uniformly from rest to 15 m s⁻¹ in 6.0 s, travels at constant velocity until t = 16 s, then decelerates uniformly to rest ",
+  "source": {
+   "page": "m4",
+   "lesson": "Velocity–time and acceleration–time graphs",
+   "kind": "exam",
+   "question": "xm-m4q0a-fb"
+  }
+ },
+ {
+  "file": "motion-take-the-gradient-to-move-from-s",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Take the gradient to move from s–t to v–t to a–t. Take the area to move back the other way.",
+  "source": {
+   "page": "m5",
+   "lesson": "Linking displacement, velocity and acceleration graphs",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-the-displacement-is-the-total-area-a",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "The displacement is the total area: a rectangle (ut) plus a triangle (½ × t × at).",
+  "source": {
+   "page": "m6",
+   "lesson": "Deriving the equations of motion",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-switching-off-the-magnet-starts-the-timer",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Switching off the magnet starts the timer; the ball opening the trapdoor stops it. Measure h from the bottom of the ball to the trapdoor.",
+  "source": {
+   "page": "m9",
+   "lesson": "Determining the acceleration of free fall",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-a-ball-fired-vertically-upwards-from-a",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "A ball fired vertically upwards from a trolley moving at constant velocity lands back in the trolley: it keeps the trolley's horizontal velocity throughout.",
+  "source": {
+   "page": "m11",
+   "lesson": "Independence of horizontal and vertical motion",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-resolve-the-launch-velocity-into-components-then",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Resolve the launch velocity into components, then treat the two directions separately. Time is the link between them.",
+  "source": {
+   "page": "m12",
+   "lesson": "Solving projectile problems",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "motion-exam-question-the-velocity-time-graph-shows-the-motion",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: motion): The velocity–time graph shows the motion of a cyclist along a straight road.",
+  "source": {
+   "page": "m14",
+   "lesson": "Mixed exam paper: motion",
+   "kind": "exam",
+   "question": "xm-m14bq0a-fb"
+  }
+ },
+ {
+  "file": "forces-add-forces-along-a-line-taking-one",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Add forces along a line, taking one direction as positive. The resultant (net) force produces the acceleration.",
+  "source": {
+   "page": "f1",
+   "lesson": "Resultant force and Newton's second law",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "forces-any-force-can-be-replaced-by-two",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Any force can be replaced by two perpendicular components that together have the same effect.",
+  "source": {
+   "page": "f3",
+   "lesson": "Resolving forces and motion on a slope",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "forces-exam-question-a-sledge-of-mass-25-kg-slides",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Resolving forces and motion on a slope): A sledge of mass 25 kg slides down a straight slope inclined at 20° to the horizontal. The frictional force on the sledge is 30 N.",
+  "source": {
+   "page": "f3",
+   "lesson": "Resolving forces and motion on a slope",
+   "kind": "exam",
+   "question": "xm-f3q0a-fb"
+  }
+ },
+ {
+  "file": "forces-the-moment-of-a-force-is-the",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "The moment of a force is the force times the perpendicular distance from the pivot to its line of action.",
+  "source": {
+   "page": "f7",
+   "lesson": "Moments and the principle of moments",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "forces-exam-question-a-uniform-plank-of-length-4-0",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Moments and the principle of moments): A uniform plank of length 4.0 m and weight 200 N rests on two supports. Support A is at one end and support B is 1.0 m from the other end. A child of weight 300 N stands 1.0 m from A.",
+  "source": {
+   "page": "f7",
+   "lesson": "Moments and the principle of moments",
+   "kind": "exam",
+   "question": "xm-f7q0a-fb"
+  }
+ },
+ {
+  "file": "forces-the-pressure-at-depth-h-is-the",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "The pressure at depth h is the weight of the column of liquid above an area, divided by that area.",
+  "source": {
+   "page": "f12",
+   "lesson": "Pressure and p = hρg",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "forces-upthrust-comes-from-the-pressure-difference-between",
+  "figure": null,
+  "options": {},
+  "topic": "Motion and forces",
+  "description": "Upthrust comes from the pressure difference between the bottom and the top of the object.",
+  "source": {
+   "page": "f13",
+   "lesson": "Upthrust and Archimedes' principle",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "forces-exam-question-a-uniform-horizontal-beam-of-length-5",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: forces in action): A uniform horizontal beam of length 5.0 m and weight 600 N is hinged to a wall at one end. It is held horizontal by a cable attached to its other end, making an angle of 30° with the beam. A load of 400 N hangs 4.0 m fro",
+  "source": {
+   "page": "f15",
+   "lesson": "Mixed exam paper: forces in action",
+   "kind": "exam",
+   "question": "xm-f15bq1a-fb"
+  }
+ },
+ {
+  "file": "energy-exam-question-the-graph-shows-how-the-force-needed",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Force–extension graphs and elastic potential energy): The graph shows how the force needed to stretch the elastic of a catapult varies with extension. The elastic obeys Hooke's law.",
+  "source": {
+   "page": "ep5",
+   "lesson": "Force–extension graphs and elastic potential energy",
+   "kind": "exam",
+   "question": "xm-ep5q0a-fb"
+  }
+ },
+ {
+  "file": "energy-exam-question-the-graph-shows-how-the-force-on",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: energy, materials and momentum): The graph shows how the force on a tennis ball varies with time while it is in contact with a racket. The ball has a mass of 0.058 kg and arrives at the racket at 25 m s⁻¹.",
+  "source": {
+   "page": "ep13",
+   "lesson": "Mixed exam paper: energy, materials and momentum",
+   "kind": "exam",
+   "question": "xm-ep13bq2a-fb"
+  }
+ },
+ {
+  "file": "electricity-the-total-current-into-a-junction-equals",
+  "figure": null,
+  "options": {},
+  "topic": "Electricity",
+  "description": "The total current into a junction equals the total current out of it.",
+  "source": {
+   "page": "e2",
+   "lesson": "Kirchhoff's first law",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "electricity-in-time-t-every-carrier-in-a",
+  "figure": null,
+  "options": {},
+  "topic": "Electricity",
+  "description": "In time t, every carrier in a length vt passes the end face.",
+  "source": {
+   "page": "e3",
+   "lesson": "Mean drift velocity: I = Anev",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "electricity-e-m-f-energy-transferred-into-electrical",
+  "figure": null,
+  "options": {},
+  "topic": "Electricity",
+  "description": "E.m.f.: energy transferred into electrical energy per coulomb. P.d.: electrical energy transferred into other forms per coulomb.",
+  "source": {
+   "page": "e4",
+   "lesson": "Potential difference and electromotive force",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "electricity-exam-question-a-12-v-battery-of-negligible-internal",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Series and parallel circuits; Kirchhoff's second law): A 12 V battery of negligible internal resistance is connected to three resistors as shown.",
+  "source": {
+   "page": "e8",
+   "lesson": "Series and parallel circuits; Kirchhoff's second law",
+   "kind": "exam",
+   "question": "xm-e8q0a-fb"
+  }
+ },
+ {
+  "file": "electricity-exam-question-a-battery-of-e-m-f-4",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (E.m.f. and internal resistance): A battery of e.m.f. 4.5 V and internal resistance 0.60 Ω is connected to a 2.4 Ω resistor.",
+  "source": {
+   "page": "e10",
+   "lesson": "E.m.f. and internal resistance",
+   "kind": "exam",
+   "question": "xm-e10q0a-fb"
+  }
+ },
+ {
+  "file": "electricity-exam-question-a-battery-of-e-m-f-12",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Electricity: review and exam practice): A battery of e.m.f. 12.0 V and internal resistance 0.50 Ω is connected to two identical lamps in parallel. Each lamp has a resistance of 6.0 Ω.",
+  "source": {
+   "page": "e13",
+   "lesson": "Electricity: review and exam practice",
+   "kind": "exam",
+   "question": "xm-e13q0a-fb"
+  }
+ },
+ {
+  "file": "electricity-exam-question-the-circuit-shows-a-9-0-v",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: electricity): The circuit shows a 9.0 V battery of negligible internal resistance connected to a resistor R₁ of 1.0 kΩ, a resistor R₂ of 3.0 kΩ and an NTC thermistor T. At 20 °C the resistance of the thermistor is 6.0 kΩ.",
+  "source": {
+   "page": "e14",
+   "lesson": "Mixed exam paper: electricity",
+   "kind": "exam",
+   "question": "xm-e14bq1a-fb"
+  }
+ },
+ {
+  "file": "waves-exam-question-the-graph-shows-the-displacement-of-particles",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: waves and quantum physics): The graph shows the displacement of particles against distance along a wave at one instant. The wave travels at 12 m s⁻¹.",
+  "source": {
+   "page": "wv13",
+   "lesson": "Mixed exam paper: waves and quantum physics",
+   "kind": "exam",
+   "question": "xm-wv13bq0a-fb"
+  }
+ },
+ {
+  "file": "thermal-a-temperature-difference-of-1-k-is",
+  "figure": null,
+  "options": {},
+  "topic": "Thermal physics",
+  "description": "A temperature difference of 1 K is the same as 1 °C; only the zero is different.",
+  "source": {
+   "page": "t1",
+   "lesson": "Temperature, thermal equilibrium and the kelvin scale",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "thermal-solid-particles-close-together-vibrating-about-fixed",
+  "figure": null,
+  "options": {},
+  "topic": "Thermal physics",
+  "description": "Solid: particles close together, vibrating about fixed positions. Liquid: close together but free to move past each other. Gas: far apart, moving fast and randomly.",
+  "source": {
+   "page": "t2",
+   "lesson": "The kinetic model of matter and Brownian motion",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "gravity-exam-question-a-student-investigates-the-motion-of-a",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: circular motion, oscillations and gravitation): A student investigates the motion of a mass hanging from a spring. The graph shows the displacement of the mass against time.",
+  "source": {
+   "page": "cg10",
+   "lesson": "Mixed exam paper: circular motion, oscillations and gravitation",
+   "kind": "exam",
+   "question": "xm-cg10bq0a-fb"
+  }
+ },
+ {
+  "file": "astro-approximate-sizes-diameters-the-universe-spans-more",
+  "figure": null,
+  "options": {},
+  "topic": "Gravitation and astrophysics",
+  "description": "Approximate sizes (diameters). The universe spans more than 20 orders of magnitude.",
+  "source": {
+   "page": "a1",
+   "lesson": "Objects in the universe and the formation of stars",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "fields-exam-question-a-470-f-capacitor-is-charged-to",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Mixed exam paper: capacitors, electric fields and electromagnetism): A 470 μF capacitor is charged to 12.0 V and then discharged through a resistor. The graph shows how the p.d. across the capacitor varies with time.",
+  "source": {
+   "page": "fd13",
+   "lesson": "Mixed exam paper: capacitors, electric fields and electromagnetism",
+   "kind": "exam",
+   "question": "xm-fd13bq0a-fb"
+  }
+ },
+ {
+  "file": "nuclear-in-decay-a-down-quark-changes-into",
+  "figure": null,
+  "options": {},
+  "topic": "Nuclear and particle physics",
+  "description": "In β⁻ decay a down quark changes into an up quark, emitting an electron and an electron antineutrino.",
+  "source": {
+   "page": "n3",
+   "lesson": "Antiparticles, hadrons, leptons and quarks",
+   "kind": "figure"
+  }
+ },
+ {
+  "file": "exam-paper-fp1-the-graph-shows-the-stress-strain-graph",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Paper 1: Modelling physics): The graph shows the stress–strain graph for a metal wire, up to the point where the wire breaks.",
+  "source": {
+   "page": "fp1",
+   "lesson": "Paper 1: Modelling physics",
+   "kind": "exam",
+   "question": "xm-fp1bq1a-fb"
+  }
+ },
+ {
+  "file": "exam-paper-fp2-the-circuit-is-used-as-a-temperature",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Paper 2: Exploring physics): The circuit is used as a temperature sensor. The battery has negligible internal resistance. The thermistor T is a negative temperature coefficient (NTC) thermistor.",
+  "source": {
+   "page": "fp2",
+   "lesson": "Paper 2: Exploring physics",
+   "kind": "exam",
+   "question": "xm-fp2bq0a-fb"
+  }
+ },
+ {
+  "file": "exam-paper-fp2-a-student-varies-the-external-resistance-connected",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Paper 2: Exploring physics): A student varies the external resistance connected to a cell and measures the terminal p.d. V and the current I. The graph shows the results.",
+  "source": {
+   "page": "fp2",
+   "lesson": "Paper 2: Exploring physics",
+   "kind": "exam",
+   "question": "xm-fp2bq1a-fb"
+  }
+ },
+ {
+  "file": "exam-paper-fp5-the-circuit-is-used-to-monitor-the",
+  "figure": null,
+  "options": {},
+  "topic": "Exam question figures",
+  "description": "Exam question figure (Paper 2: Exploring physics (Set 2)): The circuit is used to monitor the temperature of a greenhouse. The thermistor is an NTC thermistor; its resistance is 4.7 kΩ at 25 °C and 1.2 kΩ at 60 °C. The battery has negligible internal resistance.",
+  "source": {
+   "page": "fp5",
+   "lesson": "Paper 2: Exploring physics (Set 2)",
+   "kind": "exam",
+   "question": "xm-fp5bq2a-fb"
+  }
  }
 ]

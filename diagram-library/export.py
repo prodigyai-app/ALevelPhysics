@@ -2,7 +2,7 @@ import asyncio,json,re
 from playwright.async_api import async_playwright
 import os
 HERE=os.path.dirname(os.path.abspath(__file__))
-C=os.path.join(HERE,'..','platform','client')+'/'; OUT=HERE+'/'
+C=os.path.join(HERE,'..')+'/'; OUT=HERE+'/'  # the figure scripts this site loads
 FIGS=[
  ('practical-young-modulus','youngModulus',{},'Practical skills','Young modulus: long wire, pulley, marker and fixed scale'),
  ('practical-emf-internal-resistance','emfInternal',{},'Practical skills','E.m.f. and internal resistance: circuit and V against I graph'),
@@ -70,12 +70,53 @@ FIGS=[
  ('medical-pet-scanner','petScan',{},'Medical imaging','PET scanner'),
  ('medical-acoustic-impedance','acousticImpedance',{},'Medical imaging','Acoustic impedance and reflection'),
  ('medical-doppler-ultrasound','dopplerUS',{},'Medical imaging','Doppler ultrasound'),
+# Figures used in the lessons (lesson-visuals-data-2.js), added November 2026
+ ("fields-grid","grid",{'level':"alevel"},"Electricity and fields","The National Grid: power station, step-up transformer, transmission cables, step-down transformer and homes"),
+ ("gravity-kepler-laws","keplerLaws",{'level':"alevel"},"Gravitation and astrophysics","An elliptical orbit with three equal-area sectors swept in equal times, and a graph of T squared against r cubed for the inner planets on a straight line"),
+ ("astro-grating-orders","gratingOrders",{'level':"alevel"},"Gravitation and astrophysics","Laser light passing through a diffraction grating producing orders at angles computed from d sin theta equals n lambda"),
+ ("waves-photo-ke","photoKE",{'level':"alevel"},"Waves and quantum","Graph of maximum kinetic energy against frequency for copper and sodium: parallel lines of gradient h with intercepts at the threshold frequency and minus the work function"),
+ ("fields-magnetic-path","magneticPath",{'level':"alevel"},"Electricity and fields","An electron moving in a circle in a magnetic field into the page with the force towards the centre, and a velocity selector with balanced electric and magnetic forces"),
+ ("forces-lift-forces","liftForces",{'level':"alevel"},"Motion and forces","Free-body diagram of a person in a lift accelerating upwards, and a trolley pulled by a hanging mass with tension and weight labelled"),
+ ("forces-drag-speed","dragSpeed",{'level':"alevel"},"Motion and forces","Graph of drag force against speed rising as v squared until it meets the weight line at terminal velocity"),
+ ("forces-couple","couple",{'level':"alevel"},"Motion and forces","Two equal and opposite forces on a tap handle forming a couple with perpendicular separation 6 centimetres, and the perpendicular distance between lines of action for forces at an angle"),
+ ("energy-work-angle","workAngle",{'level':"alevel"},"Motion and forces","A sledge pulled by a rope at 35 degrees showing the horizontal and vertical components of the tension, friction and the displacement"),
+ ("energy-ke-gpe","keGpe",{'level':"alevel"},"Motion and forces","A roller coaster transferring gravitational potential energy to kinetic energy"),
+ ("energy-elastic-energy","elasticEnergy",{'level':"alevel"},"Motion and forces","Force-extension graph with the triangle under it shaded as stored energy, and a rubber loading and unloading loop with the energy dissipated shaded"),
+ ("momentum-explosion-elastic","explosionElastic",{'level':"alevel"},"Momentum","Two trolleys pushed apart by a spring with equal and opposite momentum, and an elastic collision in which momentum and kinetic energy are both conserved"),
+ ("momentum-collision-2d","collision2D",{'level':"alevel"},"Momentum","Two pucks colliding at an angle with the momentum vectors drawn as a closed triangle and resolved into components"),
+ ("electricity-network-solved","networkSolved",{'level':"alevel"},"Electricity","A 9 volt supply across 20 and 40 ohm resistors in series, in parallel with 30 ohms, with every current and potential difference labelled"),
+ ("electricity-sensing-divider","sensingDivider",{'level':"alevel"},"Electricity","A potential divider with a fixed resistor and a thermistor, and a computed graph of output voltage falling as temperature rises"),
+ ("waves-two-source","twoSource",{'level':"alevel"},"Waves and quantum","Wavefronts from two coherent sources with the lines of maxima where the path difference is a whole number of wavelengths and the minima between them"),
+ ("thermal-isotherms","isotherms",{'level':"alevel"},"Thermal physics","Pressure against volume for a fixed amount of gas at 290 K and 350 K, computed from pV equals nRT"),
+ ("circular-centripetal","centripetal",{'level':"alevel"},"Gravitation and astrophysics","An object moving in a circle with velocity along the tangent and the resultant force towards the centre at two positions, and the velocity change pointing to the centre"),
+ ("oscillations-shm-energy","shmEnergy",{'level':"alevel"},"Oscillations","Kinetic, potential and total energy against displacement for simple harmonic motion: two parabolas that add to a constant"),
+ ("gravity-grav-field","gravField",{'level':"alevel"},"Gravitation and astrophysics","Radial gravitational field lines pointing into the Earth and a graph of g falling as one over r squared from the surface"),
+ ("astro-hubble-age","hubbleAge",{'level':"alevel"},"Gravitation and astrophysics","Hubble graph of recession speed against distance with gradient H0, and the separation of galaxies run backwards to zero at about 14 billion years ago"),
+ ("fields-capacitor-combine","capacitorCombine",{'level':"alevel"},"Electricity and fields","Capacitor plates carrying equal and opposite charge, with 2 and 3 microfarad capacitors combined in series and in parallel across 10 volts"),
+ ("fields-cap-energy","capEnergy",{'level':"alevel"},"Electricity and fields","Graph of p.d. against charge for a capacitor with the triangular area of 18 millijoules shaded and the 36 millijoule rectangle supplied by the battery outlined"),
+ ("fields-potential-charge","potentialCharge",{'level':"alevel"},"Electricity and fields","Graphs of potential against distance for positive and negative point charges, and circular equipotentials around a positive charge at equal steps of 30 volts"),
+ ("nuclear-nuclear-size","nuclearSize",{'level':"alevel"},"Nuclear and particle physics","An alpha particle approaching a gold nucleus head-on to a distance of closest approach, and a straight-line graph of nuclear radius against the cube root of nucleon number"),
+ ("nuclear-ln-activity","lnActivity",{'level':"alevel"},"Nuclear and particle physics","Graph of the natural log of activity against time for protactinium-234m giving a straight line of gradient minus lambda"),
+ ("forces-slope-forces","slopeForces",{'level':"alevel"},"Motion and forces","A block on a 30 degree slope with its weight resolved into components along and into the slope, the normal contact force and friction"),
+ ("motion-suvat-chooser","suvatChooser",{'level':"alevel"},"Motion and forces","Table showing which of s, u, v, a and t each of the five suvat equations contains and the one it leaves out"),
+ ("motion-free-fall-graphs","freeFallGraphs",{'level':"alevel"},"Motion and forces","Computed height-time and velocity-time graphs for a stone thrown upwards from a cliff, with the top of the flight and the impact marked"),
+ ("energy-sankey-car","sankeyCar",{'level':"alevel"},"Motion and forces","Sankey diagram with 50 kilowatts of fuel power in, 15 kilowatts useful and 35 kilowatts wasted, drawn to scale"),
+ ("electricity-charge-carriers","chargeCarriers",{'level':"alevel"},"Electricity","Electrons drifting through a metal lattice from negative to positive against the conventional current, and positive and negative ions moving opposite ways in an electrolyte"),
+ ("electricity-power-equations","powerEquations",{'level':"alevel"},"Electricity","The power equations P equals VI, I squared R and V squared over R linked through V equals IR, with a kettle example"),
+ ("astro-parallax","parallax",{'level':"alevel"},"Gravitation and astrophysics","Stellar parallax: the Earth on opposite sides of its orbit sees a nearby star at angle p, defining the parsec"),
+ ("astro-universe-timeline","universeTimeline",{'level':"alevel"},"Gravitation and astrophysics","Schematic timeline from the Big Bang through inflation, nucleosynthesis, the CMB, the first galaxies and accelerating expansion to today, and a pie chart of dark energy, dark matter and ordinary matter"),
+ ("measurements-prefix-scale","prefixScale",{'level':"alevel"},"Practical skills","A powers-of-ten scale from pico to tera with each SI prefix and examples, and how to convert areas and volumes"),
+ ("measurements-error-types","errorTypes",{'level':"alevel"},"Practical skills","Four sets of repeat readings of g showing accurate and precise, precise but not accurate from a systematic error, accurate but not precise from random error, and neither"),
+ ("measurements-uncertainty-combine","uncertaintyCombine",{'level':"alevel"},"Practical skills","Bars showing the percentage uncertainty in h and in t, with t counted twice because it is squared, adding to the percentage uncertainty in g"),
+ ("measurements-log-log-power","logLogPower",{'level':"alevel"},"Practical skills","Log-log graph of pendulum period against length giving a straight line of gradient one half"),
+ ("measurements-results-table","resultsTable",{'level':"alevel"},"Practical skills","A results table for resistance against length with headings, repeats, an anomaly circled, means and uncertainties, with annotations explaining each convention"),
+
 ]
 async def m():
   async with async_playwright() as p:
     b=await p.chromium.launch(); pg=await b.new_page(viewport={'width':1700,'height':1200},device_scale_factor=2)
     await pg.set_content('<html><body style="margin:0"></body></html>')
-    for f in ['science-figures.js','science-figures-2.js','science-figures-img.js']: await pg.add_script_tag(path=C+f)
+    for f in ['science-figures.js','science-figures-2.js','science-figures-img.js','physics-figures.js']: await pg.add_script_tag(path=C+f)
     meta=[]
     for name,fig,o,topic,desc in FIGS:
       for theme,bg,ink,panel in [('light','#ffffff','#1d2733','#ffffff'),('dark','#0f1620','#e8ecf5','#0f1620')]:
@@ -92,6 +133,8 @@ async def m():
         await pg.evaluate("s=>{document.body.innerHTML='<div id=w style=\"display:inline-block\">'+s+'</div>'}",svg)
         el=await pg.query_selector('#w svg'); await el.screenshot(path=OUT+f'png-{theme}/{name}.png')
       meta.append({'file':name,'figure':fig,'options':o,'topic':topic,'description':desc})
-    json.dump(meta,open(OUT+'diagrams.json','w'),indent=1)
+    try: keep=[d for d in json.load(open(OUT+'diagrams.json')) if d.get('source')]  # figures from export-site-figures.cjs
+    except FileNotFoundError: keep=[]
+    json.dump(meta+keep,open(OUT+'diagrams.json','w'),indent=1,ensure_ascii=False)
     await b.close(); print(len(meta),'diagrams')
 asyncio.run(m())
