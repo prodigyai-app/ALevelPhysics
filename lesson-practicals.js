@@ -12,6 +12,9 @@
       let section=document.getElementById('lab-'+embedded);if(!section)return;
       document.body.classList.add('practical-embedded-document');section.dataset.practicalRoot='';section.hidden=false;
       for(let el=section.parentElement;el&&el!==document.body;el=el.parentElement)el.dataset.practicalPath='';
+      // Keep the shared SVG definitions (gradients, patterns) out of the hiding rules below: a hidden <defs> means the
+      // equipment that uses them is not painted at all. A root's own children are never hidden.
+      document.querySelectorAll('body>svg').forEach(el=>el.dataset.practicalRoot='');
       const style=document.createElement('style');style.textContent=`
         body.practical-embedded-document{margin:0;padding:8px;overflow:visible!important}
         .practical-embedded-document>:not([data-practical-path]):not([data-practical-root]),
