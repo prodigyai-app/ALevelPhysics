@@ -111,6 +111,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 :root[data-theme="light"] #benchTop stop:nth-child(1){stop-color:#e4e8eb}
 :root[data-theme="light"] #benchTop stop:nth-child(2){stop-color:#d7dce0}
 :root[data-theme="light"] #benchTop stop:nth-child(3){stop-color:#c6ccd1}
+/* Leads: a halo separates crossing wires; point at (or tap) a lead to pick out its route (November 2026) */
+.stage .lead-halo{stroke:#fff;stroke-opacity:.9}
+:root[data-theme="dark"] .stage .lead-halo{stroke:#15191b;stroke-opacity:.95}
+.stage .lead{transition:opacity .15s}
+.stage svg:has(.lead:hover) .lead:not(:hover){opacity:.25}
+.stage .lead:hover .lead-halo{stroke:#ffcf3f;stroke-opacity:1}
 /* Lab results tables: larger, clearer type for projecting (November 2026) */
 .lower table{font-size:1.02rem}
 .lower th{font-family:var(--f-body);font-size:.92rem;font-weight:700;letter-spacing:0;color:var(--ink);background:var(--sunk);border-bottom:2px solid var(--line);padding:9px 12px;vertical-align:bottom;line-height:1.25}
@@ -976,7 +982,7 @@ function setPsu(id,v,max,on){ const k=document.getElementById(id+"-knob"); if(k)
 
 /* insulated 4 mm lead */
 const LEADCOL={red:["#c62828","#6e0e0e"],black:["#2a2a2a","#000"],blue:["#1e5fae","#0b2c57"],yellow:["#e3b51c","#7a5c00"],green:["#2e8b3e","#0f4418"]};
-C.lead=(d,col="red",id="")=>{ const [c1,c2]=LEADCOL[col]; return `<g ${id?`id="${id}"`:""}><path d="${d}" fill="none" stroke="${c2}" stroke-width="5.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c1}" stroke-width="3.8" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="1.1" stroke-linecap="round" transform="translate(-.6 -.9)"/></g>`; };
+C.lead=(d,col="red",id="")=>{ const [c1,c2]=LEADCOL[col]; return `<g class="lead" ${id?`id="${id}"`:""}><path class="lead-halo" d="${d}" fill="none" stroke-width="10" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c2}" stroke-width="6.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c1}" stroke-width="4.6" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="1.1" stroke-linecap="round" transform="translate(-.6 -.9)"/></g>`; };
 C.plug=(x,y,col="red")=>{ const [c1,c2]=LEADCOL[col]; return `<circle cx="${x}" cy="${y}" r="6.5" fill="${c2}"/><circle cx="${x}" cy="${y}" r="5.2" fill="${c1}"/><circle cx="${x-1.6}" cy="${y-1.8}" r="1.8" fill="#fff" opacity=".35"/>`; };
 /* crocodile clip pointing at angle a (deg, 0 = right) with jaws at (x,y) */
 C.croc=(x,y,col="red",a=-90)=>{ const [c1,c2]=LEADCOL[col]; return `<g transform="translate(${x} ${y}) rotate(${a})">
@@ -1262,7 +1268,7 @@ const RMAX=22, RL=0.12;
 const st={cell:"newc",R:8,closed:false,drop:0,data:[],view:"vi"};
 LabNotebook.observe("em",st);
 const X0=384, X1=616, xOf=R=>X0+(R/RMAX)*(X1-X0);
-const AM=C.mmSock(420,140), VM=C.mmSock(650,140);
+const AM=C.mmSock(420,140), VM=C.mmSock(110,140);
 
 const stage=`<svg id="em-svg" viewBox="0 0 900 470" role="img" aria-label="A cell connected through a switch and ammeter to a sliding rheostat, with a voltmeter across the cell">
 <defs><pattern id="em-wind" width="2.4" height="22" patternUnits="userSpaceOnUse"><rect width="2.4" height="22" fill="#c9b39a"/><rect width="1.1" height="22" fill="#8f7a62"/></pattern></defs>
@@ -1278,7 +1284,7 @@ ${C.shadow(500,412,170,7)}
 <g id="em-slider" style="cursor:grab"></g>
 <circle cx="369" cy="372" r="5" fill="url(#g-brass)"/><circle cx="632" cy="334" r="5" fill="url(#g-brass)"/>
 <text x="500" y="420" text-anchor="middle" font-family="Arial" font-size="8" fill="#c9d2d5">rheostat, 0–22 Ω</text>
-${C.mm(420,140,"em-am","A")}${C.mm(650,140,"em-vm","V")}
+${C.mm(420,140,"em-am","A")}${C.mm(110,140,"em-vm","V")}
 <g id="em-leads"></g>
 </svg>`;
 
@@ -1321,8 +1327,8 @@ function drawCell(){ const two=st.cell==="two";
    `<rect x="48" y="312" width="118" height="34" rx="5" fill="url(#g-cell)"/><rect x="128" y="312" width="38" height="34" rx="3" fill="url(#g-cellGold)" opacity="${st.cell==="old"?.55:1}"/><text x="88" y="333" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#f2f2f2">1.5 V</text>${st.cell==="old"?`<path d="M60 316 l20 4 M90 340 l25 -3" stroke="#6b5a3a" stroke-width="1" opacity=".7"/>`:""}`)+
    `<rect x="166" y="322" width="6" height="14" rx="2" fill="#c9cfd3"/><rect x="28" y="310" width="18" height="40" rx="2" fill="#2a2d30"/><rect x="172" y="310" width="12" height="40" rx="2" fill="#2a2d30"/><circle cx="37" cy="318" r="6" fill="#0d0f10" stroke="#777" stroke-width="1.6"/><circle cx="178" cy="318" r="5" fill="#0d0f10" stroke="#c0392b" stroke-width="1.6"/>`; }
 function drawSlider(){ const x=xOf(st.R); $("#em-slider").innerHTML=`<rect x="${x-14}" y="326" width="28" height="14" rx="3" fill="#1d2124"/><rect x="${x-3}" y="338" width="6" height="16" fill="url(#g-brass)"/><rect x="${x-20}" y="320" width="40" height="40" fill="transparent"/>`; }
-(function leads(){ $("#em-leads").innerHTML=C.lead(`M178 318 C 192 290, 205 300, 216 342`,"red")+C.lead(`M288 342 C 300 410, ${AM.a10[0]} 360, ${AM.a10[0]} ${AM.a10[1]}`,"red")+C.lead(`M${AM.com[0]} ${AM.com[1]} C ${AM.com[0]} 330, 350 340, 369 372`,"red")+C.lead(`M632 334 C 660 280, 120 250, 37 318`,"black")+
-  C.lead(`M${VM.v[0]} ${VM.v[1]} C ${VM.v[0]} 330, 260 250, 180 314`,"blue")+C.lead(`M${VM.com[0]} ${VM.com[1]} C ${VM.com[0]} 300, 100 240, 40 314`,"yellow")+
+(function leads(){ $("#em-leads").innerHTML=C.lead(`M178 318 C 192 290, 205 300, 216 342`,"red")+C.lead(`M288 342 C 300 410, ${AM.a10[0]} 360, ${AM.a10[0]} ${AM.a10[1]}`,"red")+C.lead(`M${AM.com[0]} ${AM.com[1]} C ${AM.com[0]} 330, 350 340, 369 372`,"red")+C.lead(`M632 334 C 656 420, 560 424, 420 424 L 70 424 C 12 424, 10 346, 37 318`,"black")+ /* back to the cell along the front of the bench */
+  /* the voltmeter sits above the cell, so its leads drop straight onto the cell terminals */ C.lead(`M${VM.v[0]} ${VM.v[1]} C ${VM.v[0]} 296, 182 292, 180 314`,"blue")+C.lead(`M${VM.com[0]} ${VM.com[1]} C ${VM.com[0]} 300, 44 284, 40 314`,"yellow")+
   C.plug(AM.a10[0],AM.a10[1],"red")+C.plug(AM.com[0],AM.com[1],"red")+C.plug(VM.v[0],VM.v[1],"blue")+C.plug(VM.com[0],VM.com[1],"yellow")+C.plug(178,318,"red")+C.plug(37,318,"black"); })();
 const cell=()=>CELLS[st.cell];
 function meters(){ const c=cell(), E=c.E-st.drop; if(!st.closed) return {I:0,V:E}; const I=E/(st.R+RL+c.r); return {I,V:E-I*c.r}; }

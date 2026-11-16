@@ -111,6 +111,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 :root[data-theme="light"] #benchTop stop:nth-child(1){stop-color:#e4e8eb}
 :root[data-theme="light"] #benchTop stop:nth-child(2){stop-color:#d7dce0}
 :root[data-theme="light"] #benchTop stop:nth-child(3){stop-color:#c6ccd1}
+/* Leads: a halo separates crossing wires; point at (or tap) a lead to pick out its route (November 2026) */
+.stage .lead-halo{stroke:#fff;stroke-opacity:.9}
+:root[data-theme="dark"] .stage .lead-halo{stroke:#15191b;stroke-opacity:.95}
+.stage .lead{transition:opacity .15s}
+.stage svg:has(.lead:hover) .lead:not(:hover){opacity:.25}
+.stage .lead:hover .lead-halo{stroke:#ffcf3f;stroke-opacity:1}
 /* Lab results tables: larger, clearer type for projecting (November 2026) */
 .lower table{font-size:1.02rem}
 .lower th{font-family:var(--f-body);font-size:.92rem;font-weight:700;letter-spacing:0;color:var(--ink);background:var(--sunk);border-bottom:2px solid var(--line);padding:9px 12px;vertical-align:bottom;line-height:1.25}
@@ -1087,7 +1093,7 @@ function setPsu(id,v,max,on){ const k=document.getElementById(id+"-knob"); if(k)
 
 /* insulated 4 mm lead */
 const LEADCOL={red:["#c62828","#6e0e0e"],black:["#2a2a2a","#000"],blue:["#1e5fae","#0b2c57"],yellow:["#e3b51c","#7a5c00"],green:["#2e8b3e","#0f4418"]};
-C.lead=(d,col="red",id="")=>{ const [c1,c2]=LEADCOL[col]; return `<g ${id?`id="${id}"`:""}><path d="${d}" fill="none" stroke="${c2}" stroke-width="5.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c1}" stroke-width="3.8" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="1.1" stroke-linecap="round" transform="translate(-.6 -.9)"/></g>`; };
+C.lead=(d,col="red",id="")=>{ const [c1,c2]=LEADCOL[col]; return `<g class="lead" ${id?`id="${id}"`:""}><path class="lead-halo" d="${d}" fill="none" stroke-width="10" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c2}" stroke-width="6.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${c1}" stroke-width="4.6" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="1.1" stroke-linecap="round" transform="translate(-.6 -.9)"/></g>`; };
 C.plug=(x,y,col="red")=>{ const [c1,c2]=LEADCOL[col]; return `<circle cx="${x}" cy="${y}" r="6.5" fill="${c2}"/><circle cx="${x}" cy="${y}" r="5.2" fill="${c1}"/><circle cx="${x-1.6}" cy="${y-1.8}" r="1.8" fill="#fff" opacity=".35"/>`; };
 /* crocodile clip pointing at angle a (deg, 0 = right) with jaws at (x,y) */
 C.croc=(x,y,col="red",a=-90)=>{ const [c1,c2]=LEADCOL[col]; return `<g transform="translate(${x} ${y}) rotate(${a})">
