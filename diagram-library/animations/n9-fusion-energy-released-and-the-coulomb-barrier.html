@@ -98,6 +98,19 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 /* lower area */
 .lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:960px){.lower{grid-template-columns:minmax(0,1fr)}}
+/* Light theme: light lab bench, stage and readout bar (November 2026) */
+:root[data-theme="light"] .stage{background:#e8edf1}
+:root[data-theme="light"] .stage-bar{background:#dde4ea;color:#3b4852}
+:root[data-theme="light"] .stage-bar b{color:#14202b}
+:root[data-theme="light"] #g-bench stop:nth-child(1){stop-color:#e4e8eb}
+:root[data-theme="light"] #g-bench stop:nth-child(2){stop-color:#d7dce0}
+:root[data-theme="light"] #g-bench stop:nth-child(3){stop-color:#c6ccd1}
+:root[data-theme="light"] .stage rect[fill="#555c60"]{fill:#a9b1b7}
+:root[data-theme="light"] .stage rect[fill="#111416"]{fill:#9aa3aa}
+:root[data-theme="light"] .stage rect[fill="#4c5357"]{fill:#c3cad0}
+:root[data-theme="light"] #benchTop stop:nth-child(1){stop-color:#e4e8eb}
+:root[data-theme="light"] #benchTop stop:nth-child(2){stop-color:#d7dce0}
+:root[data-theme="light"] #benchTop stop:nth-child(3){stop-color:#c6ccd1}
 /* Lab results tables: larger, clearer type for projecting (November 2026) */
 .lower table{font-size:1.02rem}
 .lower th{font-family:var(--f-body);font-size:.92rem;font-weight:700;letter-spacing:0;color:var(--ink);background:var(--sunk);border-bottom:2px solid var(--line);padding:9px 12px;vertical-align:bottom;line-height:1.25}
@@ -1796,4 +1809,38 @@ $("#n9-T").addEventListener("input",e=>{ st.T=+e.target.value; draw(); });
  var redraw=function(){ if(page&&(page.redraw||page.onShow)) (page.redraw||page.onShow)(); };
  requestAnimationFrame(function(){ redraw(); window.dispatchEvent(new Event('resize')); });
 })();</script>
+<script id="lab-light-labels">
+/* Light theme: labels drawn in pale grey for the old dark bench would vanish on the light bench.
+   Any pale label that now sits on a light background is drawn in dark ink instead (and restored in the dark theme). */
+(function(){
+  function lum(c){ var m=(c||'').match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/); if(!m) return null; if(m[4]!==undefined&&+m[4]<.2) return null; return (0.2126*m[1]+0.7152*m[2]+0.0722*m[3])/255; }
+  function stopLum(id){ var g=document.getElementById(id); if(!g) return null; var s=g.querySelectorAll('stop'); if(!s.length) return null; var t=0,n=0; s.forEach(function(x){ var c=getComputedStyle(x); if(+c.stopOpacity<.5) return; var l=lum(c.stopColor); if(l!=null){t+=l;n++;} }); return n?t/n:null; }
+  function bgLum(el){ var cs=getComputedStyle(el), f=cs.fill, m=f.match(/url\("?#([^")]+)"?\)/); if(m) return (+cs.fillOpacity)*(+cs.opacity)<.6?null:stopLum(m[1]); if((+cs.fillOpacity)*(+cs.opacity)<.6) return null; return lum(f); }
+  function light(){ return document.documentElement.getAttribute('data-theme')!=='dark'; }
+  function fix(stage){
+    if(!stage||!stage.offsetParent) return;
+    stage.querySelectorAll('svg text').forEach(function(t){
+      if(!light()){ if(t.dataset.ltInk){ t.style.fill=''; delete t.dataset.ltInk; } return; }
+      if(t.dataset.ltInk||t.dataset.ltKeep) return;
+      var l=lum(getComputedStyle(t).fill); if(l==null||l<.62) return;
+      var r=t.getBoundingClientRect(); if(!r.width||r.bottom<0||r.top>innerHeight||r.right<0||r.left>innerWidth) return;
+      // sample what lies behind the label at its left, middle and right; ink it only if most of it is on a light surface
+      var y=r.top+r.height/2, lightN=0;
+      [r.left+Math.min(3,r.width/4), r.left+r.width/2, r.right-Math.min(3,r.width/4)].forEach(function(x){
+        var els=document.elementsFromPoint(x,y), b=null;
+        for(var i=0;i<els.length;i++){ var e=els[i]; if(e===t||e.closest('text')) continue;
+          if(!(e instanceof SVGElement)) break;
+          if(/^(svg|g|line|polyline|text|tspan|defs|use)$/i.test(e.tagName)) continue;
+          var l2=bgLum(e); if(l2!=null){ b=l2; break; } }
+        if(b==null||b>.55) lightN++;
+      });
+      if(lightN>=2){ t.dataset.ltInk='1'; t.style.fill='#3b4852'; } else t.dataset.ltKeep='1';
+    });
+  }
+  var q=false; function all(){ if(q) return; q=true; setTimeout(function(){ q=false; document.querySelectorAll('section.lab:not([hidden]) .stage').forEach(fix); },200); }
+  function watch(){ document.querySelectorAll('.stage').forEach(function(s){ new MutationObserver(function(){ all(); }).observe(s,{childList:true,subtree:true}); var sc=s.closest('.stage-scroll')||s; sc.addEventListener('scroll',all,{passive:true}); }); }
+  watch(); addEventListener('scroll',all,{passive:true}); addEventListener('resize',all); addEventListener('hashchange',all); setTimeout(all,500);
+  new MutationObserver(function(){ document.querySelectorAll('.stage svg text[data-lt-keep]').forEach(function(t){ delete t.dataset.ltKeep; }); all(); }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
 </body></html>

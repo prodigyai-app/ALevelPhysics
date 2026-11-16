@@ -34,6 +34,8 @@ const cssFiles = ['simple-layout.css', 'lesson-width.css', 'diagram-fit.css'].ma
 const fonts = (head.match(/<link href="https:\/\/fonts\.googleapis\.com[^>]*>/) || [''])[0];
 // Theme: light by default; add ?theme=dark to the address for the dark theme.
 const themeScript = `<script>(function(){var t=(location.search.match(/[?&]theme=(light|dark)/)||[])[1];document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");})();</script>`;
+// Light-theme fix for pale labels on the light bench (the site's own script, reused as is)
+const labLight = (html.match(/<script id="lab-light-labels">[\s\S]*?<\/script>/) || [''])[0];
 const templates = [...html.matchAll(/<template id="[^"]+">[\s\S]*?<\/template>/g)].map(m => m[0]).join('\n');
 const jsFile = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 const helpers = ['math-notation.js', 'numeric-tools.js', 'revision-maths.js', 'mcq-order.js'].filter(f => fs.existsSync(path.join(ROOT, f))).map(jsFile);
@@ -129,6 +131,7 @@ ${it.kind === 'lab' ? staticSection(it.id) : ''}
 ${examBoard}
 ${[...core, ...it.scripts].map(s => `<script>${safeScript(s)}</script>`).join('\n')}
 <script>${isolate(it)}</script>
+${labLight}
 </body></html>
 `;
 
