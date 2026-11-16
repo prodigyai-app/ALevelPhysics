@@ -109,6 +109,7 @@ body.anim-standalone [data-anim-root] th{font-family:var(--f-body);font-size:.95
 body.anim-standalone [data-anim-root] td{font-size:1.05rem;color:var(--ink);padding:8px 12px;line-height:1.3}
 body.anim-standalone [data-anim-root] tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--sunk) 50%,transparent)}
 body.anim-standalone .lower.anim-stacked{grid-template-columns:minmax(0,1fr)}
+body.anim-standalone .lower.anim-stacked>:not(:has(table)){width:100%;max-width:900px;justify-self:center}
 body.anim-standalone [data-anim-root] td.empty{font-family:var(--f-body);color:var(--muted)}${it.kind === 'lab' ? 'body.anim-standalone section[data-anim-root]{display:block!important}' : ''}
 body.anim-standalone .anim-head{padding:4px 2px 0}
 body.anim-standalone .anim-head .muted{margin:4px 0 0}
