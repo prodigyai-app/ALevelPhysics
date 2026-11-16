@@ -32,8 +32,8 @@ const styles = [...head.matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1]);
 const bodyStyles = [...html.slice(html.indexOf('<body')).matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1]).filter(s => !/printTitle|PZCSS/.test(s));
 const cssFiles = ['simple-layout.css', 'lesson-width.css', 'diagram-fit.css'].map(f => fs.readFileSync(path.join(ROOT, f), 'utf8'));
 const fonts = (head.match(/<link href="https:\/\/fonts\.googleapis\.com[^>]*>/) || [''])[0];
-// Theme: ?theme=light or ?theme=dark in the address (for embedding), otherwise the site's saved choice, otherwise dark like the site.
-const themeScript = `<script>(function(){var t=(location.search.match(/[?&]theme=(light|dark)/)||[])[1];if(!t){try{t=localStorage.getItem("site-theme")}catch(e){}}document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");})();</script>`;
+// Theme: light by default; add ?theme=dark to the address for the dark theme.
+const themeScript = `<script>(function(){var t=(location.search.match(/[?&]theme=(light|dark)/)||[])[1];document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");})();</script>`;
 const templates = [...html.matchAll(/<template id="[^"]+">[\s\S]*?<\/template>/g)].map(m => m[0]).join('\n');
 const jsFile = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 const helpers = ['math-notation.js', 'numeric-tools.js', 'revision-maths.js', 'mcq-order.js'].filter(f => fs.existsSync(path.join(ROOT, f))).map(jsFile);
@@ -79,6 +79,12 @@ const isolate = it => `(function(){
  section.hidden=false; target.setAttribute('data-anim-root','');
  for(var el=target.parentElement; el&&el!==document.body; el=el.parentElement) el.setAttribute('data-anim-path','');
  if(KIND==='lab'){ var nb=section.querySelector('.lab-notebook'); if(nb) nb.remove(); }
+ if(KIND==='lab'){
+  // Results tables use larger type here; when one no longer fits beside the graph, give it the full width.
+  var stack=function(){ section.querySelectorAll('.lower').forEach(function(l){ var wide=[].some.call(l.querySelectorAll('.tbl-wrap'),function(w){return w.scrollWidth>w.clientWidth+2;});
+    if(wide&&!l.classList.contains('anim-stacked')){ l.classList.add('anim-stacked'); window.dispatchEvent(new Event('resize')); } }); };
+  new MutationObserver(stack).observe(section,{childList:true,subtree:true}); addEventListener('resize',stack); setTimeout(stack,300);
+ }
  var redraw=function(){ if(page&&(page.redraw||page.onShow)) (page.redraw||page.onShow)(); };
  requestAnimationFrame(function(){ redraw(); window.dispatchEvent(new Event('resize')); });
 })();`;
@@ -96,7 +102,14 @@ ${bodyStyles.map(s => `<style>${s}</style>`).join('\n')}
 body.anim-standalone .wrap>:not([data-anim-path]):not([data-anim-root]):not(.anim-head),
 body.anim-standalone [data-anim-path]>:not([data-anim-path]):not([data-anim-root]):not(.anim-head):not(template){display:none!important}
 body.anim-standalone .wrap{gap:12px}
-body.anim-standalone [data-anim-root]{margin:0}${it.kind === 'lab' ? 'body.anim-standalone section[data-anim-root]{display:block!important}' : ''}
+body.anim-standalone [data-anim-root]{margin:0}
+/* Results tables: larger, clearer type for projecting (the site's tables use small monospace) */
+body.anim-standalone [data-anim-root] table{font-size:1.05rem}
+body.anim-standalone [data-anim-root] th{font-family:var(--f-body);font-size:.95rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ink);background:var(--sunk);border-bottom:2px solid var(--line);padding:9px 12px;vertical-align:bottom;line-height:1.25}
+body.anim-standalone [data-anim-root] td{font-size:1.05rem;color:var(--ink);padding:8px 12px;line-height:1.3}
+body.anim-standalone [data-anim-root] tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--sunk) 50%,transparent)}
+body.anim-standalone .lower.anim-stacked{grid-template-columns:minmax(0,1fr)}
+body.anim-standalone [data-anim-root] td.empty{font-family:var(--f-body);color:var(--muted)}${it.kind === 'lab' ? 'body.anim-standalone section[data-anim-root]{display:block!important}' : ''}
 body.anim-standalone .anim-head{padding:4px 2px 0}
 body.anim-standalone .anim-head .muted{margin:4px 0 0}
 ${it.kind === 'sim' ? 'body.anim-standalone [data-anim-root]>h3 .kind{display:none}' : ''}
@@ -138,8 +151,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,Sego
 h2{margin:28px 0 10px;font-size:1.15rem}ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px}
 li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:2px}li span{color:var(--muted);font-size:.9rem}code{font-size:.75rem;color:var(--muted);overflow-wrap:anywhere}a{color:var(--acc);font-weight:600}pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto;font-size:.82rem}</style></head>
 <body><main><h1>A level Physics animations</h1>
-<p>${meta.length} interactive animations from the A level Physics site: ${meta.filter(m => m.kind === 'sim').length} lesson simulations and ${meta.filter(m => m.kind === 'lab').length} practical labs. Each is a single self-contained HTML file that works offline. Open one in a browser, or put it in a lesson page with an iframe. Add <code>?theme=light</code> to the address for the light theme (dark is the default, as on the site).</p>
-<pre>&lt;iframe src="animations/wv1-watch-a-wave-travel.html?theme=light" style="width:100%;height:640px;border:0" title="Watch a wave travel"&gt;&lt;/iframe&gt;</pre>
+<p>${meta.length} interactive animations from the A level Physics site: ${meta.filter(m => m.kind === 'sim').length} lesson simulations and ${meta.filter(m => m.kind === 'lab').length} practical labs. Each is a single self-contained HTML file that works offline. Open one in a browser, or put it in a lesson page with an iframe. They open in the light theme; add <code>?theme=dark</code> to the address for the dark theme.</p>
+<pre>&lt;iframe src="animations/wv1-watch-a-wave-travel.html" style="width:100%;height:640px;border:0" title="Watch a wave travel"&gt;&lt;/iframe&gt;</pre>
 ${groups.map(([t, a]) => `<h2>${esc(t)}</h2><ul>${a.map(card).join('')}</ul>`).join('\n')}
 </main></body></html>
 `);

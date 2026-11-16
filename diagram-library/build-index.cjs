@@ -53,10 +53,10 @@ Each animation is a single HTML file with everything it needs inside it, so it w
 use it on the board, or put it in a lesson page with an iframe:
 
 \`\`\`html
-<iframe src="animations/wv1-watch-a-wave-travel.html?theme=light" style="width:100%;height:640px;border:0" title="Watch a wave travel"></iframe>
+<iframe src="animations/wv1-watch-a-wave-travel.html" style="width:100%;height:640px;border:0" title="Watch a wave travel"></iframe>
 \`\`\`
 
-Add \`?theme=light\` for the light theme; dark is the default, as on the site. Readings in the practical labs are not saved
+They open in the light theme; add \`?theme=dark\` to the address for the dark theme. Readings in the practical labs are not saved
 between visits (there is no sign-in or notebook in the standalone files).
 
 ## Diagrams

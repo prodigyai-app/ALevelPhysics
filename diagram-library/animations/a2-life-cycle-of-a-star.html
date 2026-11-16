@@ -629,6 +629,13 @@ body.anim-standalone .wrap>:not([data-anim-path]):not([data-anim-root]):not(.ani
 body.anim-standalone [data-anim-path]>:not([data-anim-path]):not([data-anim-root]):not(.anim-head):not(template){display:none!important}
 body.anim-standalone .wrap{gap:12px}
 body.anim-standalone [data-anim-root]{margin:0}
+/* Results tables: larger, clearer type for projecting (the site's tables use small monospace) */
+body.anim-standalone [data-anim-root] table{font-size:1.05rem}
+body.anim-standalone [data-anim-root] th{font-family:var(--f-body);font-size:.95rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ink);background:var(--sunk);border-bottom:2px solid var(--line);padding:9px 12px;vertical-align:bottom;line-height:1.25}
+body.anim-standalone [data-anim-root] td{font-size:1.05rem;color:var(--ink);padding:8px 12px;line-height:1.3}
+body.anim-standalone [data-anim-root] tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--sunk) 50%,transparent)}
+body.anim-standalone .lower.anim-stacked{grid-template-columns:minmax(0,1fr)}
+body.anim-standalone [data-anim-root] td.empty{font-family:var(--f-body);color:var(--muted)}
 body.anim-standalone .anim-head{padding:4px 2px 0}
 body.anim-standalone .anim-head .muted{margin:4px 0 0}
 body.anim-standalone [data-anim-root]>h3 .kind{display:none}
@@ -763,7 +770,7 @@ body.anim-standalone [data-anim-root]>h3 .kind{display:none}
 </script>
 </head>
 <body class="anim-standalone">
-<script>(function(){var t=(location.search.match(/[?&]theme=(light|dark)/)||[])[1];if(!t){try{t=localStorage.getItem("site-theme")}catch(e){}}document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");})();</script>
+<script>(function(){var t=(location.search.match(/[?&]theme=(light|dark)/)||[])[1];document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");})();</script>
 <div class="wrap">
 <header class="anim-head"><span class="eyebrow">OCR A Level Physics A · Astrophysics and cosmology · The life cycles of stars</span></header>
 <nav id="switcher" hidden></nav>
@@ -1785,6 +1792,12 @@ $("#sl-next").addEventListener("click",()=>{ st.s=clamp(st.s+1,0,3); draw(); });
  section.hidden=false; target.setAttribute('data-anim-root','');
  for(var el=target.parentElement; el&&el!==document.body; el=el.parentElement) el.setAttribute('data-anim-path','');
  if(KIND==='lab'){ var nb=section.querySelector('.lab-notebook'); if(nb) nb.remove(); }
+ if(KIND==='lab'){
+  // Results tables use larger type here; when one no longer fits beside the graph, give it the full width.
+  var stack=function(){ section.querySelectorAll('.lower').forEach(function(l){ var wide=[].some.call(l.querySelectorAll('.tbl-wrap'),function(w){return w.scrollWidth>w.clientWidth+2;});
+    if(wide&&!l.classList.contains('anim-stacked')){ l.classList.add('anim-stacked'); window.dispatchEvent(new Event('resize')); } }); };
+  new MutationObserver(stack).observe(section,{childList:true,subtree:true}); addEventListener('resize',stack); setTimeout(stack,300);
+ }
  var redraw=function(){ if(page&&(page.redraw||page.onShow)) (page.redraw||page.onShow)(); };
  requestAnimationFrame(function(){ redraw(); window.dispatchEvent(new Event('resize')); });
 })();</script>
