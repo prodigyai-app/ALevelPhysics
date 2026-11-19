@@ -4351,7 +4351,7 @@ const panel=`
 <button class="btn primary" id="ch-rec">Record reading</button>
 <p class="note" id="ch-note">The sealed end of the air column is at the 0.0 cm mark. Read the scale at the bottom of the acid bead. Before each reading switch off the heater, stir, and wait for the air to reach the water temperature.</p>`;
 
-build({id:"ch",eyebrow:"OCR A Level Physics A · Adapted gas investigation",title:"Charles's law and absolute zero",
+build({id:"ch",eyebrow:"OCR A Level Physics A · PAG 8.1 (volume method) · Investigating gases",title:"Charles's law and absolute zero",
  intro:"Air is trapped in a capillary tube by a short bead of concentrated sulfuric acid, which keeps the air dry and the pressure constant (atmospheric). The tube is fixed to a ruler in a water bath. As the water is heated the air expands. A graph of length against temperature in °C extrapolates to zero length at absolute zero.",
  stage,bar:`<span>Ruler <b>±0.1 cm</b></span><span>Thermometer <b>±0.5 °C</b></span><span>Pressure <b>constant</b></span><span id="ch-status"></span>`,
  panel,
@@ -4421,7 +4421,7 @@ $("#ch-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#ch-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 window.__ch=st;
 render(); refresh(); requestAnimationFrame(loop);
-register({id:"ch",group:"ocr",num:83,name:"Charles's law",lvl:"Gas investigation (adapted)",icon:"syringe",onShow:draw});
+register({id:"ch",group:"ocr",num:83,pag:"8.1",name:"Charles's law",lvl:"PAG 8.1 · volume method",icon:"syringe",onShow:draw});
 })();
 
 </script>
@@ -10614,11 +10614,32 @@ lesson({id:"t6",group:"c",num:6,lvl:"5.1.4 · Lesson 6",name:"The gas laws and a
  outcomes:[["Use the amount of substance in moles, and the Avogadro constant N<sub>A</sub> = 6.02 × 10²³ mol⁻¹","5.1.4(a)"],["Use pV = constant (Boyle’s law), p/T = constant and V/T = constant","5.1.4(c)"],["Estimate absolute zero by extrapolation of a gas law graph; describe the experiments","5.1.4(c)(ii)"]],
  blocks:[
   B.text("The mole",`<p>The <b>mole</b> is the SI base unit of amount of substance. One mole contains <b>N<sub>A</sub> = 6.02 × 10²³</b> particles (the Avogadro constant). The number of particles N in n moles is</p>`+B.eq(`${v("N")} = ${v("n")}${v("N","A")}`,`${v("n")} = ${fr("mass","molar mass")}`)+`<p>For example, 32 g of oxygen gas (O₂, molar mass 32 g mol⁻¹) is 1.0 mol and contains 6.02 × 10²³ molecules.</p>`),
-  B.text("The gas laws",`<p>For a <b>fixed mass</b> of an ideal gas:</p>`+B.eq(`Boyle’s law: ${v("p")}${v("V")} = constant<small>at constant temperature</small>`,`pressure law: ${fr(v("p"),v("T"))} = constant<small>at constant volume</small>`,`Charles’s law: ${fr(v("V"),v("T"))} = constant<small>at constant pressure</small>`)+`<p>T must be in <b>kelvin</b>. A graph of p against V for Boyle’s law is a curve (p ∝ 1/V), so plot p against 1/V for a straight line through the origin.</p><p><b>Absolute zero</b>: if p (at constant V) or V (at constant p) is plotted against temperature in °C, the straight line extrapolates to zero at about −273 °C, whatever the gas. This is absolute zero, 0 K.</p><p>Try these in the A Level Practical Lab: <b>PAG 8.1 Estimating absolute zero</b>, <b>PAG 8.2 Boyle’s law</b> and <a href="#ch">Charles’s law and absolute zero (adapted investigation)</a>.</p>`),
+  B.text("The gas laws",`<p>For a <b>fixed mass</b> of an ideal gas:</p>`+B.eq(`Boyle’s law: ${v("p")}${v("V")} = constant<small>at constant temperature</small>`,`pressure law: ${fr(v("p"),v("T"))} = constant<small>at constant volume</small>`,`Charles’s law: ${fr(v("V"),v("T"))} = constant<small>at constant pressure</small>`)+`<p>T must be in <b>kelvin</b>. A graph of p against V for Boyle’s law is a curve (p ∝ 1/V), so plot p against 1/V for a straight line through the origin.</p><p><b>Absolute zero</b>: if p (at constant V) or V (at constant p) is plotted against temperature in °C, the straight line extrapolates to zero at about −273 °C, whatever the gas. This is absolute zero, 0 K.</p><p>Try these in the A Level Practical Lab: <a href="#az">PAG 8.1 Estimating absolute zero (pressure method)</a>, <a href="#ch">PAG 8.1 Charles’s law and absolute zero (volume method)</a> and <a href="#bl">PAG 8.2 Boyle’s law</a>.</p>`),
   B.sim("t6-sim","Gas law investigations",stage,panel,`<span>${n} mol of an ideal gas</span>`),
   B.example("Heating a sealed can","A sealed can contains air at 100 kPa and 20 °C. It is heated to 150 °C. What is the new pressure, assuming the volume does not change?",[
    ["Use kelvin","",[`${v("T","1")} = 293 K, ${v("T","2")} = 423 K`]],
    ["Pressure law","",[`${fr(v("p","1"),v("T","1"))} = ${fr(v("p","2"),v("T","2"))} ⇒ ${v("p","2")} = 100 × ${fr("423","293")} = ${res("144 kPa")}`]]]),
+  B.practical(`<p>PAG 8 has two parts. You should be able to describe each method, say what is kept constant, explain the precautions and find the uncertainty in your result.</p>
+<h4>PAG 8.1 Estimating absolute zero: pressure method</h4>
+<ul><li>A sealed flask of air is fully under the water in a beaker, connected by short, narrow tubing to a pressure gauge (or pressure sensor). The <b>volume</b> and <b>mass</b> of gas are fixed.</li>
+<li>Heat the water in steps of about 10 °C from near 0 °C (iced water) to about 90 °C. At each step, stir, switch off the heat and wait for the gauge reading to settle before reading θ and p.</li>
+<li>Plot p against θ (in °C) and draw the line of best fit. Extrapolate to p = 0: θ₀ = −c/m, where m is the gradient and c the intercept at 0 °C.</li></ul>
+<h4>PAG 8.1 Estimating absolute zero: volume method</h4>
+<ul><li>Air is trapped in a capillary tube, sealed at the bottom, by a short bead of concentrated sulfuric acid, which keeps the air dry. The bead is free to move, so the <b>pressure</b> stays at atmospheric pressure.</li>
+<li>The tube is fixed to a ruler in a water bath. The tube has a uniform cross-section, so the length L of the air column is proportional to its volume.</li>
+<li>Plot L against θ and extrapolate to L = 0 in the same way.</li></ul>
+<h4>PAG 8.2 Boyle’s law</h4>
+<ul><li>Air is trapped above oil in a sealed glass tube with a volume scale. A foot pump raises the pressure of the oil reservoir; a Bourdon gauge shows the pressure. The <b>temperature</b> and <b>mass</b> of air are fixed.</li>
+<li>Raise the pressure in steps, waiting about a minute each time: compressing the air quickly warms it. Read the volume at eye level, at the bottom of the meniscus.</li>
+<li>Calculate pV for each reading (it should stay constant) and plot p against 1/V: a straight line through the origin, with gradient pV.</li>
+<li>An alternative set-up is a sealed syringe connected to a pressure sensor and data logger: push the plunger in steps and record p and V.</li></ul>
+<table style="width:100%;table-layout:fixed"><thead><tr><th style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Problem</th><th style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Effect on the result</th><th style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">What to do</th></tr></thead><tbody>
+<tr><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Gas in the tubing stays at room temperature (pressure method)</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">p rises less than it should, so the gradient is too small and θ₀ comes out too low (more negative)</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Use short, narrow tubing; keep the whole flask under the water</td></tr>
+<tr><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Reading before the gas reaches the water temperature</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">The gas is cooler than the thermometer reading, so p (or L) is too small for each θ</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Stir, switch off the heater and wait for the reading to settle</td></tr>
+<tr><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Reading straight after compressing the gas (Boyle’s law)</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">The gas is warmer than room temperature, so p is too high for that V</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Wait for the temperature to return to room temperature</td></tr>
+<tr><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Long extrapolation from 0–90 °C back to about −273 °C</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Small uncertainties in the gradient and intercept give a large uncertainty in θ₀</td><td style="white-space:normal;text-align:left;font-family:inherit;font-size:.95rem;vertical-align:top">Use the widest temperature range you can; find the uncertainty from the worst acceptable line</td></tr>
+</tbody></table>
+<p><b>Uncertainty in absolute zero:</b> draw error bars, then the steepest or shallowest line that still passes through all of them. Extrapolate it too. The difference between the two values of θ₀ is the absolute uncertainty.</p>`,"PAG 8: investigating gases"),
   B.check([
    {q:"A gas at 200 kPa occupies 3.0 L. It is compressed at constant temperature to 1.2 L. What is its new pressure?",a:500,unit:"kPa",tol:0.01,why:"p₂ = p₁V₁/V₂ = 200 × 3.0 / 1.2 = 500 kPa."},
    {q:"Gas at 100 kPa and 27 °C is heated at constant volume to 127 °C. What is the new pressure?",a:133,unit:"kPa",tol:0.01,why:"p₂ = 100 × 400/300 = 133 kPa."},
