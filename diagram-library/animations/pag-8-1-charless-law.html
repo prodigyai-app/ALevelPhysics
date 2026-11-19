@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Charles's law</title>
-<meta name="description" content="A level Physics · Gas investigation (adapted): Charles's law. Interactive lab.">
+<meta name="description" content="OCR A Level Physics A · PAG 8.1: Charles's law. Interactive lab.">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* Layout: practical switcher, then each lab = live apparatus stage beside a control panel, with results and worked solutions underneath */
@@ -800,7 +800,7 @@ body.anim-standalone .anim-head .muted{margin:4px 0 0}
 <body class="anim-standalone">
 <script>(function(){var t=(location.search.match(/[?&]theme=(light|dark)/)||[])[1];document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");})();</script>
 <div class="wrap">
-<header class="anim-head"><span class="eyebrow">A level Physics · Gas investigation (adapted)</span></header>
+<header class="anim-head"><span class="eyebrow">OCR A Level Physics A · PAG 8.1</span></header>
 <nav id="switcher" hidden></nav>
 
 
@@ -1295,7 +1295,7 @@ const panel=`
 <button class="btn primary" id="ch-rec">Record reading</button>
 <p class="note" id="ch-note">The sealed end of the air column is at the 0.0 cm mark. Read the scale at the bottom of the acid bead. Before each reading switch off the heater, stir, and wait for the air to reach the water temperature.</p>`;
 
-build({id:"ch",eyebrow:"OCR A Level Physics A · Adapted gas investigation",title:"Charles's law and absolute zero",
+build({id:"ch",eyebrow:"OCR A Level Physics A · PAG 8.1 (volume method) · Investigating gases",title:"Charles's law and absolute zero",
  intro:"Air is trapped in a capillary tube by a short bead of concentrated sulfuric acid, which keeps the air dry and the pressure constant (atmospheric). The tube is fixed to a ruler in a water bath. As the water is heated the air expands. A graph of length against temperature in °C extrapolates to zero length at absolute zero.",
  stage,bar:`<span>Ruler <b>±0.1 cm</b></span><span>Thermometer <b>±0.5 °C</b></span><span>Pressure <b>constant</b></span><span id="ch-status"></span>`,
  panel,
@@ -1365,7 +1365,7 @@ $("#ch-tbody").addEventListener("click",e=>{ const b=e.target.closest(".x"); if(
 $("#ch-clear").addEventListener("click",()=>{ st.data=[]; refresh(); });
 window.__ch=st;
 render(); refresh(); requestAnimationFrame(loop);
-register({id:"ch",group:"ocr",num:83,name:"Charles's law",lvl:"Gas investigation (adapted)",icon:"syringe",onShow:draw});
+register({id:"ch",group:"ocr",num:83,pag:"8.1",name:"Charles's law",lvl:"PAG 8.1 · volume method",icon:"syringe",onShow:draw});
 })();
 
 </script>

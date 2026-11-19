@@ -1540,6 +1540,17 @@
   "pag": "8.2"
  },
  {
+  "file": "pag-8-1-charless-law.html",
+  "kind": "lab",
+  "id": "ch",
+  "title": "Charles's law",
+  "topic": "Practical activity groups (PAGs)",
+  "lesson": null,
+  "lessonName": null,
+  "practical": 83,
+  "pag": "8.1"
+ },
+ {
   "file": "pag-9-1-capacitor-discharge.html",
   "kind": "lab",
   "id": "cp",
@@ -1702,17 +1713,6 @@
   "lesson": null,
   "lessonName": null,
   "practical": 63,
-  "pag": null
- },
- {
-  "file": "practical-charless-law.html",
-  "kind": "lab",
-  "id": "ch",
-  "title": "Charles's law",
-  "topic": "Extension practicals",
-  "lesson": null,
-  "lessonName": null,
-  "practical": 83,
   "pag": null
  },
  {
